@@ -4,6 +4,8 @@
  */
 package javaswingdev.form;
 
+import javaswingdev.cell.TableActionCellRender;
+
 /**
  *
  * @author MI TA
@@ -15,6 +17,7 @@ public class Form_Menu extends javax.swing.JPanel {
      */
     public Form_Menu() {
         initComponents();
+        table_menu.getColumnModel().getColumn(4).setCellRenderer(new TableActionCellRender());
     }
 
     /**
@@ -51,10 +54,18 @@ public class Form_Menu extends javax.swing.JPanel {
             new String [] {
                 "Kode", "Menu", "Jumlah", "Harga", "Action"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, true
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jScrollPane1.setViewportView(table_menu);
 
-        button1.setText("TAMBAH+");
+        button1.setText("TAMBAH");
         button1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         button1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -96,7 +107,8 @@ public class Form_Menu extends javax.swing.JPanel {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jLabel1)
+                .addGap(50, 50, 50)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(container1, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
