@@ -24,7 +24,7 @@ public class Menu extends JPanel {
     }
 
     private void init() {
-        setBackground(Color.WHITE);
+        setBackground(new Color(80, 153, 85));
         setLayout(new BorderLayout());
         JScrollPane scroll = createScroll();
         panelMenu = createPanelMenu();
@@ -92,7 +92,7 @@ public class Menu extends JPanel {
         JLabel label = new JLabel(title);
         label.setBorder(new EmptyBorder(15, 20, 5, 5));
         label.setFont(label.getFont().deriveFont(Font.BOLD));
-        label.setForeground(new Color(170, 170, 170));
+        label.setForeground(new Color(255, 255, 255));
         panelMenu.add(label);
     }
 

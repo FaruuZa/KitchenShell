@@ -40,7 +40,7 @@ public class MenuItem extends JPanel {
 
     private void init(ModelMenuItem item) {
         setOpaque(false);
-        setForeground(new Color(170, 170, 170));
+        setForeground(new Color(255, 255, 255));
         setLayout(new MigLayout("wrap,fillx,inset 0", "[fill]", "[fill,35!]" + (hasSubMenu ? "0[fill,30!]" : "")));
         Item menu = new Item(true, 0);
         menu.setGoogleIcon(item.getIcon());
@@ -54,7 +54,7 @@ public class MenuItem extends JPanel {
             @Override
             public void mouseExited(MouseEvent e) {
                 if (!menu.isSelected()) {
-                    setForeground(new Color(170, 170, 170));
+                    setForeground(new Color(255, 255, 255));
                 }
             }
         });
@@ -142,7 +142,7 @@ public class MenuItem extends JPanel {
     }
 
     public void clearSelected() {
-        setForeground(new Color(170, 170, 170));
+        setForeground(new Color(255, 255, 255));
         for (Component com : getComponents()) {
             Item item = (Item) com;
             item.setSelected(false);
