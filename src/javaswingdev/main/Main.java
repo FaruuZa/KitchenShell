@@ -1,5 +1,6 @@
 package javaswingdev.main;
 
+import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.Component;
 import javaswingdev.form.Form_Dashboard;
 import javaswingdev.form.Form_Empty;
@@ -9,6 +10,7 @@ import javaswingdev.form.Form_Menu;
 import javaswingdev.form.Form_RiwayatTransaksi;
 import javaswingdev.form.Form_Transaksi;
 import javaswingdev.menu.EventMenuSelected;
+import raven.popup.GlassPanePopup;
 
 public class Main extends javax.swing.JFrame {
 
@@ -16,6 +18,8 @@ public class Main extends javax.swing.JFrame {
 
     public Main() {
         initComponents();
+        GlassPanePopup.install(this);
+        FlatLightLaf.setup();
         init();
     }
 
