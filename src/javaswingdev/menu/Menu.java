@@ -85,9 +85,10 @@ public class Menu extends JPanel {
 
     //  Public Method
     public void addMenuItem(ModelMenuItem menu) {
-        panelMenu.add(createMenuItem(menu), "h 35!");
+        panelMenu.add(createMenuItem(menu), "h 40!");
     }
-
+    //Pading sidebar
+    
     public void addTitle(String title) {
         JLabel label = new JLabel(title);
         label.setBorder(new EmptyBorder(15, 20, 5, 5));
@@ -95,7 +96,8 @@ public class Menu extends JPanel {
         label.setForeground(new Color(255, 255, 255));
         panelMenu.add(label);
     }
-
+    //tittle owner
+    
     public void addSpace(int size) {
         panelMenu.add(new JLabel(), "h " + size + "!");
     }
