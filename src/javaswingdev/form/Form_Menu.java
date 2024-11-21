@@ -4,7 +4,9 @@
  */
 package javaswingdev.form;
 
+import javaswingdev.cell.TableActionCellEditor;
 import javaswingdev.cell.TableActionCellRender;
+import javaswingdev.cell.TableActionEvent;
 
 /**
  *
@@ -17,7 +19,27 @@ public class Form_Menu extends javax.swing.JPanel {
      */
     public Form_Menu() {
         initComponents();
+        TableActionEvent event=new TableActionEvent(){
+            @Override
+            public void onEdit(int row) {
+                System.out.println("Edit row : "+row);
+            }
+
+            @Override
+            public void onDelete(int row) {
+                System.out.println("Delete row : "+row);
+            }
+
+            @Override
+            public void onView(int row) {
+                System.out.println("View row : "+row);
+            }
+        
+        };
+        
         table_menu.getColumnModel().getColumn(4).setCellRenderer(new TableActionCellRender());
+        table_menu.getColumnModel().getColumn(4).setCellEditor(new TableActionCellEditor(event));
+
     }
 
     /**
@@ -31,9 +53,9 @@ public class Form_Menu extends javax.swing.JPanel {
 
         jLabel1 = new javax.swing.JLabel();
         container1 = new javaswingdev.util.Container();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        table_menu = new javaswingdev.swing.table.Table();
         button1 = new javaswingdev.util.Button();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        table_menu = new javax.swing.JTable();
 
         setOpaque(false);
 
@@ -44,6 +66,15 @@ public class Form_Menu extends javax.swing.JPanel {
 
         container1.setBackground(new java.awt.Color(0, 153, 0));
 
+        button1.setText("TAMBAH");
+        button1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        button1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button1ActionPerformed(evt);
+            }
+        });
+
+        table_menu.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         table_menu.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
@@ -63,25 +94,21 @@ public class Form_Menu extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(table_menu);
-
-        button1.setText("TAMBAH");
-        button1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        button1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                button1ActionPerformed(evt);
-            }
-        });
+        table_menu.setRowHeight(40);
+        table_menu.setSelectionBackground(new java.awt.Color(51, 204, 0));
+        jScrollPane2.setViewportView(table_menu);
 
         javax.swing.GroupLayout container1Layout = new javax.swing.GroupLayout(container1);
         container1.setLayout(container1Layout);
         container1Layout.setHorizontalGroup(
             container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(container1Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, container1Layout.createSequentialGroup()
                 .addGap(25, 25, 25)
-                .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(button1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 412, Short.MAX_VALUE))
+                .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addGroup(container1Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 340, Short.MAX_VALUE)
+                        .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(25, 25, 25))
         );
         container1Layout.setVerticalGroup(
@@ -89,9 +116,9 @@ public class Form_Menu extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, container1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(33, 33, 33))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(25, 25, 25))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -110,7 +137,7 @@ public class Form_Menu extends javax.swing.JPanel {
                 .addGap(50, 50, 50)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(container1, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(container1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -124,7 +151,7 @@ public class Form_Menu extends javax.swing.JPanel {
     private javaswingdev.util.Button button1;
     private javaswingdev.util.Container container1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javaswingdev.swing.table.Table table_menu;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTable table_menu;
     // End of variables declaration//GEN-END:variables
 }
