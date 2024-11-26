@@ -8,13 +8,29 @@ package View;
  *
  * @author Faza
  */
+import java.sql.*;
+import javaswingdev.main.Main;
+import config.DatabaseConfig;
+import javax.swing.JOptionPane;
+
 public class Login extends javax.swing.JFrame {
 
     /**
      * Creates new form Login
      */
+    Connection connection = null;
+
     public Login() {
         initComponents();
+        getCon();
+    }
+
+    private void getCon() {
+        try {
+            connection = DatabaseConfig.getConnection();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -31,7 +47,7 @@ public class Login extends javax.swing.JFrame {
         userInput = new javaswingdev.util.TextField();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        button1 = new javaswingdev.util.Button();
+        LoginBtn = new javaswingdev.util.Button();
         jLabel4 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
 
@@ -55,10 +71,10 @@ public class Login extends javax.swing.JFrame {
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setText("Password");
 
-        button1.setText("LOGIN");
-        button1.addActionListener(new java.awt.event.ActionListener() {
+        LoginBtn.setText("LOGIN");
+        LoginBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                button1ActionPerformed(evt);
+                LoginBtnActionPerformed(evt);
             }
         });
 
@@ -86,18 +102,18 @@ public class Login extends javax.swing.JFrame {
                                 .addComponent(jLabel3))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(88, 88, 88)
-                                .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(LoginBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 88, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(164, 164, 164)
-                .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                 .addGap(165, 165, 165))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(94, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel4)
                 .addGap(61, 61, 61)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -108,7 +124,7 @@ public class Login extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(passInput, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(35, 35, 35)
-                .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(LoginBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(173, 173, 173))
         );
 
@@ -143,9 +159,35 @@ public class Login extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_userInputActionPerformed
 
-    private void button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_button1ActionPerformed
+    private void LoginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LoginBtnActionPerformed
+        try {
+            String usn = userInput.getText();
+            String pass = passInput.getText();
+            if (usn.equals("")) {
+                JOptionPane.showMessageDialog(null, "Username tidak boleh kosong!");
+
+            } else if (pass.equals("")) {
+                JOptionPane.showMessageDialog(null, "Password tidak boleh kosong!");
+
+            }
+            String query = "SELECT * FROM akun WHERE nama='" + usn + "' " + "AND password='" + pass + "' LIMIT 1";
+            Statement stat = connection.createStatement();
+            ResultSet hasil = stat.executeQuery(query);
+            while (hasil.next()) {
+                if (hasil.getString("role").equals("1")) {
+//                    JOptionPane.showMessageDialog(null, "masuk admin!");
+                    new Main().setVisible(true);
+                    this.setVisible(false);
+                } else if (hasil.getString("role").equals("0")) {
+                    JOptionPane.showMessageDialog(null, "Masuk Karyawan!");
+                } else {
+                    JOptionPane.showMessageDialog(null, "username atau password salah!");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_LoginBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -183,7 +225,7 @@ public class Login extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javaswingdev.util.Button button1;
+    private javaswingdev.util.Button LoginBtn;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

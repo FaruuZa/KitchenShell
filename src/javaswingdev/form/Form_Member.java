@@ -107,6 +107,11 @@ public class Form_Member extends javax.swing.JPanel {
 
         button1.setText("TAMBAH");
         button1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        button1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button1ActionPerformed(evt);
+            }
+        });
 
         button2.setText("EDIT");
         button2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -200,6 +205,10 @@ public class Form_Member extends javax.swing.JPanel {
     private void textField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textField2ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_textField2ActionPerformed
+
+    private void button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button1ActionPerformed
+        new tambahMember().setVisible(true);
+    }//GEN-LAST:event_button1ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
