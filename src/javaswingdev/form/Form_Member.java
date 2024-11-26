@@ -16,18 +16,17 @@ public class Form_Member extends javax.swing.JPanel {
 
     DefaultTableModel tableModel;
     Connection connection = null;
-
+    String kodeTerpilih = "";
     public Form_Member() {
         getCon();
-//        String[] judul = {"Kode member ", "Nama member", "no telepon", "tgl bergabung"};
-//        tableModel = new DefaultTableModel(judul, 0) {
-//            @Override
-//            public boolean isCellEditable(int row, int column) {
-//                return false;
-//            }
-//        };
-//        tbl_member.setModel(tableModel);
-//        loadDataMember();
+        String[] judul = {"Kode member ", "Nama member", "no telepon", "tgl bergabung"};
+        tableModel = new DefaultTableModel(judul, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        loadDataMember();
         initComponents();
     }
 
@@ -44,7 +43,7 @@ public class Form_Member extends javax.swing.JPanel {
         }
     }
 
-    private void loadDataMember() {
+    protected void loadDataMember() {
         if (connection != null) {
             try {
                 Statement st = connection.createStatement();
@@ -112,26 +111,14 @@ public class Form_Member extends javax.swing.JPanel {
             }
         });
 
-        tbl_member.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Kode", "Nama", "No Telp", "Tanggal Gabung"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, true, true
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
+        tbl_member.setModel(tableModel);
+        tbl_member.setRowHeight(40);
+        tbl_member.getTableHeader().setReorderingAllowed(false);
+        tbl_member.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbl_memberMouseClicked(evt);
             }
         });
-        tbl_member.setRowHeight(40);
         jScrollPane1.setViewportView(tbl_member);
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -250,6 +237,15 @@ public class Form_Member extends javax.swing.JPanel {
     private void button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button1ActionPerformed
         new tambahMember().setVisible(true);
     }//GEN-LAST:event_button1ActionPerformed
+
+    private void tbl_memberMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_memberMouseClicked
+        int selectedRow = tbl_member.getSelectedRow();
+
+        if (selectedRow != -1 && selectedRow < tbl_member.getRowCount()) {
+            String kodeTerpilih = (String) tableModel.getValueAt(selectedRow, 0);
+            System.out.println(kodeTerpilih);
+        }
+    }//GEN-LAST:event_tbl_memberMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
