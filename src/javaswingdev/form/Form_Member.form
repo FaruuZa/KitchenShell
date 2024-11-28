@@ -76,7 +76,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jScrollPane1" pref="760" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" pref="758" max="32767" attributes="0"/>
                       <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -88,12 +88,8 @@
                           </Group>
                           <EmptySpace max="32767" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="textFieldSearchOption1" alignment="1" min="-2" pref="185" max="-2" attributes="0"/>
-                              <Group type="102" alignment="1" attributes="0">
-                                  <Component id="Refresh" min="-2" pref="80" max="-2" attributes="0"/>
-                                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                                  <Component id="button1" min="-2" pref="80" max="-2" attributes="0"/>
-                              </Group>
+                              <Component id="search" alignment="1" min="-2" pref="185" max="-2" attributes="0"/>
+                              <Component id="button1" alignment="1" min="-2" pref="80" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -107,12 +103,11 @@
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="1" attributes="0">
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
-                      <Component id="textFieldSearchOption1" min="-2" max="-2" attributes="0"/>
+                      <Component id="search" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="60" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="button1" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="Refresh" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="editBtn" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="hapusBtn" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -135,9 +130,10 @@
             <Property name="text" type="java.lang.String" value="MEMBER"/>
           </Properties>
         </Component>
-        <Component class="javaswingdev.util.TextFieldSearchOption" name="textFieldSearchOption1">
+        <Component class="javaswingdev.util.TextFieldSearchOption" name="search">
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="textFieldSearchOption1ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="searchActionPerformed"/>
+            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="searchKeyReleased"/>
           </Events>
         </Component>
         <Container class="javax.swing.JScrollPane" name="jScrollPane1">
@@ -197,17 +193,6 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="hapusBtnActionPerformed"/>
-          </Events>
-        </Component>
-        <Component class="javaswingdev.util.Button" name="Refresh">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="REFRESH"/>
-            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Segoe UI" size="12" style="1"/>
-            </Property>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="RefreshActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>
