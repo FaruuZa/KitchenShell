@@ -85,6 +85,7 @@ public class Form_Member extends javax.swing.JPanel {
 
         setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
         setOpaque(false);
+        setPreferredSize(new java.awt.Dimension(860, 650));
 
         container1.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
@@ -118,6 +119,11 @@ public class Form_Member extends javax.swing.JPanel {
 
         editBtn.setText("EDIT");
         editBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        editBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editBtnActionPerformed(evt);
+            }
+        });
 
         hapusBtn.setText("HAPUS");
         hapusBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -233,6 +239,10 @@ public class Form_Member extends javax.swing.JPanel {
             }
         }
     }//GEN-LAST:event_hapusBtnActionPerformed
+
+    private void editBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_editBtnActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
