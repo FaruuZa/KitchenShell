@@ -18,13 +18,11 @@ public class Session {
     public static void setKode(String kode){
         Session.kodeMember = kode;
     }
-    
-    public static Main getHalamanUtama(){
-        return halamanUtama;
+    public static int getRole(){
+        return role;
     }
-    
-    public static void setHalamanUtama(Main halaman){
-        Session.halamanUtama = halaman;
+    public static void setRole(int roles){
+        Session.role= roles;
     }
     
 }

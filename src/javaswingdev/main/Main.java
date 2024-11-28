@@ -31,10 +31,6 @@ public class Main extends javax.swing.JFrame {
         
     }
     
-    private void cek() {
-        
-    }
-    
     private void init() {
         main = this;
         titleBar.initJFram(this);

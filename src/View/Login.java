@@ -195,6 +195,7 @@ public class Login extends javax.swing.JFrame {
                 if (hasil.getString("role").equals("1")) {
 //                    JOptionPane.showMessageDialog(null, "masuk admin!");
                     Session.setKode(hasil.getString("kode_akun"));
+                    Session.setRole(hasil.getInt("role"));
                     new Main().setVisible(true);
                     this.setVisible(false);
                 } else if (hasil.getString("role").equals("0")) {
