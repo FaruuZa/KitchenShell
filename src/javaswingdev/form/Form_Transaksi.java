@@ -303,6 +303,7 @@ public class Form_Transaksi extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
+        tbl_menu.getTableHeader().setReorderingAllowed(false);
         tbl_menu.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tbl_menuMouseClicked(evt);

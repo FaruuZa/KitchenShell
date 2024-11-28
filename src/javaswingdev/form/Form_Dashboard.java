@@ -1,35 +1,91 @@
 package javaswingdev.form;
 
+import java.sql.*;
 import javaswingdev.card.ModelCard;
+import config.DatabaseConfig;
 
 public class Form_Dashboard extends javax.swing.JPanel {
+
+    Connection connection = DatabaseConfig.getConnection();
 
     public Form_Dashboard() {
         initComponents();
         init();
     }
 
+    public String loadMember() {
+        if (connection != null) {
+            try {
+                String jumlah = "";
+                Statement st = connection.createStatement();
+                String query = "SELECT COUNT(kode_member) AS jumlah FROM member";
+                
+                ResultSet rs = st.executeQuery(query);
+                while (rs.next()) {
+                    jumlah = rs.getString("jumlah");
+                }
+                rs.close();
+                st.close();
+                return jumlah;
+//                System.out.println(jumlahKaryawan + jumlahMember + jumlahMenu);
+            } catch (Exception e) {
+
+            }
+        }
+        return "";
+    }
+    public String loadMenu() {
+        if (connection != null) {
+            try {
+                String jumlah = "" ;
+                Statement st = connection.createStatement();
+                String query = "SELECT COUNT(kode_menu) AS jumlah FROM menu";
+                
+                ResultSet rs = st.executeQuery(query);
+                while (rs.next()) {
+                    jumlah = rs.getString("jumlah");
+                }
+                
+                rs.close();
+                st.close();
+                return jumlah;
+//                System.out.println(jumlahKaryawan + jumlahMember + jumlahMenu);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return "";
+    }
+    public String loadKaryawan() {
+        if (connection != null) {
+            try {
+                String jumlah = "";
+                Statement st = connection.createStatement();
+                String query = "SELECT COUNT(kode_akun) AS jumlah FROM akun WHERE role='0'";
+                
+                ResultSet rs = st.executeQuery(query);
+                while (rs.next()) {
+                    jumlah = rs.getString("jumlah");
+                }
+                rs.close();
+                st.close();
+                return jumlah;
+//                System.out.println(jumlahKaryawan + jumlahMember + jumlahMenu);
+            } catch (Exception e) {
+
+            }
+        }
+        return "";
+    }
+
     private void init() {
         table.fixTable(jScrollPane1);
         table.addRow(new Object[]{"1", "Mike Bhand", "mikebhand@gmail.com", "Admin", "25 Apr,2018"});
-        table.addRow(new Object[]{"2", "Andrew Strauss", "andrewstrauss@gmail.com", "Editor", "25 Apr,2018"});
-        table.addRow(new Object[]{"3", "Ross Kopelman", "rosskopelman@gmail.com", "Subscriber", "25 Apr,2018"});
-        table.addRow(new Object[]{"4", "Mike Hussy", "mikehussy@gmail.com", "Admin", "25 Apr,2018"});
-        table.addRow(new Object[]{"5", "Kevin Pietersen", "kevinpietersen@gmail.com", "Admin", "25 Apr,2018"});
-        table.addRow(new Object[]{"6", "Andrew Strauss", "andrewstrauss@gmail.com", "Editor", "25 Apr,2018"});
-        table.addRow(new Object[]{"7", "Ross Kopelman", "rosskopelman@gmail.com", "Subscriber", "25 Apr,2018"});
-        table.addRow(new Object[]{"8", "Mike Hussy", "mikehussy@gmail.com", "Admin", "25 Apr,2018"});
-        table.addRow(new Object[]{"9", "Kevin Pietersen", "kevinpietersen@gmail.com", "Admin", "25 Apr,2018"});
-        table.addRow(new Object[]{"10", "Kevin Pietersen", "kevinpietersen@gmail.com", "Admin", "25 Apr,2018"});
-        table.addRow(new Object[]{"11", "Andrew Strauss", "andrewstrauss@gmail.com", "Editor", "25 Apr,2018"});
-        table.addRow(new Object[]{"12", "Ross Kopelman", "rosskopelman@gmail.com", "Subscriber", "25 Apr,2018"});
-        table.addRow(new Object[]{"13", "Mike Hussy", "mikehussy@gmail.com", "Admin", "25 Apr,2018"});
-        table.addRow(new Object[]{"14", "Kevin Pietersen", "kevinpietersen@gmail.com", "Admin", "25 Apr,2018"});
 
         //  init card data
-        card1.setData(new ModelCard(null, null, null, "MENU", "0"));
-        card2.setData(new ModelCard(null, null, null, "MEMBER", "0"));
-        card3.setData(new ModelCard(null, null, null, "KARYAWAN", "0"));
+        card1.setData(new ModelCard(null, null, null, "MENU", loadMenu()));
+        card2.setData(new ModelCard(null, null, null, "MEMBER", loadMember()));
+        card3.setData(new ModelCard(null, null, null, "KARYAWAN", loadKaryawan()));
     }
 
     @SuppressWarnings("unchecked")
