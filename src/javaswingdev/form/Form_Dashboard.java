@@ -45,6 +45,10 @@ public class Form_Dashboard extends javax.swing.JPanel {
 
         setOpaque(false);
 
+        card1.setColor1(new java.awt.Color(50, 50, 50));
+        card1.setColor2(new java.awt.Color(100, 75, 70));
+        card1.setIcon(javaswingdev.GoogleMaterialDesignIcon.GIF);
+
         card2.setColor1(new java.awt.Color(95, 211, 226));
         card2.setColor2(new java.awt.Color(26, 166, 170));
         card2.setIcon(javaswingdev.GoogleMaterialDesignIcon.PIE_CHART);
