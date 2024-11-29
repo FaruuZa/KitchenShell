@@ -1,8 +1,10 @@
 package javaswingdev.form;
 
+import com.mysql.cj.jdbc.PreparedStatementWrapper;
 import java.sql.*;
 import config.DatabaseConfig;
 import javaswingdev.util.TextFieldFilter;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.AbstractDocument;
 
@@ -30,7 +32,7 @@ public class Form_Transaksi extends javax.swing.JPanel {
         selectedTableMenu = new DefaultTableModel(titleTblPesanan, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 2;
+                return false;
             }
         };
         tbl_menu.setModel(tableModel);
@@ -109,6 +111,91 @@ public class Form_Transaksi extends javax.swing.JPanel {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+            }
+        }
+    }
+
+    public static String generateKodeMenu() {
+        Connection connection = DatabaseConfig.getConnection();
+        String kodeTransaksi = "TRS001";
+
+        if (connection != null) {
+            try {
+                Statement statement = connection.createStatement();
+                String query = "SELECT kode_transaksi FROM transaksi ORDER BY kode_transaksi DESC LIMIT 1";
+                ResultSet resultSet = statement.executeQuery(query);
+
+                if (resultSet.next()) {
+                    String lastKode = resultSet.getString("kode_transaksi");
+                    int kodeNum = Integer.parseInt(lastKode.substring(3)) + 1;
+                    kodeTransaksi = String.format("TRS%03d", kodeNum);
+                }
+
+                resultSet.close();
+                statement.close();
+                connection.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return kodeTransaksi;
+    }
+
+    private static void prosesTransaksi(String kodeTransaksi, String kodeMember, String namaPelanggan, String[] kodeMenu, int idAdmin, int[] jumlah) throws SQLException {
+        Connection conn = DatabaseConfig.getConnection();
+        if (conn != null) {
+            try {
+                conn.setAutoCommit(false);
+                //Cek stok
+                for (int i = 0; i < kodeMenu.length; i++) {
+                    String cekStok = "SELECT stok_menu, harga FROM menu WHERE kode_menu = ?";
+                    try (PreparedStatement cekStokStmt = conn.prepareStatement(cekStok)) {
+                        cekStokStmt.setString(1, kodeMenu[i]);
+                        try (ResultSet rs = cekStokStmt.executeQuery()) {
+                            if (rs.next()) {
+                                int stok = rs.getInt("stok_menu");
+                                if (stok <= jumlah[i]) {
+                                    throw new SQLException("Stok tidak mencukupi pada kode menu: " + kodeMenu[i]);
+                                }
+                            } else {
+                                throw new SQLException("Kode tidak ditemukan: " + kodeMenu[i]);
+                            }
+                        }
+                    }
+                }
+                //Insert transaksi
+                String insertTransaksi = "INSERT INTO transaksi VALUES (?, ?, ?, NOW(), ?)";
+                try (PreparedStatement transaksiStmt = conn.prepareStatement(insertTransaksi)) {
+                    transaksiStmt.setString(1, kodeTransaksi);
+                    transaksiStmt.setInt(2, idAdmin);
+                    transaksiStmt.setString(3, kodeMember);
+                    transaksiStmt.setString(4, namaPelanggan);
+                    transaksiStmt.executeUpdate();
+                }
+                for (int j = 0; j < kodeMenu.length; j++) {
+                    //Insert detail transaksi
+                    String insertDetailTransaksi = "INSERT INTO detail_transaksi VALUES (?, ?)";
+                    try (PreparedStatement detailTrskStmt = conn.prepareStatement(insertDetailTransaksi)) {
+                        detailTrskStmt.setString(1, kodeTransaksi);
+                        detailTrskStmt.setString(2, kodeMenu[j]);
+                        detailTrskStmt.executeUpdate();
+                    }
+
+                    //Update stok pada tabel menu
+                    String updateStokMenu = "UPDATE menu SET stok_menu = stok_menu - ? WHERE kode_menu = ?";
+                    try (PreparedStatement upStokStmt = conn.prepareStatement(updateStokMenu)) {
+                        upStokStmt.setInt(1, jumlah[j]);
+                        upStokStmt.setString(2, kodeMenu[j]);
+                        upStokStmt.executeUpdate();
+                    }
+                }
+
+                conn.commit();
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(true);
             }
         }
     }
@@ -481,11 +568,16 @@ public class Form_Transaksi extends javax.swing.JPanel {
     }//GEN-LAST:event_txt_namaPelangganActionPerformed
 
     private void btn_hapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_hapusActionPerformed
-        // TODO add your handling code here:
+        int selectedRow = tbl_pesanan.getSelectedRow();
+        if (selectedRow != -1) {
+            selectedTableMenu.removeRow(selectedRow);
+        } else {
+            JOptionPane.showMessageDialog(Form_Transaksi.this, "Pilih pesanan yang ingin anda hapus!", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btn_hapusActionPerformed
 
     private void btn_pesanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_pesanActionPerformed
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_btn_pesanActionPerformed
 
     private void txt_bayarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_bayarActionPerformed

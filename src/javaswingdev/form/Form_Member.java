@@ -214,7 +214,7 @@ public class Form_Member extends javax.swing.JPanel {
     }//GEN-LAST:event_searchActionPerformed
 
     private void button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button1ActionPerformed
-        TambahMember tmember =  new TambahMember(this);
+        tambahMember tmember =  new tambahMember(this);
         tmember.setVisible(true);
         tmember.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         disabledButton();

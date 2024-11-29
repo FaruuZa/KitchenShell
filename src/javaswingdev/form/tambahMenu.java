@@ -2,6 +2,7 @@ package javaswingdev.form;
 
 import java.sql.*;
 import config.DatabaseConfig;
+import java.awt.event.ActionEvent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javaswingdev.form.Form_Menu;
@@ -86,6 +87,7 @@ public class tambahMenu extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jButton1 = new javax.swing.JButton();
         container1 = new javaswingdev.util.Container();
         jLabel1 = new javax.swing.JLabel();
         inputMenu = new javaswingdev.util.TextField();
@@ -94,8 +96,10 @@ public class tambahMenu extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        btn_batal = new javaswingdev.util.Button();
+        btn_batall = new javaswingdev.util.Button();
         btn_simpan = new javaswingdev.util.Button();
+
+        jButton1.setText("jButton1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setAlwaysOnTop(true);
@@ -125,9 +129,9 @@ public class tambahMenu extends javax.swing.JFrame {
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setText("Stok");
 
-        btn_batal.setText("BATAL");
-        btn_batal.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btn_batal.addActionListener(new java.awt.event.ActionListener() {
+        btn_batall.setText("BATAL");
+        btn_batall.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btn_batall.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 button1ActionPerformed(evt);
             }
@@ -135,6 +139,11 @@ public class tambahMenu extends javax.swing.JFrame {
 
         btn_simpan.setText("SIMPAN");
         btn_simpan.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btn_simpan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_simpanActionPerformed1(evt);
+            }
+        });
 
         javax.swing.GroupLayout container1Layout = new javax.swing.GroupLayout(container1);
         container1.setLayout(container1Layout);
@@ -145,9 +154,9 @@ public class tambahMenu extends javax.swing.JFrame {
                 .addGap(34, 34, 34)
                 .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addGroup(container1Layout.createSequentialGroup()
-                        .addComponent(btn_batal, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btn_simpan, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(btn_batall, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(154, 154, 154)
+                        .addComponent(btn_simpan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(jLabel4)
                         .addComponent(jLabel3)
@@ -176,7 +185,7 @@ public class tambahMenu extends javax.swing.JFrame {
                 .addComponent(inputJumlah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btn_batal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_batall, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btn_simpan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
@@ -202,9 +211,14 @@ public class tambahMenu extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_inputMenuActionPerformed
 
+
     private void button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_button1ActionPerformed
+
+    private void btn_simpanActionPerformed1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_simpanActionPerformed1
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btn_simpanActionPerformed1
 
     /**
      * @param args the command line arguments
@@ -243,12 +257,13 @@ public class tambahMenu extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javaswingdev.util.Button btn_batal;
+    private javaswingdev.util.Button btn_batall;
     private javaswingdev.util.Button btn_simpan;
     private javaswingdev.util.Container container1;
     private javaswingdev.util.TextField inputHarga;
     private javaswingdev.util.TextField inputJumlah;
     private javaswingdev.util.TextField inputMenu;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
