@@ -198,7 +198,7 @@ public class Form_Menu extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button1ActionPerformed
-        new tambahMenu().setVisible(true);
+        new TambahMenu().setVisible(true);
     }//GEN-LAST:event_button1ActionPerformed
 
     private void textFieldSearchOption1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textFieldSearchOption1ActionPerformed

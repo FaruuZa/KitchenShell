@@ -13,14 +13,14 @@ import javax.swing.text.AbstractDocument;
  *
  * @author rayag
  */
-public class tambahMenu extends javax.swing.JFrame {
+public class TambahMenu extends javax.swing.JFrame {
 
     Connection connection = null;
     Date date = new Date();
     Form_Menu menuF = new Form_Menu();
     private static final SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-    public tambahMenu() {
+    public TambahMenu() {
         initComponents();
         getCon();
         ((AbstractDocument) inputMenu.getDocument()).setDocumentFilter(new TextFieldFilter("[a-zA-Z ]*"));
@@ -98,6 +98,9 @@ public class tambahMenu extends javax.swing.JFrame {
         btn_simpan = new javaswingdev.util.Button();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setAlwaysOnTop(true);
+        setUndecorated(true);
+        setResizable(false);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 30)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
@@ -122,21 +125,16 @@ public class tambahMenu extends javax.swing.JFrame {
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setText("Stok");
 
-        btn_batal.setText("BATAL");
-        btn_batal.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btn_batal.addActionListener(new java.awt.event.ActionListener() {
+        button1.setText("BATAL");
+        button1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        button1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_batalActionPerformed(evt);
+                button1ActionPerformed(evt);
             }
         });
 
-        btn_simpan.setText("SIMPAN");
-        btn_simpan.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btn_simpan.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_simpanActionPerformed(evt);
-            }
-        });
+        button2.setText("SIMPAN");
+        button2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
 
         javax.swing.GroupLayout container1Layout = new javax.swing.GroupLayout(container1);
         container1.setLayout(container1Layout);
@@ -197,25 +195,16 @@ public class tambahMenu extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void inputMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputMenuActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_inputMenuActionPerformed
 
-    private void btn_batalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_batalActionPerformed
-        this.setVisible(false);
-    }//GEN-LAST:event_btn_batalActionPerformed
-
-    private void btn_simpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_simpanActionPerformed
-        if (!createData()) {
-            JOptionPane.showMessageDialog(null, "berhasil menambahkan data");
-            this.setVisible(false);
-        } else {
-            JOptionPane.showMessageDialog(null, "gagal menambahkan data");
-            this.setVisible(false);
-        }
-    }//GEN-LAST:event_btn_simpanActionPerformed
+    private void button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_button1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -234,20 +223,21 @@ public class tambahMenu extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(tambahMenu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TambahMenu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(tambahMenu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TambahMenu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(tambahMenu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TambahMenu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(tambahMenu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TambahMenu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new tambahMenu().setVisible(true);
+                new TambahMenu().setVisible(true);
             }
         });
     }

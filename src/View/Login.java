@@ -14,6 +14,7 @@ import config.DatabaseConfig;
 import javaswingdev.util.TextFieldFilter;
 import javax.swing.JOptionPane;
 import javax.swing.text.AbstractDocument;
+import config.Session;
 
 public class Login extends javax.swing.JFrame {
 
@@ -193,9 +194,12 @@ public class Login extends javax.swing.JFrame {
             while (hasil.next()) {
                 if (hasil.getString("role").equals("1")) {
 //                    JOptionPane.showMessageDialog(null, "masuk admin!");
+                    Session.setKode(hasil.getString("kode_akun"));
+                    Session.setRole(hasil.getInt("role"));
                     new Main().setVisible(true);
                     this.setVisible(false);
                 } else if (hasil.getString("role").equals("0")) {
+                    Session.setKode(hasil.getString("kode_akun"));
                     JOptionPane.showMessageDialog(null, "Masuk Karyawan!");
                 } else {
                     JOptionPane.showMessageDialog(null, "username atau password salah!");

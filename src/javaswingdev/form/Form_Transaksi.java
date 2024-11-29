@@ -12,37 +12,46 @@ import javax.swing.text.AbstractDocument;
  */
 public class Form_Transaksi extends javax.swing.JPanel {
 
-    DefaultTableModel tableModel;
+    DefaultTableModel tableModel, selectedTableMenu;
     Connection connection = DatabaseConfig.getConnection();
 
     public Form_Transaksi() {
         initComponents();
-        String[] judul = {"Kode menu ", "Nama Menu", "Stok", "Harga"};
-        tableModel = new DefaultTableModel(judul, 0) {
+        String[] titleTblMenu = {"Kode menu ", "Nama Menu", "Stok", "Harga"};
+        String[] titleTblPesanan = {"Kode menu ", "Nama Menu", "Jumlah", "Harga", "Total Harga"};
+        ((AbstractDocument) txt_jumlah.getDocument()).setDocumentFilter(new TextFieldFilter("[0-9]*"));
+        ((AbstractDocument) txt_bayar.getDocument()).setDocumentFilter(new TextFieldFilter("[0-9]*"));
+        tableModel = new DefaultTableModel(titleTblMenu, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
+        selectedTableMenu = new DefaultTableModel(titleTblPesanan, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column == 2;
+            }
+        };
         tbl_menu.setModel(tableModel);
+        tbl_pesanan.setModel(selectedTableMenu);
         loadDataMenu();
         loadDataMember();
-        ((AbstractDocument) txt_jumlah.getDocument()).setDocumentFilter(new TextFieldFilter("[0-9]*"));
     }
 
     private void loadDataMenu() {
         if (connection != null) {
             try {
                 Statement st = connection.createStatement();
-                String query = "SELECT * FROM menu";
+                String query = "SELECT * FROM menu WHERE stok_menu != 0";
                 ResultSet rs = st.executeQuery(query);
                 tableModel.setRowCount(0);
                 while (rs.next()) {
                     String[] data = {rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4)};
                     tableModel.addRow(data);
                 }
-                rs.close();
                 st.close();
+                rs.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -59,6 +68,44 @@ public class Form_Transaksi extends javax.swing.JPanel {
                     String kode_member = rs.getString("kode_member");
                     String nama_member = rs.getString("nama_member");
                     cbox_member.addItem(kode_member + " | " + nama_member);
+                }
+                st.close();
+                rs.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void getKodeMenu() {
+        if (connection != null) {
+            try {
+                String kode_menu = txt_kodeMenu.getText();
+                String query = "SELECT kode_menu, nama_menu , harga FROM menu WHERE kode_menu = ?";
+                PreparedStatement ps = connection.prepareStatement(query);
+                ps.setString(1, kode_menu);
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    String kodeMenu = rs.getString(1);
+                    String namaMenu = rs.getString(2);
+                    int jumlah = Integer.parseInt(txt_jumlah.getText());
+                    int harga = Integer.parseInt(rs.getString(3));
+                    int totalHarga = jumlah * harga;
+                    boolean cekKode = false;
+                    //Cek kode_menu jika sama akan menambah jumlah pesanan
+                    for (int i = 0; i < tbl_pesanan.getRowCount(); i++) {
+                        if (tbl_pesanan.getValueAt(i, 0).equals(kodeMenu)) {
+                            int jumlahBaru = Integer.parseInt(tbl_pesanan.getValueAt(i, 2).toString());
+                            tbl_pesanan.setValueAt(jumlahBaru + jumlah, i, 2);
+                            int total = (jumlahBaru + jumlah) * harga;
+                            tbl_pesanan.setValueAt(total, i, 4);
+                            cekKode = true;
+                            break;
+                        }
+                    }
+                    if (!cekKode) {
+                        selectedTableMenu.addRow(new Object[]{kodeMenu, namaMenu, jumlah, harga, totalHarga});
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -160,6 +207,11 @@ public class Form_Transaksi extends javax.swing.JPanel {
         });
 
         btn_clear.setText("Clear");
+        btn_clear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_clearActionPerformed(evt);
+            }
+        });
 
         tbl_pesanan.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -290,11 +342,10 @@ public class Form_Transaksi extends javax.swing.JPanel {
                                     .addComponent(jLabel2)
                                     .addComponent(jLabel4)))))
                     .addGroup(container1Layout.createSequentialGroup()
-                        .addGap(0, 224, Short.MAX_VALUE)
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btn_clear, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_tambah, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(22, 22, 22))
+                        .addGap(18, 18, 18)
+                        .addComponent(btn_tambah, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(container1Layout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
@@ -422,7 +473,7 @@ public class Form_Transaksi extends javax.swing.JPanel {
     }//GEN-LAST:event_txt_jumlahActionPerformed
 
     private void btn_tambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tambahActionPerformed
-        // TODO add your handling code here:
+        getKodeMenu();
     }//GEN-LAST:event_btn_tambahActionPerformed
 
     private void txt_namaPelangganActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_namaPelangganActionPerformed
@@ -452,9 +503,17 @@ public class Form_Transaksi extends javax.swing.JPanel {
             txt_kodeMenu.setText(kodeMenu);
             txt_namaMenu.setText(namaMenu);
             txt_harga.setText(harga);
+            txt_jumlah.setText("1");
         }
 
     }//GEN-LAST:event_tbl_menuMouseClicked
+
+    private void btn_clearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_clearActionPerformed
+        txt_kodeMenu.setText("");
+        txt_namaMenu.setText("");
+        txt_harga.setText("");
+        txt_jumlah.setText("");
+    }//GEN-LAST:event_btn_clearActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

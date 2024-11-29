@@ -53,6 +53,17 @@
   </Layout>
   <SubComponents>
     <Component class="javaswingdev.card.Card" name="card1">
+      <Properties>
+        <Property name="color1" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="32" green="32" red="32" type="rgb"/>
+        </Property>
+        <Property name="color2" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="46" green="4b" red="64" type="rgb"/>
+        </Property>
+        <Property name="icon" type="javaswingdev.GoogleMaterialDesignIcon" editor="org.netbeans.modules.form.editors.EnumEditor">
+          <Value id="GIF"/>
+        </Property>
+      </Properties>
     </Component>
     <Component class="javaswingdev.card.Card" name="card2">
       <Properties>
