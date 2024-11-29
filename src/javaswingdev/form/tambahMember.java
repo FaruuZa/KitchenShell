@@ -16,7 +16,7 @@ import javax.swing.JOptionPane;
 import javax.swing.text.AbstractDocument;
 import java.util.Date;
 
-public class TambahMember extends javax.swing.JFrame {
+public class tambahMember extends javax.swing.JFrame {
 
     Connection connection = null;
     Date date = new Date();
@@ -27,7 +27,7 @@ public class TambahMember extends javax.swing.JFrame {
 //    public tambahMember() {
 //    }
 
-    public TambahMember(Form_Member member){
+    public tambahMember(Form_Member member){
         initComponents();
         getCon();
         ((AbstractDocument) inputNama.getDocument()).setDocumentFilter(new TextFieldFilter("[a-z A-Z]*"));
@@ -254,13 +254,13 @@ public class TambahMember extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(TambahMember.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(tambahMember.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(TambahMember.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(tambahMember.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(TambahMember.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(tambahMember.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(TambahMember.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(tambahMember.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
