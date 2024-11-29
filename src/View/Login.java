@@ -63,6 +63,9 @@ public class Login extends javax.swing.JFrame {
         jPanel1.setToolTipText("");
         jPanel1.setPreferredSize(new java.awt.Dimension(400, 507));
 
+        passInput.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+
+        userInput.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         userInput.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 userInputActionPerformed(evt);
@@ -78,6 +81,7 @@ public class Login extends javax.swing.JFrame {
         jLabel3.setText("Password");
 
         LoginBtn.setText("LOGIN");
+        LoginBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         LoginBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 LoginBtnActionPerformed(evt);
@@ -163,9 +167,7 @@ public class Login extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 0, 0)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 661, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 661, Short.MAX_VALUE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(0, 0, 0))
         );
@@ -188,18 +190,18 @@ public class Login extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "Password tidak boleh kosong!");
 
             }
-            String query = "SELECT * FROM akun WHERE nama='" + usn + "' " + "AND password='" + pass + "' LIMIT 1";
+            String query = "SELECT * FROM user WHERE username='" + usn + "' " + "AND password='" + pass + "' LIMIT 1";
             Statement stat = connection.createStatement();
             ResultSet hasil = stat.executeQuery(query);
             while (hasil.next()) {
-                if (hasil.getString("role").equals("1")) {
+                if (hasil.getString("level").equals("1")) {
 //                    JOptionPane.showMessageDialog(null, "masuk admin!");
-                    Session.setKode(hasil.getString("kode_akun"));
-                    Session.setRole(hasil.getInt("role"));
+                    Session.setKode(hasil.getString("id"));
+                    Session.setRole(hasil.getInt("level"));
                     new Main().setVisible(true);
                     this.setVisible(false);
-                } else if (hasil.getString("role").equals("0")) {
-                    Session.setKode(hasil.getString("kode_akun"));
+                } else if (hasil.getString("id").equals("0")) {
+                    Session.setKode(hasil.getString("level"));
                     JOptionPane.showMessageDialog(null, "Masuk Karyawan!");
                 } else {
                     JOptionPane.showMessageDialog(null, "username atau password salah!");
