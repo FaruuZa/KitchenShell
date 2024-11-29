@@ -1,28 +1,29 @@
 package javaswingdev.form;
 
+import java.sql.*;
 import config.DatabaseConfig;
-import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javaswingdev.form.Form_Menu;
 import javaswingdev.util.TextFieldFilter;
+import javax.swing.JOptionPane;
 import javax.swing.text.AbstractDocument;
 
 /**
  *
  * @author rayag
  */
-public class tambahMenu extends javax.swing.JFrame {
+public class TambahMenu extends javax.swing.JFrame {
 
     Connection connection = null;
     Date date = new Date();
     Form_Menu menuF = new Form_Menu();
     private static final SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-    public tambahMenu() {
+    public TambahMenu() {
         initComponents();
         getCon();
-        ((AbstractDocument) inputMenu.getDocument()).setDocumentFilter(new TextFieldFilter("[a-zA-Z]*"));
+        ((AbstractDocument) inputMenu.getDocument()).setDocumentFilter(new TextFieldFilter("[a-zA-Z ]*"));
         ((AbstractDocument) inputHarga.getDocument()).setDocumentFilter(new TextFieldFilter("[0-9]*"));
         ((AbstractDocument) inputJumlah.getDocument()).setDocumentFilter(new TextFieldFilter("[0-9]*"));
     }
@@ -34,6 +35,51 @@ public class tambahMenu extends javax.swing.JFrame {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    private String generateCode() {
+        String kodeMenu = "";
+        if (connection != null) {
+            try {
+                Statement statement = connection.createStatement();
+                String query = "SELECT kode_menu FROM menu ORDER BY kode_menu DESC LIMIT 1";
+                ResultSet resultSet = statement.executeQuery(query);
+
+                if (resultSet.next()) {
+                    String lastKode = resultSet.getString("kode_menu");
+                    int kodeNum = Integer.parseInt(lastKode.substring(3)) + 1;
+                    kodeMenu = String.format("MNU%03d", kodeNum);
+                }
+
+                resultSet.close();
+                statement.close();
+                return kodeMenu;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return kodeMenu;
+    }
+    
+    private boolean createData()    {
+        if (connection != null) {
+            try {
+                if (!inputMenu.getText().equals("") || !inputHarga.getText().equals("") || !inputJumlah.getText().equals("")) {
+                Statement statement = connection.createStatement();
+                String query = "INSERT INTO menu VALUES ('" + generateCode() + "', '" + inputMenu.getText() + "', '" + inputJumlah.getText() +"', '" + inputHarga.getText()+ "')";
+                    System.out.println(query);
+                Boolean resultSet = statement.execute(query);
+                statement.close();
+                menuF.loadDataMenu();
+                return resultSet;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            
+        }
+        return false;
     }
     
     @SuppressWarnings("unchecked")
@@ -48,10 +94,13 @@ public class tambahMenu extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        button1 = new javaswingdev.util.Button();
-        button2 = new javaswingdev.util.Button();
+        btn_batal = new javaswingdev.util.Button();
+        btn_simpan = new javaswingdev.util.Button();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setAlwaysOnTop(true);
+        setUndecorated(true);
+        setResizable(false);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 30)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
@@ -74,10 +123,15 @@ public class tambahMenu extends javax.swing.JFrame {
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel4.setText("Jumlah");
+        jLabel4.setText("Stok");
 
         button1.setText("BATAL");
         button1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        button1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button1ActionPerformed(evt);
+            }
+        });
 
         button2.setText("SIMPAN");
         button2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -91,9 +145,9 @@ public class tambahMenu extends javax.swing.JFrame {
                 .addGap(20, 20, 20)
                 .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addGroup(container1Layout.createSequentialGroup()
-                        .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btn_batal, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(140, 140, 140)
-                        .addComponent(button2, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(btn_simpan, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(jLabel4)
                         .addComponent(jLabel3)
@@ -122,8 +176,8 @@ public class tambahMenu extends javax.swing.JFrame {
                 .addComponent(inputJumlah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(button2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btn_batal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_simpan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -141,11 +195,16 @@ public class tambahMenu extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void inputMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputMenuActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_inputMenuActionPerformed
+
+    private void button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_button1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -164,27 +223,28 @@ public class tambahMenu extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(tambahMenu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TambahMenu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(tambahMenu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TambahMenu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(tambahMenu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TambahMenu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(tambahMenu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TambahMenu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new tambahMenu().setVisible(true);
+                new TambahMenu().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javaswingdev.util.Button button1;
-    private javaswingdev.util.Button button2;
+    private javaswingdev.util.Button btn_batal;
+    private javaswingdev.util.Button btn_simpan;
     private javaswingdev.util.Container container1;
     private javaswingdev.util.TextField inputHarga;
     private javaswingdev.util.TextField inputJumlah;

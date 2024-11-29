@@ -1,5 +1,6 @@
 package javaswingdev.main;
 
+import View.Login;
 import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.Component;
 import javaswingdev.form.Form_Dashboard;
@@ -11,18 +12,25 @@ import javaswingdev.form.Form_RiwayatTransaksi;
 import javaswingdev.form.Form_Transaksi;
 import javaswingdev.menu.EventMenuSelected;
 import raven.popup.GlassPanePopup;
+import config.Session;
 
 public class Main extends javax.swing.JFrame {
-
+    
     private static Main main;
-
+    
     public Main() {
+        if (!Session.getKode().equals("")) {
         initComponents();
-        GlassPanePopup.install(this);
-        FlatLightLaf.setup();
-        init();
+            GlassPanePopup.install(this);
+            FlatLightLaf.setup();
+            init();
+        } else {
+            this.setVisible(false);
+            new Login().setVisible(true);
+        }
+        
     }
-
+    
     private void init() {
         main = this;
         titleBar.initJFram(this);
@@ -48,18 +56,18 @@ public class Main extends javax.swing.JFrame {
         });
         menu.setSelectedIndex(0, 0);
     }
-
+    
     public void showForm(Component com) {
         body.removeAll();
         body.add(com);
         body.repaint();
         body.revalidate();
     }
-
+    
     public static Main getMain() {
         return main;
     }
-
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {

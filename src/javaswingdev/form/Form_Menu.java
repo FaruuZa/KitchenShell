@@ -24,15 +24,16 @@ public class Form_Menu extends javax.swing.JPanel {
     
     public Form_Menu() {
         getCon();
-        String[] judul = {"Kode Menu ", "Menu", "Harga", "Jumlah"};
+        String[] judul = {"Kode Menu ", "Menu", "Stok", "Harga"};
         tableModel = new DefaultTableModel(judul, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
-        loadDataMember();
+        loadDataMenu();
         initComponents();
+        tbl_menu.setModel(tableModel);
         editBtn.setEnabled(false);
         hapusBtn.setEnabled(false);
      }
@@ -45,52 +46,51 @@ public class Form_Menu extends javax.swing.JPanel {
     
      private void getCon() {
         try {
-            Connection connection = DatabaseConfig.getConnection();
+            connection = DatabaseConfig.getConnection();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
      
-     protected void loadDataMember() {
-        if (connection != null) {
-            try {
-                Statement st = connection.createStatement();
-                String query = "SELECT * FROM menu";
-                ResultSet rs = st.executeQuery(query);
-                tableModel.setRowCount(0);
-                while (rs.next()) {
-                    String[] data = {rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4)};
-                    tableModel.addRow(data);
-                }
-                rs.close();
-                st.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+    protected void loadDataMenu() {
+       if (connection != null) {
+           try {
+               Statement st = connection.createStatement();
+               String query = "SELECT * FROM menu";
+               ResultSet rs = st.executeQuery(query);
+               tableModel.setRowCount(0);
+                   System.out.println("sout");
+               while (rs.next()) {
+                   String[] data = {rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4)};
+                   tableModel.addRow(data);
+               }
+               rs.close();
+               st.close();
+           } catch (Exception e) {
+               e.printStackTrace();
+           }
+       }else{
+           System.out.println("kon");
+       }
     }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        searchOption1 = new javaswingdev.util.SearchOption();
-        container1 = new javaswingdev.util.Container();
+        container4 = new javaswingdev.util.Container();
         button1 = new javaswingdev.util.Button();
+        btn_refresh = new javaswingdev.util.Button();
+        textFieldSearchOption1 = new javaswingdev.util.TextFieldSearchOption();
         jScrollPane2 = new javax.swing.JScrollPane();
         tbl_menu = new javax.swing.JTable();
-        textFieldSearchOption1 = new javaswingdev.util.TextFieldSearchOption();
         jLabel1 = new javax.swing.JLabel();
         hapusBtn = new javaswingdev.util.Button();
         editBtn = new javaswingdev.util.Button();
-        btn_refresh = new javaswingdev.util.Button();
 
+        setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
         setOpaque(false);
-        setPreferredSize(new java.awt.Dimension(860, 650));
 
-        container1.setBackground(new java.awt.Color(0, 153, 0));
-        container1.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        container1.setForeground(new java.awt.Color(255, 255, 255));
-        container1.setPreferredSize(new java.awt.Dimension(850, 650));
+        container4.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         button1.setText("TAMBAH");
         button1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -100,18 +100,22 @@ public class Form_Menu extends javax.swing.JPanel {
             }
         });
 
-        tbl_menu.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        tbl_menu.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "null"
+        btn_refresh.setText("REFRESH");
+        btn_refresh.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btn_refresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_refreshActionPerformed(evt);
             }
-        ));
+        });
+
+        textFieldSearchOption1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                textFieldSearchOption1ActionPerformed(evt);
+            }
+        });
+
+        tbl_menu.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        tbl_menu.setModel(tableModel);
         tbl_menu.setRowHeight(40);
         tbl_menu.setSelectionBackground(new java.awt.Color(51, 204, 0));
         tbl_menu.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -120,12 +124,6 @@ public class Form_Menu extends javax.swing.JPanel {
             }
         });
         jScrollPane2.setViewportView(tbl_menu);
-
-        textFieldSearchOption1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                textFieldSearchOption1ActionPerformed(evt);
-            }
-        });
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
@@ -143,74 +141,64 @@ public class Form_Menu extends javax.swing.JPanel {
             }
         });
 
-        btn_refresh.setText("REFRESH");
-        btn_refresh.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btn_refresh.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_refreshActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout container1Layout = new javax.swing.GroupLayout(container1);
-        container1.setLayout(container1Layout);
-        container1Layout.setHorizontalGroup(
-            container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, container1Layout.createSequentialGroup()
-                .addGap(40, 40, 40)
-                .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, container1Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 580, Short.MAX_VALUE)
-                        .addComponent(textFieldSearchOption1, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, container1Layout.createSequentialGroup()
-                        .addComponent(editBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(hapusBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btn_refresh, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(40, 40, 40))
+        javax.swing.GroupLayout container4Layout = new javax.swing.GroupLayout(container4);
+        container4.setLayout(container4Layout);
+        container4Layout.setHorizontalGroup(
+            container4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(container4Layout.createSequentialGroup()
+                .addGap(30, 30, 30)
+                .addGroup(container4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2)
+                    .addGroup(container4Layout.createSequentialGroup()
+                        .addGroup(container4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(container4Layout.createSequentialGroup()
+                                .addComponent(hapusBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(editBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel1))
+                        .addGap(600, 600, 600)
+                        .addGroup(container4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(textFieldSearchOption1, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, container4Layout.createSequentialGroup()
+                                .addComponent(btn_refresh, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addGap(30, 30, 30))
         );
-        container1Layout.setVerticalGroup(
-            container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, container1Layout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(textFieldSearchOption1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(container1Layout.createSequentialGroup()
-                        .addGap(66, 66, 66)
-                        .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btn_refresh, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE)
-                        .addContainerGap())
-                    .addGroup(container1Layout.createSequentialGroup()
-                        .addGap(69, 69, 69)
-                        .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(editBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(hapusBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+        container4Layout.setVerticalGroup(
+            container4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(container4Layout.createSequentialGroup()
+                .addGap(14, 14, 14)
+                .addGroup(container4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(textFieldSearchOption1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(50, 50, 50)
+                .addGroup(container4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(hapusBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_refresh, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(editBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 399, Short.MAX_VALUE)
+                .addGap(30, 30, 30))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(container1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(container4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(container1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(container4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button1ActionPerformed
-        new tambahMenu().setVisible(true);
+        new TambahMenu().setVisible(true);
     }//GEN-LAST:event_button1ActionPerformed
 
     private void textFieldSearchOption1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textFieldSearchOption1ActionPerformed
@@ -232,19 +220,18 @@ public class Form_Menu extends javax.swing.JPanel {
     }//GEN-LAST:event_tbl_menuMouseClicked
 
     private void btn_refreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_refreshActionPerformed
-        loadDataMember();
+        loadDataMenu();
     }//GEN-LAST:event_btn_refreshActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javaswingdev.util.Button btn_refresh;
     private javaswingdev.util.Button button1;
-    private javaswingdev.util.Container container1;
+    private javaswingdev.util.Container container4;
     private javaswingdev.util.Button editBtn;
     private javaswingdev.util.Button hapusBtn;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javaswingdev.util.SearchOption searchOption1;
     private javax.swing.JTable tbl_menu;
     private javaswingdev.util.TextFieldSearchOption textFieldSearchOption1;
     // End of variables declaration//GEN-END:variables
