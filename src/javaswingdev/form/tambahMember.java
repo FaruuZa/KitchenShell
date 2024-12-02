@@ -80,6 +80,7 @@ public class tambahMember extends javax.swing.JFrame {
                     statement.close();
                     memberF.loadDataMember("");
                     memberF.enabledButton();
+                    JOptionPane.showMessageDialog(null, "Berhasil menambahkan"+ inputNama.getText());
                     return resultSet;
                 }
             } catch (Exception e) {
@@ -235,6 +236,7 @@ public class tambahMember extends javax.swing.JFrame {
 
     private void batalkanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_batalkanActionPerformed
         this.setVisible(false);
+        memberF.enabledButton();
     }//GEN-LAST:event_batalkanActionPerformed
 
     /**

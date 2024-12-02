@@ -20,7 +20,8 @@ public class Main extends javax.swing.JFrame {
     
     public Main() {
         if (!Session.getKode().equals("")) {
-        initComponents();
+//        if (true) {
+            initComponents();
             GlassPanePopup.install(this);
             FlatLightLaf.setup();
             init();

@@ -3,10 +3,16 @@ package javaswingdev.form;
 import com.mysql.cj.jdbc.PreparedStatementWrapper;
 import java.sql.*;
 import config.DatabaseConfig;
+import config.Session;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javaswingdev.util.TextFieldFilter;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.AbstractDocument;
+import raven.alerts.MessageAlerts;
 
 /**
  *
@@ -39,6 +45,7 @@ public class Form_Transaksi extends javax.swing.JPanel {
         tbl_pesanan.setModel(selectedTableMenu);
         loadDataMenu();
         loadDataMember();
+//        tes.setText(Session.getKode());
     }
 
     private void loadDataMenu() {
@@ -79,11 +86,11 @@ public class Form_Transaksi extends javax.swing.JPanel {
         }
     }
 
-    private void getKodeMenu() {
+    private void tambahPesanan() {
         if (connection != null) {
             try {
                 String kode_menu = txt_kodeMenu.getText();
-                String query = "SELECT kode_menu, nama_menu , harga FROM menu WHERE kode_menu = ?";
+                String query = "SELECT kode_menu, nama_menu , harga, stok_menu FROM menu WHERE kode_menu = ?";
                 PreparedStatement ps = connection.prepareStatement(query);
                 ps.setString(1, kode_menu);
                 ResultSet rs = ps.executeQuery();
@@ -93,20 +100,35 @@ public class Form_Transaksi extends javax.swing.JPanel {
                     int jumlah = Integer.parseInt(txt_jumlah.getText());
                     int harga = Integer.parseInt(rs.getString(3));
                     int totalHarga = jumlah * harga;
+                    int stok = rs.getInt(4);
+                    boolean cekStok = true;
                     boolean cekKode = false;
-                    //Cek kode_menu jika sama akan menambah jumlah pesanan
-                    for (int i = 0; i < tbl_pesanan.getRowCount(); i++) {
-                        if (tbl_pesanan.getValueAt(i, 0).equals(kodeMenu)) {
-                            int jumlahBaru = Integer.parseInt(tbl_pesanan.getValueAt(i, 2).toString());
-                            tbl_pesanan.setValueAt(jumlahBaru + jumlah, i, 2);
-                            int total = (jumlahBaru + jumlah) * harga;
-                            tbl_pesanan.setValueAt(total, i, 4);
-                            cekKode = true;
-                            break;
+                    if (jumlah <= stok) {
+                        //Cek kode_menu jika sama akan menambah jumlah pesanan
+                        int row = tbl_pesanan.getRowCount();
+                        for (int i = 0; i < row; i++) {
+                            int stokSelect = (int) tbl_pesanan.getValueAt(i, 2);
+                            if (tbl_pesanan.getValueAt(i, 0).equals(kodeMenu) && stokSelect < stok) {
+                                int jumlahBaru = Integer.parseInt(tbl_pesanan.getValueAt(i, 2).toString());
+//                                if (stokSelect <= stok && jumlahBaru <= stok) {
+                                tbl_pesanan.setValueAt(jumlahBaru + jumlah, i, 2);
+                                int total = (jumlahBaru + jumlah) * harga;
+                                tbl_pesanan.setValueAt(total, i, 4);
+                                cekKode = true;
+                                cekStok = false;
+                                break;
+//                                } else {
+//                                    MessageAlerts.getInstance().showMessage("GAGAL MENAMBAH PESANAN!", "Tolong cek stok terlebih dahulu sebelum menambah pesanan.", MessageAlerts.MessageType.ERROR);
+//                                }
+                            }
                         }
-                    }
-                    if (!cekKode) {
-                        selectedTableMenu.addRow(new Object[]{kodeMenu, namaMenu, jumlah, harga, totalHarga});
+
+                        if (!cekKode && cekStok) {
+                            selectedTableMenu.addRow(new Object[]{kodeMenu, namaMenu, jumlah, harga, totalHarga});
+                        }
+
+                    } else {
+                        MessageAlerts.getInstance().showMessage("GAGAL MENAMBAH PESANAN!", "Tolong cek stok terlebih dahulu sebelum menambah pesanan.", MessageAlerts.MessageType.ERROR);
                     }
                 }
             } catch (Exception e) {
@@ -115,13 +137,13 @@ public class Form_Transaksi extends javax.swing.JPanel {
         }
     }
 
-    public static String generateKodeMenu() {
-        Connection connection = DatabaseConfig.getConnection();
-        String kodeTransaksi = "TRS001";
+    public static String generateKodeTransaksi() {
+        Connection conn = DatabaseConfig.getConnection();
+        String kodeTransaksi = "";
 
-        if (connection != null) {
+        if (conn != null) {
             try {
-                Statement statement = connection.createStatement();
+                Statement statement = conn.createStatement();
                 String query = "SELECT kode_transaksi FROM transaksi ORDER BY kode_transaksi DESC LIMIT 1";
                 ResultSet resultSet = statement.executeQuery(query);
 
@@ -133,7 +155,7 @@ public class Form_Transaksi extends javax.swing.JPanel {
 
                 resultSet.close();
                 statement.close();
-                connection.close();
+                conn.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -141,7 +163,7 @@ public class Form_Transaksi extends javax.swing.JPanel {
         return kodeTransaksi;
     }
 
-    private static void prosesTransaksi(String kodeTransaksi, String kodeMember, String namaPelanggan, String[] kodeMenu, int idAdmin, int[] jumlah) throws SQLException {
+    private static void prosesTransaksi(String kodeTransaksi, String kodeMember, String namaPelanggan, String[] kodeMenu, String idAdmin, int[] jumlah) throws SQLException {
         Connection conn = DatabaseConfig.getConnection();
         if (conn != null) {
             try {
@@ -167,18 +189,20 @@ public class Form_Transaksi extends javax.swing.JPanel {
                 String insertTransaksi = "INSERT INTO transaksi VALUES (?, ?, ?, NOW(), ?)";
                 try (PreparedStatement transaksiStmt = conn.prepareStatement(insertTransaksi)) {
                     transaksiStmt.setString(1, kodeTransaksi);
-                    transaksiStmt.setInt(2, idAdmin);
+                    transaksiStmt.setString(2, idAdmin);
                     transaksiStmt.setString(3, kodeMember);
                     transaksiStmt.setString(4, namaPelanggan);
                     transaksiStmt.executeUpdate();
                 }
                 for (int j = 0; j < kodeMenu.length; j++) {
                     //Insert detail transaksi
-                    String insertDetailTransaksi = "INSERT INTO detail_transaksi VALUES (?, ?)";
-                    try (PreparedStatement detailTrskStmt = conn.prepareStatement(insertDetailTransaksi)) {
-                        detailTrskStmt.setString(1, kodeTransaksi);
-                        detailTrskStmt.setString(2, kodeMenu[j]);
-                        detailTrskStmt.executeUpdate();
+                    for (int x = 0; x < jumlah[j]; x++) {
+                        String insertDetailTransaksi = "INSERT INTO detail_transaksi VALUES (?, ?)";
+                        try (PreparedStatement detailTrskStmt = conn.prepareStatement(insertDetailTransaksi)) {
+                            detailTrskStmt.setString(1, kodeTransaksi);
+                            detailTrskStmt.setString(2, kodeMenu[j]);
+                            detailTrskStmt.executeUpdate();
+                        }
                     }
 
                     //Update stok pada tabel menu
@@ -189,7 +213,6 @@ public class Form_Transaksi extends javax.swing.JPanel {
                         upStokStmt.executeUpdate();
                     }
                 }
-
                 conn.commit();
             } catch (SQLException e) {
                 conn.rollback();
@@ -429,7 +452,7 @@ public class Form_Transaksi extends javax.swing.JPanel {
                                     .addComponent(jLabel2)
                                     .addComponent(jLabel4)))))
                     .addGroup(container1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGap(0, 0, 0)
                         .addComponent(btn_clear, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(btn_tambah, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -443,28 +466,27 @@ public class Form_Transaksi extends javax.swing.JPanel {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, container1Layout.createSequentialGroup()
                         .addGap(32, 32, 32)
                         .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel5)
+                            .addComponent(cbox_member, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(35, 35, 35)
+                        .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel6)
+                            .addComponent(txt_namaPelanggan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, container1Layout.createSequentialGroup()
+                        .addGap(180, 180, 180)
+                        .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel8)
+                            .addComponent(jLabel7)
+                            .addComponent(jLabel9))
+                        .addGap(18, 18, 18)
+                        .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, container1Layout.createSequentialGroup()
-                                .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel5)
-                                    .addComponent(cbox_member, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addGap(35, 35, 35)
-                                .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel6)
-                                    .addComponent(txt_namaPelanggan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, container1Layout.createSequentialGroup()
-                                .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel8)
-                                    .addComponent(jLabel7)
-                                    .addComponent(jLabel9))
-                                .addGap(18, 18, 18)
-                                .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, container1Layout.createSequentialGroup()
-                                        .addComponent(btn_hapus, javax.swing.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(btn_pesan, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(txt_kembalian, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(txt_bayar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(txt_totalBayar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))))
+                                .addComponent(btn_hapus, javax.swing.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btn_pesan, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txt_kembalian, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txt_bayar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txt_totalBayar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addGap(10, 10, 10))
         );
         container1Layout.setVerticalGroup(
@@ -560,7 +582,7 @@ public class Form_Transaksi extends javax.swing.JPanel {
     }//GEN-LAST:event_txt_jumlahActionPerformed
 
     private void btn_tambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tambahActionPerformed
-        getKodeMenu();
+        tambahPesanan();
     }//GEN-LAST:event_btn_tambahActionPerformed
 
     private void txt_namaPelangganActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_namaPelangganActionPerformed
@@ -568,16 +590,40 @@ public class Form_Transaksi extends javax.swing.JPanel {
     }//GEN-LAST:event_txt_namaPelangganActionPerformed
 
     private void btn_hapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_hapusActionPerformed
-        int selectedRow = tbl_pesanan.getSelectedRow();
-        if (selectedRow != -1) {
-            selectedTableMenu.removeRow(selectedRow);
-        } else {
-            JOptionPane.showMessageDialog(Form_Transaksi.this, "Pilih pesanan yang ingin anda hapus!", "Error", JOptionPane.ERROR_MESSAGE);
-        }
+        selectedTableMenu.setRowCount(0);
     }//GEN-LAST:event_btn_hapusActionPerformed
 
     private void btn_pesanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_pesanActionPerformed
+        String kodeTransaksi, idAdmin, namaPelanggan;
+        String[] kodeMember;
+        List<String> kodeMenuList = new ArrayList<>();
+        List<Integer> jumlahList = new ArrayList<>();
 
+        kodeTransaksi = generateKodeTransaksi();
+        idAdmin = Session.getKode();
+        kodeMember = cbox_member.getSelectedItem().toString().split("\\|");
+
+        namaPelanggan = txt_namaPelanggan.getText();
+        for (int i = 0; i < tbl_pesanan.getRowCount(); i++) {
+            kodeMenuList.add((String) tbl_pesanan.getValueAt(i, 0));
+            jumlahList.add((Integer) tbl_pesanan.getValueAt(i, 2));
+        }
+
+        String[] kodeMenu = kodeMenuList.toArray(new String[0]);
+        int[] jumlah = jumlahList.stream().mapToInt(Integer::intValue).toArray();
+        try {
+            prosesTransaksi(kodeTransaksi, kodeMember[0], namaPelanggan, kodeMenu, idAdmin, jumlah);
+            selectedTableMenu.setRowCount(0);
+            txt_kodeMenu.setText("");
+            txt_namaMenu.setText("");
+            txt_harga.setText("");
+            txt_jumlah.setText("");
+            loadDataMenu();
+            MessageAlerts.getInstance().showMessage("Transaksi berhasil!", "", MessageAlerts.MessageType.SUCCESS);
+        } catch (SQLException ex) {
+            MessageAlerts.getInstance().showMessage("Transaksi gagal!", "", MessageAlerts.MessageType.ERROR);
+            Logger.getLogger(Form_Transaksi.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btn_pesanActionPerformed
 
     private void txt_bayarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_bayarActionPerformed
@@ -586,8 +632,7 @@ public class Form_Transaksi extends javax.swing.JPanel {
 
     private void tbl_menuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_menuMouseClicked
         int selectedRow = tbl_menu.getSelectedRow();
-
-        if (selectedRow != -1 && selectedRow < tbl_menu.getRowCount()) {
+        if (selectedRow != -1) {
             String kodeMenu = (String) tableModel.getValueAt(selectedRow, 0);
             String namaMenu = (String) tableModel.getValueAt(selectedRow, 1);
             String harga = (String) tableModel.getValueAt(selectedRow, 3);
@@ -597,7 +642,6 @@ public class Form_Transaksi extends javax.swing.JPanel {
             txt_harga.setText(harga);
             txt_jumlah.setText("1");
         }
-
     }//GEN-LAST:event_tbl_menuMouseClicked
 
     private void btn_clearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_clearActionPerformed
