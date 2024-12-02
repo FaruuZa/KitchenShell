@@ -52,6 +52,7 @@ Connection connection = null;
                 String query = "SELECT * FROM menu WHERE kode_menu='"+kodeMenu+"';";
                 ResultSet rs = st.executeQuery(query);
                 while (rs.next()) {
+                    System.out.println(rs.getString(2));
                     inputMenu.setText(rs.getString(2));
                     inputJumlah.setText(rs.getString(3));
                     inputHarga.setText(rs.getString(4));
