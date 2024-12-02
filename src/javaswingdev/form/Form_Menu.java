@@ -4,10 +4,10 @@
  */
 package javaswingdev.form;
 
+import java.sql.*;
 import config.DatabaseConfig;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 
@@ -31,7 +31,7 @@ public class Form_Menu extends javax.swing.JPanel {
                 return false;
             }
         };
-        loadDataMenu();
+        loadDataMenu("");
         initComponents();
         tbl_menu.setModel(tableModel);
         editBtn.setEnabled(false);
@@ -52,14 +52,24 @@ public class Form_Menu extends javax.swing.JPanel {
         }
     }
      
-    protected void loadDataMenu() {
+     public void enabledButton(){
+        button1.setEnabled(true);
+        editBtn.setEnabled(true);
+        hapusBtn.setEnabled(true);
+    }
+    public void disabledButton(){
+        button1.setEnabled(false);
+        editBtn.setEnabled(false);
+        hapusBtn.setEnabled(false);
+    }
+     
+    protected void loadDataMenu(String cari) {
        if (connection != null) {
            try {
                Statement st = connection.createStatement();
-               String query = "SELECT * FROM menu";
+               String query = "SELECT * FROM menu WHERE nama_menu LIKE '%"+cari+"%'";
                ResultSet rs = st.executeQuery(query);
                tableModel.setRowCount(0);
-                   System.out.println("sout");
                while (rs.next()) {
                    String[] data = {rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4)};
                    tableModel.addRow(data);
@@ -79,7 +89,6 @@ public class Form_Menu extends javax.swing.JPanel {
 
         container4 = new javaswingdev.util.Container();
         button1 = new javaswingdev.util.Button();
-        btn_refresh = new javaswingdev.util.Button();
         textFieldSearchOption1 = new javaswingdev.util.TextFieldSearchOption();
         jScrollPane2 = new javax.swing.JScrollPane();
         tbl_menu = new javax.swing.JTable();
@@ -97,14 +106,6 @@ public class Form_Menu extends javax.swing.JPanel {
         button1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 button1ActionPerformed(evt);
-            }
-        });
-
-        btn_refresh.setText("REFRESH");
-        btn_refresh.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btn_refresh.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_refreshActionPerformed(evt);
             }
         });
 
@@ -132,6 +133,11 @@ public class Form_Menu extends javax.swing.JPanel {
 
         hapusBtn.setText("HAPUS");
         hapusBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        hapusBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                hapusBtnActionPerformed(evt);
+            }
+        });
 
         editBtn.setText("EDIT");
         editBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -159,10 +165,7 @@ public class Form_Menu extends javax.swing.JPanel {
                         .addGap(600, 600, 600)
                         .addGroup(container4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(textFieldSearchOption1, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, container4Layout.createSequentialGroup()
-                                .addComponent(btn_refresh, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                            .addComponent(button1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(30, 30, 30))
         );
         container4Layout.setVerticalGroup(
@@ -175,7 +178,6 @@ public class Form_Menu extends javax.swing.JPanel {
                 .addGap(50, 50, 50)
                 .addGroup(container4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(hapusBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_refresh, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(editBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -198,7 +200,11 @@ public class Form_Menu extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button1ActionPerformed
-        new tambahMenu().setVisible(true);
+
+        tambahMenu tmenu =  new tambahMenu(this);
+        tmenu.setVisible(true);
+        tmenu.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        disabledButton();
     }//GEN-LAST:event_button1ActionPerformed
 
     private void textFieldSearchOption1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textFieldSearchOption1ActionPerformed
@@ -206,7 +212,10 @@ public class Form_Menu extends javax.swing.JPanel {
     }//GEN-LAST:event_textFieldSearchOption1ActionPerformed
 
     private void editBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBtnActionPerformed
-        // TODO add your handling code here:
+        EditMenu emenu =  new EditMenu(this, kodeTerpilih);
+        emenu.setVisible(true);
+        emenu.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        disabledButton();
     }//GEN-LAST:event_editBtnActionPerformed
 
     private void tbl_menuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_menuMouseClicked
@@ -219,13 +228,25 @@ public class Form_Menu extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_tbl_menuMouseClicked
 
-    private void btn_refreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_refreshActionPerformed
-        loadDataMenu();
-    }//GEN-LAST:event_btn_refreshActionPerformed
+    private void hapusBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hapusBtnActionPerformed
+        int konfirm = JOptionPane.showConfirmDialog(null, "Yakin Ingin Menghapus Data tersebut?");
+        if (konfirm == 0) {
+            try {
+                Statement st = connection.createStatement();
+                String query = "DELETE FROM menu WHERE kode_menu='" + kodeTerpilih + "'";
+//                System.out.println(query);
+                st.execute(query);
+                kodeTerpilih = "";
+                disabledButton();
+                loadDataMenu("");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }//GEN-LAST:event_hapusBtnActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javaswingdev.util.Button btn_refresh;
     private javaswingdev.util.Button button1;
     private javaswingdev.util.Container container4;
     private javaswingdev.util.Button editBtn;
@@ -235,6 +256,10 @@ public class Form_Menu extends javax.swing.JPanel {
     private javax.swing.JTable tbl_menu;
     private javaswingdev.util.TextFieldSearchOption textFieldSearchOption1;
     // End of variables declaration//GEN-END:variables
+
+//    private void disabledButton() {
+//        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+//    }
 
 //    private void loadDataMember() {
 //        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
