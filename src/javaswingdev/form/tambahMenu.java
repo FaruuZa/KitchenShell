@@ -27,7 +27,6 @@ public class tambahMenu extends javax.swing.JFrame {
         ((AbstractDocument) inputHarga.getDocument()).setDocumentFilter(new TextFieldFilter("[0-9]*"));
         ((AbstractDocument) inputJumlah.getDocument()).setDocumentFilter(new TextFieldFilter("[0-9]*"));
     }
-    
 
     private void getCon() {
         try {
@@ -36,7 +35,7 @@ public class tambahMenu extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }
-    
+
     private String generateCode() {
         String kodeMenu = "";
         if (connection != null) {
@@ -61,27 +60,28 @@ public class tambahMenu extends javax.swing.JFrame {
 
         return kodeMenu;
     }
-    
-    private boolean createData()    {
+
+    private void createData() {
         if (connection != null) {
             try {
                 if (!inputMenu.getText().equals("") || !inputHarga.getText().equals("") || !inputJumlah.getText().equals("")) {
-                Statement statement = connection.createStatement();
-                String query = "INSERT INTO menu VALUES ('" + generateCode() + "', '" + inputMenu.getText() + "', '" + inputJumlah.getText() +"', '" + inputHarga.getText()+ "')";
+                    Statement statement = connection.createStatement();
+                    String query = "INSERT INTO menu VALUES ('" + generateCode() + "', '" + inputMenu.getText() + "', '" + inputJumlah.getText() + "', '" + inputHarga.getText() + "')";
                     System.out.println(query);
-                Boolean resultSet = statement.execute(query);
-                statement.close();
-                menuF.loadDataMenu("");
-                return resultSet;
+                    Boolean resultSet = statement.execute(query);
+                    statement.close();
+                    menuF.loadDataMenu("");
+//                    return true;
+                }else{
+                    throw new Exception("data tidak boleh kosong");
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                menuF.errorPopup(e.getMessage(), this, null);
             }
-            
+
         }
-        return false;
     }
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -207,7 +207,7 @@ public class tambahMenu extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void inputMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputMenuActionPerformed
-         
+
     }//GEN-LAST:event_inputMenuActionPerformed
 
 
@@ -216,21 +216,12 @@ public class tambahMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_button1ActionPerformed
 
     private void btn_simpanActionPerformed1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_simpanActionPerformed1
-        if (createData()) {
-            //            JOptionPane.showMessageDialog(null, "berhasil menambahkan data");
-            menuF.loadDataMenu("");
-            this.setVisible(false);
-        } else {
-            menuF.loadDataMenu("");
-            //            JOptionPane.showMessageDialog(null, "gagal menambahkan data");
-            this.setVisible(false);
-        }
+        createData();
     }//GEN-LAST:event_btn_simpanActionPerformed1
 
     /**
      * @param args the command line arguments
      */
-    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javaswingdev.util.Button btn_batall;

@@ -15,6 +15,7 @@ import javaswingdev.util.TextFieldFilter;
 import javax.swing.JOptionPane;
 import javax.swing.text.AbstractDocument;
 import java.util.Date;
+//import raven.alerts.MessageAlerts;
 
 public class tambahMember extends javax.swing.JFrame {
 
@@ -84,7 +85,7 @@ public class tambahMember extends javax.swing.JFrame {
                     return resultSet;
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                return false;
             }
         }
         return false;
@@ -227,9 +228,11 @@ public class tambahMember extends javax.swing.JFrame {
     private void button3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button3ActionPerformed
         if (createData()) {
             //            JOptionPane.showMessageDialog(null, "berhasil menambahkan data");
+//            MessageAlerts.getInstance().showMessage("Berhasil menambahkan ", "", MessageAlerts.MessageType.SUCCESS);
             this.setVisible(false);
         } else {
             //            JOptionPane.showMessageDialog(null, "gagal menambahkan data");
+//            MessageAlerts.getInstance().showMessage("Gagal menambahkan member", "", MessageAlerts.MessageType.ERROR);
             this.setVisible(false);
         }
     }//GEN-LAST:event_button3ActionPerformed

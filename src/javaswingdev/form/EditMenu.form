@@ -121,6 +121,9 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="inputMenuActionPerformed"/>
           </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_SerializeTo" type="java.lang.String" value="EditMenu_inputMenu"/>
+          </AuxValues>
         </Component>
         <Component class="javaswingdev.util.TextField" name="inputHarga">
         </Component>

@@ -1,4 +1,3 @@
-
 package View;
 
 /**
@@ -12,6 +11,7 @@ import javaswingdev.util.TextFieldFilter;
 import javax.swing.JOptionPane;
 import javax.swing.text.AbstractDocument;
 import config.Session;
+//import raven.alerts.MessageAlerts;
 
 public class Login extends javax.swing.JFrame {
 
@@ -182,31 +182,34 @@ public class Login extends javax.swing.JFrame {
             String usn = userInput.getText();
             String pass = passInput.getText();
             if (usn.equals("")) {
-                JOptionPane.showMessageDialog(null, "Username tidak boleh kosong!");
+                throw new Exception("Username tidak boleh kosong!");
 
             } else if (pass.equals("")) {
-                JOptionPane.showMessageDialog(null, "Password tidak boleh kosong!");
+                throw new Exception("Password tidak boleh kosong!");
 
             }
             String query = "SELECT * FROM user WHERE username='" + usn + "' " + "AND password='" + pass + "' LIMIT 1";
             Statement stat = connection.createStatement();
             ResultSet hasil = stat.executeQuery(query);
-            while (hasil.next()) {
-                if (hasil.getString("level").equals("1")) {
-//                    JOptionPane.showMessageDialog(null, "masuk admin!");
-                    Session.setKode(hasil.getString("id"));
-                    Session.setRole(hasil.getInt("level"));
-                    new Main().setVisible(true);
-                    this.setVisible(false);
-                } else if (hasil.getString("id").equals("0")) {
-                    Session.setKode(hasil.getString("level"));
-                    JOptionPane.showMessageDialog(null, "Masuk Karyawan!");
-                } else {
-                    JOptionPane.showMessageDialog(null, "username atau password salah!");
-                }
+            if (hasil.next()) {
+                do {
+                    if (hasil.getString("level").equals("1")) {
+                        Session.setKode(hasil.getString("id"));
+                        Session.setRole(hasil.getInt("level"));
+                        new Main().setVisible(true);
+                        this.setVisible(false);
+                    } else if (hasil.getString("id").equals("0")) {
+                        Session.setKode(hasil.getString("level"));
+                        JOptionPane.showMessageDialog(null, "Masuk Karyawan!");
+                    }
+                }while (hasil.next());
+            }else{
+                throw new Exception("Username atau password salah");
             }
+
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
+            JOptionPane.showMessageDialog(null, e.getMessage());
         }
     }//GEN-LAST:event_LoginBtnActionPerformed
 

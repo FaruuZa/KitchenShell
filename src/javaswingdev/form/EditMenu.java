@@ -52,7 +52,7 @@ Connection connection = null;
                 String query = "SELECT * FROM menu WHERE kode_menu='"+kodeMenu+"';";
                 ResultSet rs = st.executeQuery(query);
                 while (rs.next()) {
-                    System.out.println(rs.getString(2));
+                    System.out.println(inputMenu.getText());
                     inputMenu.setText(rs.getString(2));
                     inputJumlah.setText(rs.getString(3));
                     inputHarga.setText(rs.getString(4));
@@ -65,25 +65,23 @@ Connection connection = null;
         }
     }
     
-    public boolean editData(){
+    public void editData(){
         if (connection != null) {
             try {
                 if (!inputMenu.equals("") || !inputJumlah.equals("") || !inputHarga.equals("")) {
                     Statement statement = connection.createStatement();
                     String query = "UPDATE `Menu` SET `nama_menu` = '"+inputMenu.getText()+"', `stok_menu` = '"+inputJumlah.getText()+"', `harga` = '"+inputHarga.getText()+"' WHERE `menu`.`kode_menu` = '"+kodeMenu+"';";
-                    Boolean resultSet = statement.execute(query);
-//                    System.out.println(query);
-//                    resultSet.close();
+                    statement.execute(query);
                     statement.close();
                     menuF.loadDataMenu("");
                     menuF.enabledButton();
-                    return resultSet;
+                }else{
+                    throw new Exception("Data tidak boleh kosong");
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                menuF.errorPopup(e.getMessage(), null, this);
             }
         }
-        return false;
     }
     
     @SuppressWarnings("unchecked")
@@ -204,12 +202,7 @@ Connection connection = null;
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_simpanActionPerformed1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_simpanActionPerformed1
-       menuF.enabledButton();
-        if (editData()) {
-            this.setVisible(false);
-        } else {
-            this.setVisible(false);
-        }
+       editData();
     }//GEN-LAST:event_btn_simpanActionPerformed1
 
     private void inputMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputMenuActionPerformed
