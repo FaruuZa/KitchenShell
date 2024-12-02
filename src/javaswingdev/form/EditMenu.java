@@ -102,6 +102,7 @@ Connection connection = null;
         btn_batall = new javaswingdev.util.Button();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setUndecorated(true);
 
         btn_simpan.setText("SIMPAN");
         btn_simpan.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -201,6 +202,7 @@ Connection connection = null;
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_simpanActionPerformed1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_simpanActionPerformed1
