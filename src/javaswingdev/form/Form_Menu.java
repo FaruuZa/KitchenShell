@@ -40,9 +40,9 @@ public class Form_Menu extends javax.swing.JPanel {
         if (asd != null) {
             asd.setVisible(false);
             addBtn.setEnabled(true);
-        }else{
+        } else {
             dsa.setVisible(false);
-            enabledButton();
+            enabledButton("");
         }
         JOptionPane.showMessageDialog(null, errorMsg);
     }
@@ -55,10 +55,12 @@ public class Form_Menu extends javax.swing.JPanel {
         }
     }
 
-    public void enabledButton() {
+    public void enabledButton(String cc) {
+        if (!cc.equals("add")) {
+            editBtn.setEnabled(true);
+            hapusBtn.setEnabled(true);
+        }
         addBtn.setEnabled(true);
-        editBtn.setEnabled(true);
-        hapusBtn.setEnabled(true);
     }
 
     public void disabledButton() {
