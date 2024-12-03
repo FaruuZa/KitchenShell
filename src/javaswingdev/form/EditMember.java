@@ -71,16 +71,16 @@ public class EditMember extends javax.swing.JFrame {
     public void editData() {
         if (connection != null) {
             try {
-                if (!inputNama.equals("") || !inputNomer.equals("") || !inputPoin.equals("")) {
+                if (!inputNama.equals("") && !inputNomer.equals("") && !inputPoin.equals("")) {
                     Statement statement = connection.createStatement();
                     String query = "UPDATE `member` SET `nama_member` = '" + inputNama.getText() + "', `noTelp_member` = '" + inputNomer.getText() + "', `point` = '" + inputPoin.getText() + "' WHERE `member`.`kode_member` = '" + kodeMember + "';";
-                    statement.execute(query);
+                    Boolean resultSet = statement.execute(query);
                     statement.close();
                     memberF.loadDataMember("");
                     memberF.enabledButton(1);
-                    memberF.popupHandler("berhasil mengubah", 0, null, this);
-                } else {
-                    throw new Exception("Data tidak boleh kosong");
+                    memberF.popupHandler("berhasil mengedit data", 1, null, this);
+                }else{
+                    throw new Exception("data tidak boleh kosong");
                 }
             } catch (Exception e) {
                 memberF.popupHandler(e.getMessage(), 0, null, this);

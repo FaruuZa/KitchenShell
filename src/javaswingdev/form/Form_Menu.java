@@ -9,6 +9,7 @@ import config.DatabaseConfig;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import raven.alerts.MessageAlerts;
 
 /**
  *
@@ -37,16 +38,21 @@ public class Form_Menu extends javax.swing.JPanel {
         hapusBtn.setEnabled(false);
     }
 
-    protected void popupHandler(String errorMsg, int status, tambahMenu asd, EditMenu dsa) {
+    protected void popupHandler(String popupMsg, int status, tambahMenu asd, EditMenu dsa) {
         if (asd != null) {
             asd.dispose();
             addBtn.setEnabled(true);
-        } else {
+        } else if (dsa != null) {
             dsa.dispose();
             enabledButton(1);
         }
-        JOptionPane.showMessageDialog(null, errorMsg);
-        aksi=0;
+        if (status == 1) {
+            MessageAlerts.getInstance().showMessage("SUCCESS", popupMsg, MessageAlerts.MessageType.SUCCESS);
+        } else {
+            MessageAlerts.getInstance().showMessage("ERROR", popupMsg, MessageAlerts.MessageType.ERROR);
+        }
+//        JOptionPane.showMessageDialog(null, popupMsg);
+        aksi = 0;
     }
 
     private void getCon() {
@@ -246,11 +252,12 @@ public class Form_Menu extends javax.swing.JPanel {
             try {
                 Statement st = connection.createStatement();
                 String query = "DELETE FROM menu WHERE kode_menu='" + kodeTerpilih + "'";
-//                System.out.println(query);
                 st.execute(query);
                 kodeTerpilih = "";
                 disabledButton();
+                enabledButton(0);
                 loadDataMenu("");
+                popupHandler("berhasil menghapus data", 1, null, null);
             } catch (Exception e) {
                 e.printStackTrace();
             }

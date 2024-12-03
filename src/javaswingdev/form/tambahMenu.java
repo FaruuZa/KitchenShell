@@ -62,7 +62,7 @@ public class tambahMenu extends javax.swing.JFrame {
     private void createData() {
         if (connection != null) {
             try {
-                if (!inputMenu.getText().equals("") || !inputHarga.getText().equals("") || !inputJumlah.getText().equals("")) {
+                if (!inputMenu.getText().equals("") && !inputHarga.getText().equals("") && !inputJumlah.getText().equals("")) {
                     Statement statement = connection.createStatement();
                     String query = "INSERT INTO menu VALUES ('" + generateCode() + "', '" + inputMenu.getText() + "', '" + inputJumlah.getText() + "', '" + inputHarga.getText() + "')";
                     statement.execute(query);

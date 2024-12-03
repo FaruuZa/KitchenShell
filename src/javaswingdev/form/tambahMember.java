@@ -70,7 +70,7 @@ public class tambahMember extends javax.swing.JFrame {
     private void createData() {
         if (connection != null) {
             try {
-                if (!inputNama.getText().equals("") || !inputNomer.getText().equals("")) {
+                if (!inputNama.getText().equals("") && !inputNomer.getText().equals("")) {
                     Timestamp timestamp2 = new Timestamp(date.getTime());
                     Statement statement = connection.createStatement();
                     String query = "INSERT INTO member VALUES ('" + generateCode() + "','" + inputNama.getText() + "','" + inputNomer.getText() + "','0','" + new Timestamp(date.getTime()) + "')";
@@ -83,7 +83,7 @@ public class tambahMember extends javax.swing.JFrame {
                     throw new Exception("data tidak boleh kosong!");
                 }
             } catch (Exception e) {
-                memberF.popupHandler("data berhasil ditambah!", 1, this, null);
+                memberF.popupHandler(e.getMessage(), 0, this, null);
             }
         }
 

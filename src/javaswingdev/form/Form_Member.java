@@ -9,6 +9,7 @@ import config.DatabaseConfig;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import raven.alerts.MessageAlerts;
 
 /**
  *
@@ -63,15 +64,19 @@ public class Form_Member extends javax.swing.JPanel {
         hapusBtn.setEnabled(false);
     }
 
-    protected void popupHandler(String errorMsg, int status, tambahMember asd, EditMember dsa) {
+    protected void popupHandler(String popupMsg, int status, tambahMember asd, EditMember dsa) {
         if (asd != null) {
             asd.dispose();
             enabledButton(0);
-        } else {
+        } else if (dsa != null) {
             dsa.dispose();
             enabledButton(1);
         }
-        JOptionPane.showMessageDialog(null, errorMsg);
+        if (status == 1) {
+            MessageAlerts.getInstance().showMessage("SUCCESS", popupMsg, MessageAlerts.MessageType.SUCCESS);
+        } else {
+            MessageAlerts.getInstance().showMessage("ERROR", popupMsg, MessageAlerts.MessageType.ERROR);
+        }
         aksi = 0;
     }
 
@@ -253,11 +258,12 @@ public class Form_Member extends javax.swing.JPanel {
             try {
                 Statement st = connection.createStatement();
                 String query = "DELETE FROM member WHERE kode_member='" + kodeTerpilih + "'";
-//                System.out.println(query);
                 st.execute(query);
                 kodeTerpilih = "";
                 disabledButton();
+                enabledButton(0);
                 loadDataMember("");
+                popupHandler("data berhasil ditambah!", 1, null, null);
             } catch (Exception e) {
                 e.printStackTrace();
             }
