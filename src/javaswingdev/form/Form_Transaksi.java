@@ -10,6 +10,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javaswingdev.util.TextFieldFilter;
 import javax.swing.JOptionPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.AbstractDocument;
 import raven.alerts.MessageAlerts;
@@ -22,6 +24,7 @@ public class Form_Transaksi extends javax.swing.JPanel {
 
     DefaultTableModel tableModel, selectedTableMenu;
     Connection connection = DatabaseConfig.getConnection();
+    private int totalBayar, token;
 
     public Form_Transaksi() {
         initComponents();
@@ -126,6 +129,8 @@ public class Form_Transaksi extends javax.swing.JPanel {
                         if (!cekKode && cekStok) {
                             selectedTableMenu.addRow(new Object[]{kodeMenu, namaMenu, jumlah, harga, totalHarga});
                         }
+                        totalBayar += totalHarga;
+                        txt_totalBayar.setText(String.valueOf(totalBayar));
 
                     } else {
                         MessageAlerts.getInstance().showMessage("GAGAL MENAMBAH PESANAN!", "Tolong cek stok terlebih dahulu sebelum menambah pesanan.", MessageAlerts.MessageType.ERROR);
@@ -254,8 +259,6 @@ public class Form_Transaksi extends javax.swing.JPanel {
         txt_totalBayar = new javaswingdev.util.TextField();
         jLabel8 = new javax.swing.JLabel();
         txt_bayar = new javaswingdev.util.TextField();
-        jLabel9 = new javax.swing.JLabel();
-        txt_kembalian = new javaswingdev.util.TextField();
         btn_hapus = new javaswingdev.util.Button();
         btn_pesan = new javaswingdev.util.Button();
         jScrollPane3 = new javax.swing.JScrollPane();
@@ -374,12 +377,6 @@ public class Form_Transaksi extends javax.swing.JPanel {
             }
         });
 
-        jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel9.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel9.setText("Kembalian");
-
-        txt_kembalian.setEnabled(false);
-
         btn_hapus.setText("Hapus");
         btn_hapus.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -452,7 +449,6 @@ public class Form_Transaksi extends javax.swing.JPanel {
                                     .addComponent(jLabel2)
                                     .addComponent(jLabel4)))))
                     .addGroup(container1Layout.createSequentialGroup()
-                        .addGap(0, 0, 0)
                         .addComponent(btn_clear, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(btn_tambah, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -476,15 +472,13 @@ public class Form_Transaksi extends javax.swing.JPanel {
                         .addGap(180, 180, 180)
                         .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel8)
-                            .addComponent(jLabel7)
-                            .addComponent(jLabel9))
+                            .addComponent(jLabel7))
                         .addGap(18, 18, 18)
                         .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, container1Layout.createSequentialGroup()
                                 .addComponent(btn_hapus, javax.swing.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btn_pesan, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(txt_kembalian, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(txt_bayar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(txt_totalBayar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addGap(10, 10, 10))
@@ -539,11 +533,7 @@ public class Form_Transaksi extends javax.swing.JPanel {
                 .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
                     .addComponent(txt_bayar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel9)
-                    .addComponent(txt_kembalian, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(53, 53, 53)
                 .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btn_hapus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btn_pesan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -612,15 +602,21 @@ public class Form_Transaksi extends javax.swing.JPanel {
         String[] kodeMenu = kodeMenuList.toArray(new String[0]);
         int[] jumlah = jumlahList.stream().mapToInt(Integer::intValue).toArray();
         try {
-            prosesTransaksi(kodeTransaksi, kodeMember[0], namaPelanggan, kodeMenu, idAdmin, jumlah);
-            selectedTableMenu.setRowCount(0);
-            txt_kodeMenu.setText("");
-            txt_namaMenu.setText("");
-            txt_harga.setText("");
-            txt_jumlah.setText("");
-            loadDataMenu();
-            MessageAlerts.getInstance().showMessage("Transaksi berhasil!", "", MessageAlerts.MessageType.SUCCESS);
-        } catch (SQLException ex) {
+            if (txt_bayar.getText().equals("")) {
+                MessageAlerts.getInstance().showMessage("Gagal!", "Pastikan mengisi nominal pembayaran", MessageAlerts.MessageType.DEFAULT);
+            } else {
+                if (Integer.parseInt(txt_bayar.getText()) <= totalBayar) {
+//                    prosesTransaksi(kodeTransaksi, kodeMember[0], namaPelanggan, kodeMenu, idAdmin, jumlah);
+                    selectedTableMenu.setRowCount(0);
+                    txt_kodeMenu.setText("");
+                    txt_namaMenu.setText("");
+                    txt_harga.setText("");
+                    txt_jumlah.setText("");
+                    loadDataMenu();
+                    MessageAlerts.getInstance().showMessage("Transaksi berhasil!", "", MessageAlerts.MessageType.SUCCESS);
+                }
+            }
+        } catch (Exception ex) {
             MessageAlerts.getInstance().showMessage("Transaksi gagal!", "", MessageAlerts.MessageType.ERROR);
             Logger.getLogger(Form_Transaksi.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -667,7 +663,6 @@ public class Form_Transaksi extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javaswingdev.util.SearchOption searchOption1;
@@ -676,7 +671,6 @@ public class Form_Transaksi extends javax.swing.JPanel {
     private javaswingdev.util.TextField txt_bayar;
     private javaswingdev.util.TextField txt_harga;
     private javaswingdev.util.TextField txt_jumlah;
-    private javaswingdev.util.TextField txt_kembalian;
     private javaswingdev.util.TextField txt_kodeMenu;
     private javaswingdev.util.TextField txt_namaMenu;
     private javaswingdev.util.TextField txt_namaPelanggan;
