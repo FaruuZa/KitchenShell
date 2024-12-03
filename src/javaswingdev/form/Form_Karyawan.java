@@ -9,6 +9,7 @@ import config.DatabaseConfig;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import raven.alerts.MessageAlerts;
 
 /**
  *
@@ -37,7 +38,7 @@ public class Form_Karyawan extends javax.swing.JPanel {
         hapusBtn.setEnabled(false);
     }
     
-    protected void popupHandler(String errorMsg, int status, tambahKaryawan asd, EditMenu dsa) {
+    protected void popupHandler(String popupMsg, int status, tambahKaryawan asd, EditKaryawan dsa) {
         if (asd != null) {
             asd.dispose();
             addBtn.setEnabled(true);
@@ -45,7 +46,11 @@ public class Form_Karyawan extends javax.swing.JPanel {
             dsa.dispose();
             enabledButton(1);
         }
-        JOptionPane.showMessageDialog(null, errorMsg);
+        if (status == 1) {
+            MessageAlerts.getInstance().showMessage("SUCCESS", popupMsg, MessageAlerts.MessageType.SUCCESS);
+        } else {
+            MessageAlerts.getInstance().showMessage("ERROR", popupMsg, MessageAlerts.MessageType.ERROR);
+        }
         aksi=0;
     }
     
@@ -133,6 +138,11 @@ public class Form_Karyawan extends javax.swing.JPanel {
 
         editBtn.setText("EDIT");
         editBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        editBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editBtnActionPerformed(evt);
+            }
+        });
 
         hapusBtn.setText("HAPUS");
         hapusBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -231,11 +241,19 @@ public class Form_Karyawan extends javax.swing.JPanel {
                 kodeTerpilih = "";
                 disabledButton();
                 loadDataKaryawan("");
+                popupHandler("berhasil menghapus data", 1, null, null);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }//GEN-LAST:event_hapusBtnActionPerformed
+
+    private void editBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBtnActionPerformed
+        EditKaryawan ekaryawan = new EditKaryawan(this, kodeTerpilih);
+        ekaryawan.setVisible(true);
+        ekaryawan.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        aksi = 1;
+    }//GEN-LAST:event_editBtnActionPerformed
         
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
