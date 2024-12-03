@@ -26,7 +26,7 @@ public class Main extends javax.swing.JFrame {
             FlatLightLaf.setup();
             init();
         } else {
-            this.setVisible(false);
+            this.dispose();
             new Login().setVisible(true);
         }
         

@@ -19,6 +19,7 @@ public class Form_Menu extends javax.swing.JPanel {
     DefaultTableModel tableModel;
     Connection connection = null;
     String kodeTerpilih = "";
+    int aksi = 0;
 
     public Form_Menu() {
         getCon();
@@ -36,15 +37,16 @@ public class Form_Menu extends javax.swing.JPanel {
         hapusBtn.setEnabled(false);
     }
 
-    protected void errorPopup(String errorMsg, tambahMenu asd, EditMenu dsa) {
+    protected void popupHandler(String errorMsg, int status, tambahMenu asd, EditMenu dsa) {
         if (asd != null) {
-            asd.setVisible(false);
+            asd.dispose();
             addBtn.setEnabled(true);
         } else {
-            dsa.setVisible(false);
-            enabledButton("");
+            dsa.dispose();
+            enabledButton(1);
         }
         JOptionPane.showMessageDialog(null, errorMsg);
+        aksi=0;
     }
 
     private void getCon() {
@@ -55,8 +57,8 @@ public class Form_Menu extends javax.swing.JPanel {
         }
     }
 
-    public void enabledButton(String cc) {
-        if (!cc.equals("add")) {
+    public void enabledButton(int cc) {
+        if (cc == 1) {
             editBtn.setEnabled(true);
             hapusBtn.setEnabled(true);
         }
@@ -212,6 +214,7 @@ public class Form_Menu extends javax.swing.JPanel {
         tmenu.setVisible(true);
         tmenu.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         disabledButton();
+        aksi = 1;
     }//GEN-LAST:event_addBtnActionPerformed
 
     private void textFieldSearchOption1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textFieldSearchOption1ActionPerformed
@@ -223,15 +226,17 @@ public class Form_Menu extends javax.swing.JPanel {
         emenu.setVisible(true);
         emenu.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         disabledButton();
+        aksi = 1;
     }//GEN-LAST:event_editBtnActionPerformed
 
     private void tbl_menuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_menuMouseClicked
         int selectedRow = tbl_menu.getSelectedRow();
-
-        if (selectedRow != -1 && selectedRow < tbl_menu.getRowCount()) {
-            kodeTerpilih = (String) tableModel.getValueAt(selectedRow, 0);
-            editBtn.setEnabled(true);
-            hapusBtn.setEnabled(true);
+        if (aksi == 0) {
+            if (selectedRow != -1 && selectedRow < tbl_menu.getRowCount()) {
+                kodeTerpilih = (String) tableModel.getValueAt(selectedRow, 0);
+                editBtn.setEnabled(true);
+                hapusBtn.setEnabled(true);
+            }
         }
     }//GEN-LAST:event_tbl_menuMouseClicked
 
