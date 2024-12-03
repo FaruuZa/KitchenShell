@@ -24,18 +24,17 @@ public class tambahMember extends javax.swing.JFrame {
     private static final SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     Form_Member memberF = null;
-    
+
 //    public tambahMember() {
 //    }
-
-    public tambahMember(Form_Member member){
+    public tambahMember(Form_Member member) {
         initComponents();
         getCon();
         ((AbstractDocument) inputNama.getDocument()).setDocumentFilter(new TextFieldFilter("[a-z A-Z]*"));
         ((AbstractDocument) inputNomer.getDocument()).setDocumentFilter(new TextFieldFilter("[0-9]*"));
         this.memberF = member;
     }
-    
+
     private void getCon() {
         try {
             connection = DatabaseConfig.getConnection();
@@ -68,27 +67,26 @@ public class tambahMember extends javax.swing.JFrame {
         return kodeMenu;
     }
 
-    private boolean createData() {
+    private void createData() {
         if (connection != null) {
             try {
-                if (!inputNama.equals("") || !inputNomer.equals("")) {
+                if (!inputNama.getText().equals("") || !inputNomer.getText().equals("")) {
                     Timestamp timestamp2 = new Timestamp(date.getTime());
                     Statement statement = connection.createStatement();
-                    String query = "INSERT INTO member VALUES ('" + generateCode() + "','" + inputNama.getText() + "','" + inputNomer.getText() + "','0','"+new Timestamp(date.getTime())+"')";
+                    String query = "INSERT INTO member VALUES ('" + generateCode() + "','" + inputNama.getText() + "','" + inputNomer.getText() + "','0','" + new Timestamp(date.getTime()) + "')";
                     Boolean resultSet = statement.execute(query);
-//                    System.out.println(query);
-//                    resultSet.close();
                     statement.close();
                     memberF.loadDataMember("");
-                    memberF.enabledButton();
-                    JOptionPane.showMessageDialog(null, "Berhasil menambahkan"+ inputNama.getText());
-                    return resultSet;
+                    memberF.popupHandler("data berhasil ditambah!", 1, this, null);
+
+                }else{
+                    throw new Exception("data tidak boleh kosong!");
                 }
             } catch (Exception e) {
-                return false;
+                memberF.popupHandler("data berhasil ditambah!", 1, this, null);
             }
         }
-        return false;
+
     }
 
     @SuppressWarnings("unchecked")
@@ -164,34 +162,38 @@ public class tambahMember extends javax.swing.JFrame {
                         .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addContainerGap())
                     .addGroup(container1Layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
                         .addComponent(batalkan, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(button3, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(6, 6, 6))))
             .addGroup(container1Layout.createSequentialGroup()
-                .addGap(22, 22, 22)
+                .addGap(10, 10, 10)
                 .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, container1Layout.createSequentialGroup()
                         .addComponent(jLabel3)
-                        .addComponent(inputNomer, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jLabel2)
-                    .addComponent(inputNama, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 25, Short.MAX_VALUE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jLabel2)))
+            .addGroup(container1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(inputNama, javax.swing.GroupLayout.PREFERRED_SIZE, 316, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(inputNomer, javax.swing.GroupLayout.PREFERRED_SIZE, 316, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 6, Short.MAX_VALUE))
         );
         container1Layout.setVerticalGroup(
             container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(container1Layout.createSequentialGroup()
+                .addGap(10, 10, 10)
                 .addComponent(jLabel1)
-                .addGap(26, 26, 26)
+                .addGap(20, 20, 20)
                 .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(0, 0, 0)
                 .addComponent(inputNama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(0, 0, 0)
                 .addComponent(inputNomer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 46, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
                 .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(batalkan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(button3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -226,20 +228,13 @@ public class tambahMember extends javax.swing.JFrame {
     }//GEN-LAST:event_inputNamaActionPerformed
 
     private void button3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button3ActionPerformed
-        if (createData()) {
-            //            JOptionPane.showMessageDialog(null, "berhasil menambahkan data");
-//            MessageAlerts.getInstance().showMessage("Berhasil menambahkan ", "", MessageAlerts.MessageType.SUCCESS);
-            this.setVisible(false);
-        } else {
-            //            JOptionPane.showMessageDialog(null, "gagal menambahkan data");
-//            MessageAlerts.getInstance().showMessage("Gagal menambahkan member", "", MessageAlerts.MessageType.ERROR);
-            this.setVisible(false);
-        }
+        createData();
     }//GEN-LAST:event_button3ActionPerformed
 
     private void batalkanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_batalkanActionPerformed
-        this.setVisible(false);
-        memberF.enabledButton();
+        this.dispose();
+        memberF.enabledButton(0);
+        memberF.aksi = 0;
     }//GEN-LAST:event_batalkanActionPerformed
 
     /**
@@ -272,7 +267,6 @@ public class tambahMember extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

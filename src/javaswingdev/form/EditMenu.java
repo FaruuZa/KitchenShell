@@ -68,15 +68,15 @@ public class EditMenu extends javax.swing.JFrame {
                     String query = "UPDATE `Menu` SET `nama_menu` = '" + namaInput.getText() + "', `stok_menu` = '" + jumlahInput.getText() + "', `harga` = '" + hargaInput.getText() + "' WHERE `menu`.`kode_menu` = '" + kodeMenu + "';";
                     statement.execute(query);
                     statement.close();
-                    menuF.setEnabled(true);
+//                    menuF.setEnabled(true);
                     menuF.loadDataMenu("");
-                    menuF.enabledButton("");
-                    menuF.errorPopup("Data berhasil diedit!", null, this);          
+                    menuF.enabledButton(0);
+                    menuF.popupHandler("Data berhasil diedit!", 1, null, this);
                 } else {
                     throw new Exception("Data tidak boleh kosong!");
                 }
             } catch (Exception e) {
-                menuF.errorPopup(e.getMessage(), null, this);
+                menuF.popupHandler(e.getMessage(), 0, null, this);
             }
         }
     }
@@ -185,7 +185,7 @@ public class EditMenu extends javax.swing.JFrame {
                 .addComponent(jLabel4)
                 .addGap(0, 0, 0)
                 .addComponent(jumlahInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(36, 36, 36)
                 .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btn_batall, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btn_simpan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -210,8 +210,8 @@ public class EditMenu extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_batallbutton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_batallbutton1ActionPerformed
-        this.setVisible(false);
-        menuF.enabledButton("");
+        this.dispose();
+        menuF.enabledButton(1);
     }//GEN-LAST:event_btn_batallbutton1ActionPerformed
 
     private void btn_simpanActionPerformed1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_simpanActionPerformed1
