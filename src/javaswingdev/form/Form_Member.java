@@ -19,6 +19,7 @@ public class Form_Member extends javax.swing.JPanel {
     DefaultTableModel tableModel;
     Connection connection = null;
     String kodeTerpilih = "";
+    int aksi = 0;
 
     public Form_Member() {
         getCon();
@@ -47,25 +48,38 @@ public class Form_Member extends javax.swing.JPanel {
             e.printStackTrace();
         }
     }
-    
-    public void enabledButton(){
+
+    public void enabledButton(int stat) {
+        if (stat == 1) {
+            editBtn.setEnabled(true);
+            hapusBtn.setEnabled(true);
+        }
         button1.setEnabled(true);
-        editBtn.setEnabled(true);
-        hapusBtn.setEnabled(true);
     }
-    public void disabledButton(){
+
+    public void disabledButton() {
         button1.setEnabled(false);
         editBtn.setEnabled(false);
         hapusBtn.setEnabled(false);
     }
-    
+
+    protected void popupHandler(String errorMsg, int status, tambahMember asd, EditMember dsa) {
+        if (asd != null) {
+            asd.dispose();
+            enabledButton(0);
+        } else {
+            dsa.dispose();
+            enabledButton(1);
+        }
+        JOptionPane.showMessageDialog(null, errorMsg);
+        aksi = 0;
+    }
 
     protected void loadDataMember(String cari) {
-        
         if (connection != null) {
             try {
                 Statement st = connection.createStatement();
-                String query = "SELECT * FROM member WHERE nama_member LIKE '%"+cari+"%'";
+                String query = "SELECT * FROM member WHERE nama_member LIKE '%" + cari + "%'";
                 ResultSet rs = st.executeQuery(query);
                 tableModel.setRowCount(0);
                 while (rs.next()) {
@@ -214,10 +228,11 @@ public class Form_Member extends javax.swing.JPanel {
     }//GEN-LAST:event_searchActionPerformed
 
     private void button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button1ActionPerformed
-        tambahMember tmember =  new tambahMember(this);
+        tambahMember tmember = new tambahMember(this);
         tmember.setVisible(true);
         tmember.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         disabledButton();
+        aksi = 1;
     }//GEN-LAST:event_button1ActionPerformed
 
     private void tbl_memberMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_memberMouseClicked
@@ -225,8 +240,10 @@ public class Form_Member extends javax.swing.JPanel {
 
         if (selectedRow != -1 && selectedRow < tbl_member.getRowCount()) {
             kodeTerpilih = (String) tableModel.getValueAt(selectedRow, 0);
-            editBtn.setEnabled(true);
-            hapusBtn.setEnabled(true);
+            if (aksi == 0) {
+                editBtn.setEnabled(true);
+                hapusBtn.setEnabled(true);
+            }
         }
     }//GEN-LAST:event_tbl_memberMouseClicked
 
@@ -248,10 +265,11 @@ public class Form_Member extends javax.swing.JPanel {
     }//GEN-LAST:event_hapusBtnActionPerformed
 
     private void editBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBtnActionPerformed
-        EditMember emember =  new EditMember(this, kodeTerpilih);
+        EditMember emember = new EditMember(this, kodeTerpilih);
         emember.setVisible(true);
         emember.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         disabledButton();
+        aksi = 1;
     }//GEN-LAST:event_editBtnActionPerformed
 
     private void searchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchKeyReleased
