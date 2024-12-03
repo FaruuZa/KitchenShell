@@ -118,7 +118,6 @@
                           <Group type="103" groupAlignment="1" attributes="0">
                               <Component id="jLabel8" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel7" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel9" alignment="1" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
@@ -127,7 +126,6 @@
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="btn_pesan" min="-2" pref="94" max="-2" attributes="0"/>
                               </Group>
-                              <Component id="txt_kembalian" alignment="1" max="32767" attributes="0"/>
                               <Component id="txt_bayar" alignment="1" max="32767" attributes="0"/>
                               <Component id="txt_totalBayar" alignment="1" max="32767" attributes="0"/>
                           </Group>
@@ -201,12 +199,7 @@
                       <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="txt_bayar" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="jLabel9" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="txt_kembalian" alignment="3" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="53" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="btn_hapus" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="btn_pesan" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -428,22 +421,6 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txt_bayarActionPerformed"/>
           </Events>
-        </Component>
-        <Component class="javax.swing.JLabel" name="jLabel9">
-          <Properties>
-            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Segoe UI" size="18" style="1"/>
-            </Property>
-            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="ff" green="ff" red="ff" type="rgb"/>
-            </Property>
-            <Property name="text" type="java.lang.String" value="Kembalian"/>
-          </Properties>
-        </Component>
-        <Component class="javaswingdev.util.TextField" name="txt_kembalian">
-          <Properties>
-            <Property name="enabled" type="boolean" value="false"/>
-          </Properties>
         </Component>
         <Component class="javaswingdev.util.Button" name="btn_hapus">
           <Properties>
