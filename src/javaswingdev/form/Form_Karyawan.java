@@ -19,7 +19,8 @@ public class Form_Karyawan extends javax.swing.JPanel {
     DefaultTableModel tableModel;
     Connection connection = null;
     String kodeTerpilih = "";
-    
+    int aksi = 0;
+
     public Form_Karyawan() {
         getCon();
         String[] judul = {"Nama", "Username"};
@@ -36,18 +37,19 @@ public class Form_Karyawan extends javax.swing.JPanel {
         hapusBtn.setEnabled(false);
     }
     
-    protected void errorPopup(String errorMsg, tambahMenu asd, EditMenu dsa) {
+    protected void popupHandler(String errorMsg, int status, tambahKaryawan asd, EditMenu dsa) {
         if (asd != null) {
-            asd.setVisible(false);
+            asd.dispose();
             addBtn.setEnabled(true);
         } else {
-            dsa.setVisible(false);
-            enabledButton("");
+            dsa.dispose();
+            enabledButton(1);
         }
         JOptionPane.showMessageDialog(null, errorMsg);
+        aksi=0;
     }
     
-    private void getCon(){
+    private void getCon() {
         try {
             connection = DatabaseConfig.getConnection();
         } catch (Exception e) {
@@ -55,12 +57,13 @@ public class Form_Karyawan extends javax.swing.JPanel {
         }
     }
     
-    public void enabledButton(String cc) {
-        if (!cc.equals("add")) {
+    public void enabledButton(int cc) {
+        if (cc == 1) {
             editBtn.setEnabled(true);
             hapusBtn.setEnabled(true);
         }
         addBtn.setEnabled(true);
+
     }
 
     public void disabledButton() {
@@ -120,6 +123,7 @@ public class Form_Karyawan extends javax.swing.JPanel {
 
         tbl_karyawan.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         tbl_karyawan.setModel(tableModel);
+        tbl_karyawan.setRowHeight(40);
         tbl_karyawan.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tbl_karyawanMouseClicked(evt);
@@ -132,6 +136,11 @@ public class Form_Karyawan extends javax.swing.JPanel {
 
         hapusBtn.setText("HAPUS");
         hapusBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        hapusBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                hapusBtnActionPerformed(evt);
+            }
+        });
 
         addBtn.setText("TAMBAH");
         addBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -208,18 +217,26 @@ public class Form_Karyawan extends javax.swing.JPanel {
             kodeTerpilih = (String) tableModel.getValueAt(selectedRow, 0);
             editBtn.setEnabled(true);
             hapusBtn.setEnabled(true);
+            aksi = 1;
         }
     }//GEN-LAST:event_tbl_karyawanMouseClicked
 
-//    private void tbl_karyawanMouseClicked(java.awt.event.MouseEvent evt) {                                      
-//        int selectedRow = tbl_karyawan.getSelectedRow();
-//
-//        if (selectedRow != -1 && selectedRow < tbl_karyawan.getRowCount()) {
-//            kodeTerpilih = (String) tableModel.getValueAt(selectedRow, 0);
-//            editBtn.setEnabled(true);
-//            hapusBtn.setEnabled(true);
-//        }
-//    }        
+    private void hapusBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hapusBtnActionPerformed
+        int konfirm = JOptionPane.showConfirmDialog(null, "Yakin Ingin Menghapus Data tersebut?");
+        if (konfirm == 0) {
+            try {
+                Statement st = connection.createStatement();
+                String query = "DELETE FROM user WHERE nama='" + kodeTerpilih + "'";
+                st.execute(query);
+                kodeTerpilih = "";
+                disabledButton();
+                loadDataKaryawan("");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }//GEN-LAST:event_hapusBtnActionPerformed
+        
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javaswingdev.util.Button addBtn;

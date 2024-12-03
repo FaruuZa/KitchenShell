@@ -4,7 +4,6 @@
  */
 package javaswingdev.form;
 
-import com.mysql.cj.conf.PropertyKey;
 import java.sql.*;
 import config.DatabaseConfig;
 import javaswingdev.util.TextFieldFilter;
@@ -18,39 +17,49 @@ public class tambahKaryawan extends javax.swing.JFrame {
 
     Connection connection = null;
     Form_Karyawan karyawanF = null;
-    
+
     public tambahKaryawan(Form_Karyawan Fkaryawan) {
-        initComponents();
         getCon();
+        initComponents();
         this.karyawanF = Fkaryawan;
         ((AbstractDocument) inputNama.getDocument()).setDocumentFilter(new TextFieldFilter("[a-zA-Z ] *"));
         ((AbstractDocument) inputUsername.getDocument()).setDocumentFilter(new TextFieldFilter("[a-zA-Z ] *"));
         ((AbstractDocument) inputPassword.getDocument()).setDocumentFilter(new TextFieldFilter("[0-9a-zA-Z ] *"));
     }
-
+    
     private void getCon() {
         try {
-            connection = DatabaseConfig.getconnection();
+            connection = DatabaseConfig.getConnection();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
     
+//    private void getCon() {
+//        try {
+//            connection = DatabaseConfig.getconnection();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+
     private void createData() {
         try {
             if (!inputNama.getText().equals("") || !inputUsername.getText().equals("") || !inputPassword.getText().equals("")) {
                 Statement statement = connection.createStatement();
-                String query = "INSERT INTO user VALUES ('"+ inputNama.getText() +"', '"+ inputUsername.getText() +"', '"+ inputPassword.getText() +"')"; 
-                Boolean resultSet = statement.execute(query); 
+                String query = "INSERT INTO user (nama, username, password) VALUES ('" + inputNama.getText() + "', '" + inputUsername.getText() + "', '" + inputPassword.getText() + "')";
+                statement.execute(query);
                 statement.close();
                 karyawanF.loadDataKaryawan("");
-//                karyawanF.errorPopup("Data berhasil dItambahkan", this, null);
+                karyawanF.popupHandler("Data berhasil dItambahkan", 1, this, null);
             } else {
+                throw new Exception("Data tidak boleh kosong");
             }
         } catch (Exception e) {
+            karyawanF.popupHandler(e.getMessage(), 0, this, null);
         }
     }
-   
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -72,6 +81,8 @@ public class tambahKaryawan extends javax.swing.JFrame {
         btnSimpan = new javaswingdev.util.Button();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setUndecorated(true);
+        setResizable(false);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 30)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
@@ -172,12 +183,14 @@ public class tambahKaryawan extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatalActionPerformed
         this.setVisible(false);
-        karyawanF.enabledButton("add");
-            }//GEN-LAST:event_btnBatalActionPerformed
+        karyawanF.enabledButton(0);
+        karyawanF.aksi=0;
+         }//GEN-LAST:event_btnBatalActionPerformed
 
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
         createData();
