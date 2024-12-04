@@ -15,9 +15,7 @@ import javax.swing.text.AbstractDocument;
 public class tambahMenu extends javax.swing.JFrame {
 
     Connection connection = null;
-    Date date = new Date();
     Form_Menu menuF = null;
-    private static final SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public tambahMenu(Form_Menu Fmenu) {
         initComponents();
@@ -64,7 +62,7 @@ public class tambahMenu extends javax.swing.JFrame {
     private void createData() {
         if (connection != null) {
             try {
-                if (!inputMenu.getText().equals("") || !inputHarga.getText().equals("") || !inputJumlah.getText().equals("")) {
+                if (!inputMenu.getText().equals("") && !inputHarga.getText().equals("") && !inputJumlah.getText().equals("")) {
                     Statement statement = connection.createStatement();
                     String query = "INSERT INTO menu VALUES ('" + generateCode() + "', '" + inputMenu.getText() + "', '" + inputJumlah.getText() + "', '" + inputHarga.getText() + "')";
                     statement.execute(query);
@@ -221,6 +219,7 @@ public class tambahMenu extends javax.swing.JFrame {
     private void button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button1ActionPerformed
         this.dispose();
         menuF.enabledButton(1);
+        menuF.aksi=0;
     }//GEN-LAST:event_button1ActionPerformed
 
     private void btn_simpanActionPerformed1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_simpanActionPerformed1

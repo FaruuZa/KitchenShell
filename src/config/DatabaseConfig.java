@@ -19,5 +19,9 @@ public class DatabaseConfig {
         }
         return connection;
     }
+
+    public static Connection getconnection() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
             
 }

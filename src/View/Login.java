@@ -4,6 +4,7 @@ package View;
  *
  * @author Faza
  */
+import com.formdev.flatlaf.FlatLightLaf;
 import java.sql.*;
 import javaswingdev.main.Main;
 import config.DatabaseConfig;
@@ -11,6 +12,8 @@ import javaswingdev.util.TextFieldFilter;
 import javax.swing.JOptionPane;
 import javax.swing.text.AbstractDocument;
 import config.Session;
+import raven.alerts.MessageAlerts;
+import raven.popup.GlassPanePopup;
 //import raven.alerts.MessageAlerts;
 
 public class Login extends javax.swing.JFrame {
@@ -21,6 +24,8 @@ public class Login extends javax.swing.JFrame {
     Connection connection = null;
 
     public Login() {
+        GlassPanePopup.install(this);
+        FlatLightLaf.setup();
         initComponents();
         getCon();
         ((AbstractDocument) userInput.getDocument()).setDocumentFilter(new TextFieldFilter("[0-9A-Za-z]*"));
@@ -202,14 +207,15 @@ public class Login extends javax.swing.JFrame {
                         Session.setKode(hasil.getString("level"));
                         JOptionPane.showMessageDialog(null, "Masuk Karyawan!");
                     }
-                }while (hasil.next());
-            }else{
+                } while (hasil.next());
+            } else {
                 throw new Exception("Username atau password salah");
             }
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            JOptionPane.showMessageDialog(null, e.getMessage());
+//            System.out.println(e.getMessage());
+            MessageAlerts.getInstance().showMessage("ERROR", e.getMessage(), MessageAlerts.MessageType.ERROR);
+//            JOptionPane.showMessageDialog(null, e.getMessage());
         }
     }//GEN-LAST:event_LoginBtnActionPerformed
 

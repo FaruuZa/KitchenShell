@@ -63,7 +63,7 @@ public class EditMenu extends javax.swing.JFrame {
     public void editData() {
         if (connection != null) {
             try {
-                if (!namaInput.equals("") || !jumlahInput.equals("") || !hargaInput.equals("")) {
+                if (!namaInput.equals("") && !jumlahInput.equals("") && !hargaInput.equals("")) {
                     Statement statement = connection.createStatement();
                     String query = "UPDATE `Menu` SET `nama_menu` = '" + namaInput.getText() + "', `stok_menu` = '" + jumlahInput.getText() + "', `harga` = '" + hargaInput.getText() + "' WHERE `menu`.`kode_menu` = '" + kodeMenu + "';";
                     statement.execute(query);
