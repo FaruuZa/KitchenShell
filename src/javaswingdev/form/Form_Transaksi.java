@@ -1,6 +1,5 @@
 package javaswingdev.form;
 
-import com.mysql.cj.jdbc.PreparedStatementWrapper;
 import java.sql.*;
 import config.DatabaseConfig;
 import config.Session;
@@ -9,9 +8,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javaswingdev.util.TextFieldFilter;
-import javax.swing.JOptionPane;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.AbstractDocument;
 import raven.alerts.MessageAlerts;
@@ -46,9 +42,11 @@ public class Form_Transaksi extends javax.swing.JPanel {
         };
         tbl_menu.setModel(tableModel);
         tbl_pesanan.setModel(selectedTableMenu);
+        cbox_member.addItem("Pilih Member");
+        cbox_member.setSelectedIndex(0);
+
         loadDataMenu();
         loadDataMember();
-//        tes.setText(Session.getKode());
     }
 
     private void loadDataMenu() {
@@ -347,6 +345,18 @@ public class Form_Transaksi extends javax.swing.JPanel {
             tbl_pesanan.getColumnModel().getColumn(2).setPreferredWidth(30);
         }
 
+        cbox_member.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                cbox_memberMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                cbox_memberMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                cbox_memberMouseExited(evt);
+            }
+        });
+
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
         jLabel5.setText("Member");
@@ -585,6 +595,7 @@ public class Form_Transaksi extends javax.swing.JPanel {
 
     private void btn_pesanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_pesanActionPerformed
         String kodeTransaksi, idAdmin, namaPelanggan;
+        int token;
         String[] kodeMember;
         List<String> kodeMenuList = new ArrayList<>();
         List<Integer> jumlahList = new ArrayList<>();
@@ -592,29 +603,37 @@ public class Form_Transaksi extends javax.swing.JPanel {
         kodeTransaksi = generateKodeTransaksi();
         idAdmin = Session.getKode();
         kodeMember = cbox_member.getSelectedItem().toString().split("\\|");
-
+        token = totalBayar * (20 / 100);
         namaPelanggan = txt_namaPelanggan.getText();
         for (int i = 0; i < tbl_pesanan.getRowCount(); i++) {
             kodeMenuList.add((String) tbl_pesanan.getValueAt(i, 0));
             jumlahList.add((Integer) tbl_pesanan.getValueAt(i, 2));
         }
-
+        System.out.println(token);
         String[] kodeMenu = kodeMenuList.toArray(new String[0]);
         int[] jumlah = jumlahList.stream().mapToInt(Integer::intValue).toArray();
         try {
-            if (txt_bayar.getText().equals("")) {
-                MessageAlerts.getInstance().showMessage("Gagal!", "Pastikan mengisi nominal pembayaran", MessageAlerts.MessageType.DEFAULT);
-            } else {
-                if (Integer.parseInt(txt_bayar.getText()) <= totalBayar) {
-//                    prosesTransaksi(kodeTransaksi, kodeMember[0], namaPelanggan, kodeMenu, idAdmin, jumlah);
-                    selectedTableMenu.setRowCount(0);
-                    txt_kodeMenu.setText("");
-                    txt_namaMenu.setText("");
-                    txt_harga.setText("");
-                    txt_jumlah.setText("");
-                    loadDataMenu();
-                    MessageAlerts.getInstance().showMessage("Transaksi berhasil!", "", MessageAlerts.MessageType.SUCCESS);
+            if (tbl_pesanan.getRowCount() != 0) {
+                if (txt_bayar.getText().equals("")) {
+                    MessageAlerts.getInstance().showMessage("Gagal!", "Pastikan mengisi nominal pembayaran", MessageAlerts.MessageType.DEFAULT);
+                } else {
+                    System.out.println(totalBayar);
+                    System.out.println(Integer.parseInt(txt_bayar.getText()));
+                    if (Integer.parseInt(txt_bayar.getText()) >= totalBayar) {
+//                        prosesTransaksi(kodeTransaksi, kodeMember[0], namaPelanggan, kodeMenu, idAdmin, jumlah);
+                        selectedTableMenu.setRowCount(0);
+                        txt_kodeMenu.setText("");
+                        txt_namaMenu.setText("");
+                        txt_harga.setText("");
+                        txt_jumlah.setText("");
+                        loadDataMenu();
+                        MessageAlerts.getInstance().showMessage("Transaksi berhasil!", "", MessageAlerts.MessageType.SUCCESS);
+                    } else {
+                        MessageAlerts.getInstance().showMessage("Gagal!", "Pastikan nominal bayar mencukupi", MessageAlerts.MessageType.DEFAULT);
+                    }
                 }
+            }else{
+                MessageAlerts.getInstance().showMessage("Pesan menu terlebih dahulu!", "", MessageAlerts.MessageType.ERROR);
             }
         } catch (Exception ex) {
             MessageAlerts.getInstance().showMessage("Transaksi gagal!", "", MessageAlerts.MessageType.ERROR);
@@ -646,6 +665,24 @@ public class Form_Transaksi extends javax.swing.JPanel {
         txt_harga.setText("");
         txt_jumlah.setText("");
     }//GEN-LAST:event_btn_clearActionPerformed
+
+    private void cbox_memberMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cbox_memberMouseClicked
+
+    }//GEN-LAST:event_cbox_memberMouseClicked
+
+    private void cbox_memberMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cbox_memberMouseExited
+
+    }//GEN-LAST:event_cbox_memberMouseExited
+
+    private void cbox_memberMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cbox_memberMouseEntered
+        int cmbox = cbox_member.getSelectedIndex();
+//        System.out.println(cmbox);
+        if (cmbox != 0) {
+            txt_namaPelanggan.setEnabled(false);
+        } else {
+            txt_namaPelanggan.setEnabled(true);
+        }
+    }//GEN-LAST:event_cbox_memberMouseEntered
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
