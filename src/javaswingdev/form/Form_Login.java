@@ -12,6 +12,7 @@ public class Form_Login extends javax.swing.JPanel {
 
     Connection connection = null;
     Main mainf = null;
+
     public Form_Login(Main main) {
         initComponents();
         getCon();
@@ -26,6 +27,41 @@ public class Form_Login extends javax.swing.JPanel {
             connection = DatabaseConfig.getConnection();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public void cobaLogin() {
+        try {
+            String usn = userInput.getText();
+            String pass = passInput.getText();
+            if (usn.equals("")) {
+                throw new Exception("Username tidak boleh kosong!");
+
+            } else if (pass.equals("")) {
+                throw new Exception("Password tidak boleh kosong!");
+
+            }
+            String query = "SELECT * FROM user WHERE username = ? AND password = ? LIMIT 1";
+            try (PreparedStatement ps = connection.prepareStatement(query)) {
+                ps.setString(1, usn);
+                ps.setString(2, pass);
+                ResultSet hasil = ps.executeQuery();
+                if (hasil.next()) {
+                    do {
+                        Session.setKode(hasil.getString("id"));
+                        Session.setRole(hasil.getInt("level"));
+//                        System.out.println(Session.getRole());
+                        mainf.init();
+                    } while (hasil.next());
+                } else {
+                    throw new Exception("Username atau password salah");
+                }
+            }
+
+        } catch (Exception e) {
+            //            System.out.println(e.getMessage());
+            MessageAlerts.getInstance().showMessage("ERROR", e.getMessage(), MessageAlerts.MessageType.ERROR);
+            //            JOptionPane.showMessageDialog(null, e.getMessage());
         }
     }
 
@@ -44,6 +80,11 @@ public class Form_Login extends javax.swing.JPanel {
         setOpaque(false);
 
         passInput.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        passInput.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                passInputKeyPressed(evt);
+            }
+        });
 
         userInput.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         userInput.addActionListener(new java.awt.event.ActionListener() {
@@ -110,7 +151,7 @@ public class Form_Login extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGap(51, 51, 51)
                 .addComponent(jLabel4)
-                .addGap(47, 47, 47)
+                .addGap(60, 60, 60)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(userInput, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -122,7 +163,7 @@ public class Form_Login extends javax.swing.JPanel {
                 .addComponent(show)
                 .addGap(38, 38, 38)
                 .addComponent(LoginBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(107, Short.MAX_VALUE))
+                .addContainerGap(94, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -131,38 +172,7 @@ public class Form_Login extends javax.swing.JPanel {
     }//GEN-LAST:event_userInputActionPerformed
 
     private void LoginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LoginBtnActionPerformed
-        try {
-            String usn = userInput.getText();
-            String pass = passInput.getText();
-            if (usn.equals("")) {
-                throw new Exception("Username tidak boleh kosong!");
-
-            } else if (pass.equals("")) {
-                throw new Exception("Password tidak boleh kosong!");
-
-            }
-            String query = "SELECT * FROM user WHERE username = ? AND password = ? LIMIT 1";
-            try (PreparedStatement ps = connection.prepareStatement(query)) {
-                ps.setString(1, usn);
-                ps.setString(2, pass);
-                ResultSet hasil = ps.executeQuery();
-                if (hasil.next()) {
-                    do {
-                        Session.setKode(hasil.getString("id"));
-                        Session.setRole(hasil.getInt("level"));
-//                        System.out.println(Session.getRole());
-                        mainf.init();
-                    } while (hasil.next());
-                } else {
-                    throw new Exception("Username atau password salah");
-                }
-            }
-
-        } catch (Exception e) {
-            //            System.out.println(e.getMessage());
-            MessageAlerts.getInstance().showMessage("ERROR", e.getMessage(), MessageAlerts.MessageType.ERROR);
-            //            JOptionPane.showMessageDialog(null, e.getMessage());
-        }
+        cobaLogin();
     }//GEN-LAST:event_LoginBtnActionPerformed
 
     private void showActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showActionPerformed
@@ -172,6 +182,13 @@ public class Form_Login extends javax.swing.JPanel {
             passInput.setEchoChar('*');
         }
     }//GEN-LAST:event_showActionPerformed
+
+    private void passInputKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_passInputKeyPressed
+        if (evt.getKeyCode() == 10) {
+            cobaLogin();
+        }
+//        System.out.println(evt.getKeyCode() + " " + evt.getKeyChar() );
+    }//GEN-LAST:event_passInputKeyPressed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javaswingdev.util.Button LoginBtn;

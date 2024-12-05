@@ -5,7 +5,7 @@ import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.Component;
 import javaswingdev.form.Form_Dashboard;
 import javaswingdev.form.Form_Empty;
-import javaswingdev.form.Form_Karyawan;
+import javaswingdev.form.Form_Akun;
 import javaswingdev.form.Form_Member;
 import javaswingdev.form.Form_Menu;
 import javaswingdev.form.Form_RiwayatTransaksi;
@@ -23,25 +23,15 @@ public class Main extends javax.swing.JFrame {
     private static Main main;
 
     public Main() {
-//        if (!Session.getKode().equals("")) {
-        if (true) {
-            initComponents();
-            GlassPanePopup.install(this);
-            FlatLightLaf.setup();
-            init();
-            this.setVisible(true);
-        } else {
-            new Login().setVisible(true);
-            this.dispose();
-        }
-
+        initComponents();
+        GlassPanePopup.install(this);
+        FlatLightLaf.setup();
+        init();
     }
 
     public void init() {
         main = this;
-//        menu.removeAll();
         titleBar.initJFram(this);
-//        menu.init();
         if (Session.getRole() == 1) {
             button1.setVisible(true);
             menu.addEvent(new EventMenuSelected() {
@@ -56,7 +46,7 @@ public class Main extends javax.swing.JFrame {
                     } else if (index == 3 && indexSubMenu == 0) {
                         showForm(new Form_Member());
                     } else if (index == 4 && indexSubMenu == 0) {
-                        showForm(new Form_Karyawan());
+                        showForm(new Form_Akun());
                     } else if (index == 5 && indexSubMenu == 0) {
                         showForm(new Form_RiwayatTransaksi());
                     } else {
@@ -246,7 +236,7 @@ public class Main extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
 //                if (!Session.getKode().equals("")) {
-                new Main();
+                new Main().setVisible(true);
             }
         });
     }
