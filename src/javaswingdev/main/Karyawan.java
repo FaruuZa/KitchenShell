@@ -13,6 +13,7 @@ import javaswingdev.form.Form_Transaksi;
 import javaswingdev.menu.EventMenuSelected;
 import raven.popup.GlassPanePopup;
 import config.Session;
+import javax.swing.JOptionPane;
 
 public class Karyawan extends javax.swing.JFrame {
     
@@ -25,6 +26,8 @@ public class Karyawan extends javax.swing.JFrame {
             GlassPanePopup.install(this);
             FlatLightLaf.setup();
             init();
+            jLabel2.setText("karyawan");
+            this.setVisible(true);
         } else {
             this.dispose();
             new Login().setVisible(true);
@@ -41,21 +44,10 @@ public class Karyawan extends javax.swing.JFrame {
                 if (index == 0 && indexSubMenu == 0) {
                     showForm(new Form_Dashboard());
                 } else if (index == 1 && indexSubMenu == 0) {
-                    showForm(new Form_Menu());
-                } else if (index == 2 && indexSubMenu == 0) {
-                    showForm(new Form_Transaksi());
-                } else if (index == 3 && indexSubMenu == 0) {
-                    showForm(new Form_Member());
-                } else if (index == 4 && indexSubMenu == 0) {
-                    showForm(new Form_Karyawan());
-                } else if (index == 5 && indexSubMenu == 0) {
-                    showForm(new Form_RiwayatTransaksi());
-                } else {
-                    showForm(new Form_Empty(index + " " + indexSubMenu));
-                }
+                    showForm(new Form_Transaksi());}
             }
         });
-        menu.setSelectedIndex(0, 0);
+        menu.setSelectedIndex(2, 0);
     }
     
     public void showForm(Component com) {
@@ -174,7 +166,12 @@ public class Karyawan extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button1ActionPerformed
-        // TODO add your handling code here:
+        int konfirm = JOptionPane.showConfirmDialog(null, "Apakah anda yakin ingin logout?");
+        if (konfirm == 0) {
+            Session.logout();
+            this.dispose();
+            new Login().setVisible(true);
+        }
     }//GEN-LAST:event_button1ActionPerformed
 
     public static void main(String args[]) {
@@ -205,7 +202,7 @@ public class Karyawan extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Karyawan().setVisible(true);
+                new Karyawan();
             }
         });
     }

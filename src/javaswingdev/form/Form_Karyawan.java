@@ -42,7 +42,7 @@ public class Form_Karyawan extends javax.swing.JPanel {
         if (asd != null) {
             asd.dispose();
             addBtn.setEnabled(true);
-        } else {
+        } else if(dsa != null){
             dsa.dispose();
             enabledButton(1);
         }
@@ -80,9 +80,11 @@ public class Form_Karyawan extends javax.swing.JPanel {
     protected void loadDataKaryawan(String cari) {
         if (connection != null) {
             try {
-                Statement st = connection.createStatement();
-                String query = "SELECT * FROM user WHERE level = 0 AND nama LIKE '%" + cari + "%'";
-                ResultSet rs = st.executeQuery(query);
+                String query = "SELECT * FROM user WHERE level = 0 AND nama LIKE ?";
+                PreparedStatement st = connection.prepareStatement(query);
+                String cariq = "%"+cari+"%";
+                st.setString(1, cariq);
+                ResultSet rs = st.executeQuery();
                 tableModel.setRowCount(0);
                 while (rs.next()) {
                     String[] data = {rs.getString(2), rs.getString(3)};
@@ -157,6 +159,12 @@ public class Form_Karyawan extends javax.swing.JPanel {
         addBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addBtnActionPerformed(evt);
+            }
+        });
+
+        textFieldSearchOption1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                textFieldSearchOption1KeyTyped(evt);
             }
         });
 
@@ -254,6 +262,10 @@ public class Form_Karyawan extends javax.swing.JPanel {
         ekaryawan.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         aksi = 1;
     }//GEN-LAST:event_editBtnActionPerformed
+
+    private void textFieldSearchOption1KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textFieldSearchOption1KeyTyped
+        loadDataKaryawan(textFieldSearchOption1.getText());
+    }//GEN-LAST:event_textFieldSearchOption1KeyTyped
         
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

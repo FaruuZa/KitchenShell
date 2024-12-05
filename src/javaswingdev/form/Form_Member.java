@@ -83,16 +83,20 @@ public class Form_Member extends javax.swing.JPanel {
     protected void loadDataMember(String cari) {
         if (connection != null) {
             try {
-                Statement st = connection.createStatement();
-                String query = "SELECT * FROM member WHERE nama_member LIKE '%" + cari + "%'";
-                ResultSet rs = st.executeQuery(query);
+                String qcari = "%"+cari+"%";
+//                Statement st = connection.createStatement();
+                String query = "SELECT * FROM member WHERE nama_member LIKE ?";
+                PreparedStatement ps = connection.prepareStatement(query);
+                ps.setString(1, qcari);
+                ResultSet rs = ps.executeQuery();
+                
                 tableModel.setRowCount(0);
                 while (rs.next()) {
                     String[] data = {rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(5)};
                     tableModel.addRow(data);
                 }
                 rs.close();
-                st.close();
+                ps.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -256,14 +260,15 @@ public class Form_Member extends javax.swing.JPanel {
         int konfirm = JOptionPane.showConfirmDialog(null, "Yakin Ingin Menghapus Data tersebut?");
         if (konfirm == 0) {
             try {
-                Statement st = connection.createStatement();
-                String query = "DELETE FROM member WHERE kode_member='" + kodeTerpilih + "'";
-                st.execute(query);
+                String query = "DELETE FROM member WHERE kode_member= ? ";
+                PreparedStatement st = connection.prepareStatement(query);
+                st.setString(1, kodeTerpilih);
+                st.execute();
                 kodeTerpilih = "";
                 disabledButton();
                 enabledButton(0);
                 loadDataMember("");
-                popupHandler("data berhasil ditambah!", 1, null, null);
+                popupHandler("data berhasil dihapus!", 1, null, null);
             } catch (Exception e) {
                 e.printStackTrace();
             }

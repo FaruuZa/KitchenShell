@@ -4,7 +4,7 @@ package config;
         
 public class Session {
     public static String kodeMember = "";
-    public static int role = 0;
+    public static int role = -1;
     
     public static String getKode(){
         return kodeMember;
@@ -19,4 +19,8 @@ public class Session {
         Session.role= roles;
     }
     
+    public static void logout(){
+        Session.kodeMember = "";
+        Session.role = -1;
+    }
 }

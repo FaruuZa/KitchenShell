@@ -175,6 +175,9 @@
           </Events>
         </Component>
         <Component class="javaswingdev.util.TextFieldSearchOption" name="textFieldSearchOption1">
+          <Events>
+            <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="textFieldSearchOption1KeyTyped"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>

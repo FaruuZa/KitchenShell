@@ -13,62 +13,98 @@ import javaswingdev.form.Form_Transaksi;
 import javaswingdev.menu.EventMenuSelected;
 import raven.popup.GlassPanePopup;
 import config.Session;
+import javaswingdev.GoogleMaterialDesignIcon;
+import javaswingdev.form.Form_Login;
+import javaswingdev.menu.ModelMenuItem;
+import javax.swing.JOptionPane;
 
 public class Main extends javax.swing.JFrame {
-    
+
     private static Main main;
-    
+
     public Main() {
-        if (!Session.getKode().equals("")) {
-//        if (true) {
+//        if (!Session.getKode().equals("")) {
+        if (true) {
             initComponents();
             GlassPanePopup.install(this);
             FlatLightLaf.setup();
             init();
+            this.setVisible(true);
         } else {
-            this.dispose();
             new Login().setVisible(true);
+            this.dispose();
         }
-        
+
     }
-    
-    private void init() {
+
+    public void init() {
         main = this;
+//        menu.removeAll();
         titleBar.initJFram(this);
-        menu.addEvent(new EventMenuSelected() {
-            @Override
-            public void menuSelected(int index, int indexSubMenu) {
-                if (index == 0 && indexSubMenu == 0) {
-                    showForm(new Form_Dashboard());
-                } else if (index == 1 && indexSubMenu == 0) {
-                    showForm(new Form_Menu());
-                } else if (index == 2 && indexSubMenu == 0) {
-                    showForm(new Form_Transaksi());
-                } else if (index == 3 && indexSubMenu == 0) {
-                    showForm(new Form_Member());
-                } else if (index == 4 && indexSubMenu == 0) {
-                    showForm(new Form_Karyawan());
-                } else if (index == 5 && indexSubMenu == 0) {
-                    showForm(new Form_RiwayatTransaksi());
-                } else {
-                    showForm(new Form_Empty(index + " " + indexSubMenu));
+//        menu.init();
+        if (Session.getRole() == 1) {
+            button1.setVisible(true);
+            menu.addEvent(new EventMenuSelected() {
+                @Override
+                public void menuSelected(int index, int indexSubMenu) {
+                    if (index == 0 && indexSubMenu == 0) {
+                        showForm(new Form_Dashboard());
+                    } else if (index == 1 && indexSubMenu == 0) {
+                        showForm(new Form_Menu());
+                    } else if (index == 2 && indexSubMenu == 0) {
+                        showForm(new Form_Transaksi());
+                    } else if (index == 3 && indexSubMenu == 0) {
+                        showForm(new Form_Member());
+                    } else if (index == 4 && indexSubMenu == 0) {
+                        showForm(new Form_Karyawan());
+                    } else if (index == 5 && indexSubMenu == 0) {
+                        showForm(new Form_RiwayatTransaksi());
+                    } else {
+                        showForm(new Form_Empty(index + " " + indexSubMenu));
+                    }
                 }
-            }
-        });
-        menu.setSelectedIndex(0, 0);
+            });
+        } else if (Session.getRole() == 0) {
+            button1.setVisible(true);
+            menu.addEvent(new EventMenuSelected() {
+                @Override
+                public void menuSelected(int index, int indexSubMenu) {
+                    if (index == 0 && indexSubMenu == 0) {
+                        showForm(new Form_Dashboard());
+                    } else if (index == 1 && indexSubMenu == 0) {
+                        showForm(new Form_Transaksi());
+                    }
+                }
+            });
+        } else {
+            button1.setVisible(false);
+            menu.addEvent(new EventMenuSelected() {
+                @Override
+                public void menuSelected(int index, int indexSubMenu) {
+                    if (index == 0 && indexSubMenu == 0) {
+                        showForm(new Form_Login(getMain()));
+                    }
+                }
+            });
+
+        }
+        menu.tmbahMenu();
+        menu.repaint();
+        menu.revalidate();
+
     }
-    
+
     public void showForm(Component com) {
         body.removeAll();
         body.add(com);
         body.repaint();
         body.revalidate();
     }
-    
+
     public static Main getMain() {
         return main;
     }
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -87,6 +123,8 @@ public class Main extends javax.swing.JFrame {
         background.setBackground(new java.awt.Color(115, 200, 120));
 
         panelMenu.setBackground(new java.awt.Color(255, 255, 255));
+
+        menu.setForeground(new java.awt.Color(255, 0, 0));
 
         titleBar.setBackground(new java.awt.Color(204, 204, 204));
 
@@ -140,8 +178,7 @@ public class Main extends javax.swing.JFrame {
                     .addGroup(backgroundLayout.createSequentialGroup()
                         .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 1060, Short.MAX_VALUE)
                         .addGap(0, 0, 0)
-                        .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, 0)))
+                        .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         backgroundLayout.setVerticalGroup(
@@ -174,7 +211,11 @@ public class Main extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button1ActionPerformed
-        // TODO add your handling code here:
+        int konfirm = JOptionPane.showConfirmDialog(null, "Apakah anda yakin ingin logout?");
+        if (konfirm == 0) {
+            Session.logout();
+            init();
+        }
     }//GEN-LAST:event_button1ActionPerformed
 
     public static void main(String args[]) {
@@ -204,6 +245,7 @@ public class Main extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
+//                if (!Session.getKode().equals("")) {
                 new Main();
             }
         });

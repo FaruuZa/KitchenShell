@@ -38,13 +38,16 @@ public class tambahKaryawan extends javax.swing.JFrame {
 
     private void createData() {
         try {
-            if (!inputNama.getText().equals("") || !inputUsername.getText().equals("") || !inputPassword.getText().equals("")) {
+            if (!inputNama.getText().equals("") && !inputUsername.getText().equals("") && !inputPassword.getText().equals("")) {
                 Statement statement = connection.createStatement();
-                String query = "INSERT INTO user (nama, username, password) VALUES ('" + inputNama.getText() + "', '" + inputUsername.getText() + "', '" + inputPassword.getText() + "')";
-                statement.execute(query);
-                statement.close();
+                String query = "INSERT INTO user (nama, username, password) VALUES (?, ?, ?)";
+                PreparedStatement ps = connection.prepareStatement(query);
+                ps.setString(1, inputNama.getText());
+                ps.setString(2, inputUsername.getText());
+                ps.setString(3, inputPassword.getText());
+                ps.execute();
                 karyawanF.loadDataKaryawan("");
-                karyawanF.popupHandler("Data berhasil dItambahkan", 1, this, null);
+                karyawanF.popupHandler("Data berhasil ditambahkan", 1, this, null);
             } else {
                 throw new Exception("Data tidak boleh kosong");
             }
@@ -141,7 +144,7 @@ public class tambahKaryawan extends javax.swing.JFrame {
         container1Layout.setVerticalGroup(
             container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(container1Layout.createSequentialGroup()
-                .addGap(18, 18, 18)
+                .addGap(10, 10, 10)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
@@ -171,8 +174,8 @@ public class tambahKaryawan extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(container1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(0, 0, 0))
+                .addComponent(container1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 6, Short.MAX_VALUE))
         );
 
         pack();
@@ -180,7 +183,7 @@ public class tambahKaryawan extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatalActionPerformed
-        this.setVisible(false);
+        this.dispose();
         karyawanF.enabledButton(0);
         karyawanF.aksi=0;
          }//GEN-LAST:event_btnBatalActionPerformed
