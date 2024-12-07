@@ -124,6 +124,8 @@ public class Form_Menu extends javax.swing.JPanel {
             }
         });
 
+        textFieldSearchOption1.setColorOverlay1(new java.awt.Color(255, 255, 55));
+        textFieldSearchOption1.setColorOverlay2(new java.awt.Color(0, 220, 0));
         textFieldSearchOption1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 textFieldSearchOption1ActionPerformed(evt);

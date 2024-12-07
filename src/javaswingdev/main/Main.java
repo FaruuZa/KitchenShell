@@ -88,6 +88,10 @@ public class Main extends javax.swing.JFrame {
 
         panelMenu.setBackground(new java.awt.Color(255, 255, 255));
 
+        menu.setBackground(new java.awt.Color(0, 0, 0));
+        menu.setForeground(new java.awt.Color(255, 255, 255));
+        menu.setOpaque(false);
+
         titleBar.setBackground(new java.awt.Color(204, 204, 204));
 
         javax.swing.GroupLayout panelMenuLayout = new javax.swing.GroupLayout(panelMenu);
@@ -140,8 +144,7 @@ public class Main extends javax.swing.JFrame {
                     .addGroup(backgroundLayout.createSequentialGroup()
                         .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 1060, Short.MAX_VALUE)
                         .addGap(0, 0, 0)
-                        .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, 0)))
+                        .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         backgroundLayout.setVerticalGroup(
