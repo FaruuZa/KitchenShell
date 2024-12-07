@@ -12,7 +12,6 @@ import javaswingdev.util.TextFieldFilter;
 import javax.swing.JOptionPane;
 import javax.swing.text.AbstractDocument;
 import config.Session;
-import javaswingdev.main.Karyawan;
 import raven.alerts.MessageAlerts;
 import raven.popup.GlassPanePopup;
 //import raven.alerts.MessageAlerts;
