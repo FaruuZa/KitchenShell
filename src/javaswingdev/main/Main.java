@@ -15,6 +15,7 @@ import raven.popup.GlassPanePopup;
 import config.Session;
 import javaswingdev.GoogleMaterialDesignIcon;
 import javaswingdev.form.Form_Login;
+import javaswingdev.form.TestSub;
 import javaswingdev.menu.ModelMenuItem;
 import javax.swing.JOptionPane;
 
@@ -43,8 +44,10 @@ public class Main extends javax.swing.JFrame {
                         showForm(new Form_Menu());
                     } else if (index == 2 && indexSubMenu == 0) {
                         showForm(new Form_Transaksi());
-                    } else if (index == 3 && indexSubMenu == 0) {
+                    } else if (index == 3 && indexSubMenu == 1) {
                         showForm(new Form_Member());
+                    } else if (index == 3 && indexSubMenu == 2) {
+                        showForm(new TestSub());
                     } else if (index == 4 && indexSubMenu == 0) {
                         showForm(new Form_Akun());
                     } else if (index == 5 && indexSubMenu == 0) {

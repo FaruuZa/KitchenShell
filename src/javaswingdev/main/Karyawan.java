@@ -5,7 +5,7 @@ import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.Component;
 import javaswingdev.form.Form_Dashboard;
 import javaswingdev.form.Form_Empty;
-import javaswingdev.form.Form_Karyawan;
+//import javaswingdev.form.Form_Karyawan;
 import javaswingdev.form.Form_Member;
 import javaswingdev.form.Form_Menu;
 import javaswingdev.form.Form_RiwayatTransaksi;
@@ -47,7 +47,7 @@ public class Karyawan extends javax.swing.JFrame {
                 } else if (index == 3 && indexSubMenu == 0) {
                     showForm(new Form_Member());
                 } else if (index == 4 && indexSubMenu == 0) {
-                    showForm(new Form_Karyawan());
+//                    showForm(new Form_Karyawan());
                 } else if (index == 5 && indexSubMenu == 0) {
                     showForm(new Form_RiwayatTransaksi());
                 } else {

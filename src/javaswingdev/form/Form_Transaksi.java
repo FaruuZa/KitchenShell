@@ -3,11 +3,13 @@ package javaswingdev.form;
 import java.sql.*;
 import config.DatabaseConfig;
 import config.Session;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javaswingdev.util.TextFieldFilter;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.AbstractDocument;
 import raven.alerts.MessageAlerts;
@@ -20,11 +22,11 @@ public class Form_Transaksi extends javax.swing.JPanel {
 
     DefaultTableModel tableModel, selectedTableMenu;
     Connection connection = DatabaseConfig.getConnection();
-    private double totalBayar, token;
+    private double totalBayar;
 
     public Form_Transaksi() {
         initComponents();
-        String[] titleTblMenu = {"Kode menu ", "Nama Menu", "Stok", "Harga"};
+        String[] titleTblMenu = {"Kode menu ", "Nama Menu", "Porsi", "Harga"};
         String[] titleTblPesanan = {"Kode menu ", "Nama Menu", "Jumlah", "Harga", "Total Harga"};
         ((AbstractDocument) txt_jumlah.getDocument()).setDocumentFilter(new TextFieldFilter("[0-9]*"));
         ((AbstractDocument) txt_bayar.getDocument()).setDocumentFilter(new TextFieldFilter("[0-9]*"));
@@ -33,6 +35,8 @@ public class Form_Transaksi extends javax.swing.JPanel {
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
+            
+            
         };
         selectedTableMenu = new DefaultTableModel(titleTblPesanan, 0) {
             @Override
@@ -53,11 +57,14 @@ public class Form_Transaksi extends javax.swing.JPanel {
         if (connection != null) {
             try {
                 Statement st = connection.createStatement();
-                String query = "SELECT * FROM menu WHERE stok_menu != 0";
+                String query = "SELECT * FROM jumlah_porsi_menu WHERE jumlah_porsi != 0";
                 ResultSet rs = st.executeQuery(query);
                 tableModel.setRowCount(0);
+                DecimalFormat df = new DecimalFormat("#");
+
                 while (rs.next()) {
-                    String[] data = {rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4)};
+                    String formatNumber = df.format(rs.getDouble(3));
+                    String[] data = {rs.getString(1), rs.getString(2), formatNumber, rs.getString(4)};
                     tableModel.addRow(data);
                 }
                 st.close();
@@ -92,7 +99,7 @@ public class Form_Transaksi extends javax.swing.JPanel {
         if (connection != null) {
             try {
                 String kode_menu = txt_kodeMenu.getText();
-                String query = "SELECT kode_menu, nama_menu , harga, stok_menu FROM menu WHERE kode_menu = ?";
+                String query = "SELECT * FROM jumlah_porsi_menu WHERE kode_menu = ?";
                 PreparedStatement ps = connection.prepareStatement(query);
                 ps.setString(1, kode_menu);
                 ResultSet rs = ps.executeQuery();
@@ -100,9 +107,9 @@ public class Form_Transaksi extends javax.swing.JPanel {
                     String kodeMenu = rs.getString(1);
                     String namaMenu = rs.getString(2);
                     int jumlah = Integer.parseInt(txt_jumlah.getText());
-                    double harga = Double.parseDouble(rs.getString(3));
+                    double harga = Double.parseDouble(rs.getString(4));
                     double totalHarga = jumlah * harga;
-                    int stok = rs.getInt(4);
+                    int stok = rs.getInt(3);
                     boolean cekStok = true;
                     boolean cekKode = false;
                     if (jumlah < stok) {
@@ -167,19 +174,20 @@ public class Form_Transaksi extends javax.swing.JPanel {
         return kodeTransaksi;
     }
 
-    private static void prosesTransaksi(String kodeTransaksi, String kodeMember, String namaPelanggan, String[] kodeMenu, String idAdmin, int[] jumlah, double bayar, double point) throws SQLException {
+    private static void prosesTransaksi(String kodeTransaksi, String kodeMember, String namaPelanggan, String[] kodeMenu, String idAdmin, int[] jumlah, double bayar, double point, double totalBayar) throws SQLException {
         Connection conn = DatabaseConfig.getConnection();
         if (conn != null) {
             try {
                 conn.setAutoCommit(false);
+
                 //Cek stok
                 for (int i = 0; i < kodeMenu.length; i++) {
-                    String cekStok = "SELECT stok_menu, harga FROM menu WHERE kode_menu = ?";
+                    String cekStok = "SELECT jumlah_porsi, harga_menu FROM jumlah_porsi_menu WHERE kode_menu = ?";
                     try (PreparedStatement cekStokStmt = conn.prepareStatement(cekStok)) {
                         cekStokStmt.setString(1, kodeMenu[i]);
                         try (ResultSet rs = cekStokStmt.executeQuery()) {
                             if (rs.next()) {
-                                int stok = rs.getInt("stok_menu");
+                                int stok = rs.getInt("jumlah_porsi");
                                 if (stok <= jumlah[i]) {
                                     throw new SQLException("Stok tidak mencukupi pada kode menu: " + kodeMenu[i]);
                                 }
@@ -190,13 +198,14 @@ public class Form_Transaksi extends javax.swing.JPanel {
                     }
                 }
                 //Insert transaksi
-                String insertTransaksi = "INSERT INTO transaksi VALUES (?, ?, ?, NOW(), ?, ?)";
+                String insertTransaksi = "INSERT INTO transaksi VALUES (?, ?, ?, NOW(), ?, ?, ?)";
                 try (PreparedStatement transaksiStmt = conn.prepareStatement(insertTransaksi)) {
                     transaksiStmt.setString(1, kodeTransaksi);
                     transaksiStmt.setString(2, idAdmin);
                     transaksiStmt.setString(3, kodeMember);
                     transaksiStmt.setString(4, namaPelanggan);
-                    transaksiStmt.setDouble(5, bayar);
+                    transaksiStmt.setDouble(5, totalBayar);
+                    transaksiStmt.setDouble(6, bayar);
                     transaksiStmt.executeUpdate();
                 }
 
@@ -211,23 +220,30 @@ public class Form_Transaksi extends javax.swing.JPanel {
                         detailTrskStmt.executeUpdate();
                     }
 //                    }
+                    String getKodeBhn = "SELECT kode_bahanbaku, jumlah FROM detail_menu WHERE kode_menu = ?";
+                    try (PreparedStatement getBhnStmt = conn.prepareStatement(getKodeBhn)) {
+                        getBhnStmt.setString(1, kodeMenu[j]);
 
-                    //Update stok pada tabel menu
-                    String updateStokMenu = "UPDATE menu SET stok_menu = stok_menu - ? WHERE kode_menu = ?";
-                    try (PreparedStatement upStokStmt = conn.prepareStatement(updateStokMenu)) {
-                        upStokStmt.setInt(1, jumlah[j]);
-                        upStokStmt.setString(2, kodeMenu[j]);
-                        upStokStmt.executeUpdate();
+                        ResultSet rs = getBhnStmt.executeQuery();
+                        while (rs.next()) {
+                            String kodeBahanBaku = rs.getString(1);
+                            double jumlahBahan = rs.getDouble(2) * jumlah[j];
+                            String updateBahanBaku = "UPDATE bahanbaku SET stok_bahanbaku = stok_bahanbaku - ? WHERE kode_bahanbaku = ?";
+                            try (PreparedStatement updateBahanStmt = conn.prepareStatement(updateBahanBaku)) {
+                                updateBahanStmt.setDouble(1, jumlahBahan);
+                                updateBahanStmt.setString(2, kodeBahanBaku);
+                                updateBahanStmt.executeUpdate();
+                            }
+                        }
                     }
+
                     //Insert point
-                    System.out.println("Kode Member: " + kodeMember); // Log untuk memeriksa kode member 
-                    System.out.println("Point: " + point);
                     String setPoint = "UPDATE member SET point = point + ? WHERE kode_member = ?";
                     try (PreparedStatement pointStmt = conn.prepareStatement(setPoint)) {
                         pointStmt.setDouble(1, point);
                         pointStmt.setString(2, kodeMember);
                         int rowUpdate = pointStmt.executeUpdate();
-                        System.out.println("Row updates point: " + rowUpdate);
+//                        System.out.println("Row updates point: " + rowUpdate);
                         if (rowUpdate == 0) {
                             throw new SQLException("Gagal perbarui data pada member: " + kodeMember);
                         }
@@ -358,6 +374,7 @@ public class Form_Transaksi extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
+        tbl_pesanan.setDragEnabled(true);
         jScrollPane2.setViewportView(tbl_pesanan);
         if (tbl_pesanan.getColumnModel().getColumnCount() > 0) {
             tbl_pesanan.getColumnModel().getColumn(2).setPreferredWidth(30);
@@ -438,6 +455,8 @@ public class Form_Transaksi extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
+        tbl_menu.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        tbl_menu.setDragEnabled(true);
         tbl_menu.getTableHeader().setReorderingAllowed(false);
         tbl_menu.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -642,8 +661,10 @@ public class Form_Transaksi extends javax.swing.JPanel {
         idAdmin = Session.getKode();
         kodeMember = cbox_member.getSelectedItem().toString().split("\\ ");
         bayar = Double.parseDouble(txt_bayar.getText());
-        
+
         point = totalBayar * 0.1;
+        double updatePoint = cbox_point.isSelected() ? 0 : point;
+
         namaPelanggan = txt_namaPelanggan.getText();
         for (int i = 0; i < tbl_pesanan.getRowCount(); i++) {
             kodeMenuList.add((String) tbl_pesanan.getValueAt(i, 0));
@@ -657,7 +678,7 @@ public class Form_Transaksi extends javax.swing.JPanel {
                     MessageAlerts.getInstance().showMessage("Gagal!", "Pastikan mengisi nominal pembayaran", MessageAlerts.MessageType.DEFAULT);
                 } else {
                     if (Double.parseDouble(txt_bayar.getText()) >= totalBayar) {
-                        prosesTransaksi(kodeTransaksi, kodeMember[0], namaPelanggan, kodeMenu, idAdmin, jumlah, bayar, point);
+                        prosesTransaksi(kodeTransaksi, kodeMember[0], namaPelanggan, kodeMenu, idAdmin, jumlah, bayar, updatePoint, totalBayar);
                         selectedTableMenu.setRowCount(0);
                         txt_kodeMenu.setText("");
                         txt_namaMenu.setText("");
@@ -667,7 +688,7 @@ public class Form_Transaksi extends javax.swing.JPanel {
                         loadDataMenu();
                         MessageAlerts.getInstance().showMessage("Transaksi berhasil!", "", MessageAlerts.MessageType.SUCCESS);
                     } else {
-                        MessageAlerts.getInstance().showMessage("Gagal!", "Pastikan nominal bayar mencukupi", MessageAlerts.MessageType.DEFAULT);
+                        MessageAlerts.getInstance().showMessage("Gagal!", "Pastikan nominal pembayaran mencukupi", MessageAlerts.MessageType.DEFAULT);
                     }
                 }
             } else {
@@ -721,23 +742,23 @@ public class Form_Transaksi extends javax.swing.JPanel {
         } else {
             cbox_point.setSelected(false);
             cbox_point.setEnabled(false);
-            txt_namaPelanggan.setEnabled(true);  
+            txt_namaPelanggan.setEnabled(true);
         }
     }//GEN-LAST:event_cbox_memberMouseEntered
 
     private void cbox_pointActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbox_pointActionPerformed
-        double getPoint;   
+        double getPoint;
         String[] kodeMember;
-        
+
         kodeMember = cbox_member.getSelectedItem().toString().split("\\ ");
-        
+
         Double dObj = Double.valueOf(kodeMember[4]);
         getPoint = dObj.doubleValue();
-        if(cbox_point.isSelected()){
+        if (cbox_point.isSelected()) {
             totalBayar -= getPoint;
             txt_totalBayar.setText(String.valueOf(totalBayar));
             cbox_member.setEnabled(false);
-        }else{
+        } else {
             totalBayar += getPoint;
             txt_totalBayar.setText(String.valueOf(totalBayar));
             cbox_member.setEnabled(true);
