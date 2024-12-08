@@ -13,12 +13,12 @@ import javax.swing.text.AbstractDocument;
  *
  * @author rayag
  */
-public class tambahKaryawan extends javax.swing.JFrame {
+public class tambahAkun extends javax.swing.JFrame {
 
     Connection connection = null;
-    Form_Karyawan karyawanF = null;
+    Form_Akun karyawanF = null;
 
-    public tambahKaryawan(Form_Karyawan Fkaryawan) {
+    public tambahAkun(Form_Akun Fkaryawan) {
         getCon();
         initComponents();
         this.karyawanF = Fkaryawan;
@@ -26,7 +26,7 @@ public class tambahKaryawan extends javax.swing.JFrame {
         ((AbstractDocument) inputUsername.getDocument()).setDocumentFilter(new TextFieldFilter("[a-zA-Z ] *"));
         ((AbstractDocument) inputPassword.getDocument()).setDocumentFilter(new TextFieldFilter("[0-9a-zA-Z ] *"));
     }
-    
+
     private void getCon() {
         try {
             connection = DatabaseConfig.getConnection();
@@ -34,17 +34,26 @@ public class tambahKaryawan extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }
-    
 
     private void createData() {
         try {
-            if (!inputNama.getText().equals("") || !inputUsername.getText().equals("") || !inputPassword.getText().equals("")) {
+            int hak = -1;
+            if (rdAd.isSelected()) {
+                hak= 1;
+            }else{
+                hak=0;
+            }
+            if (!inputNama.getText().equals("") && !inputUsername.getText().equals("") && !inputPassword.getText().equals("") && hak != -1) {
                 Statement statement = connection.createStatement();
-                String query = "INSERT INTO user (nama, username, password) VALUES ('" + inputNama.getText() + "', '" + inputUsername.getText() + "', '" + inputPassword.getText() + "')";
-                statement.execute(query);
-                statement.close();
+                String query = "INSERT INTO user (nama, username, password, level) VALUES (?, ?, ?, ?)";
+                PreparedStatement ps = connection.prepareStatement(query);
+                ps.setString(1, inputNama.getText());
+                ps.setString(2, inputUsername.getText());
+                ps.setString(3, inputPassword.getText());
+                ps.setInt(4, hak);
+                ps.execute();
                 karyawanF.loadDataKaryawan("");
-                karyawanF.popupHandler("Data berhasil dItambahkan", 1, this, null);
+                karyawanF.popupHandler("Data berhasil ditambahkan", 1, this, null);
             } else {
                 throw new Exception("Data tidak boleh kosong");
             }
@@ -62,6 +71,7 @@ public class tambahKaryawan extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        rdHak = new javax.swing.ButtonGroup();
         container1 = new javaswingdev.util.Container();
         jLabel1 = new javax.swing.JLabel();
         inputNama = new javaswingdev.util.TextField();
@@ -72,15 +82,19 @@ public class tambahKaryawan extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         btnBatal = new javaswingdev.util.Button();
         btnSimpan = new javaswingdev.util.Button();
+        rdAd = new javax.swing.JRadioButton();
+        rdKar = new javax.swing.JRadioButton();
+        jLabel5 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setAlwaysOnTop(true);
         setUndecorated(true);
         setResizable(false);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 30)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("TAMBAH KARYAWAN");
+        jLabel1.setText("TAMBAH AKUN");
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
@@ -110,38 +124,73 @@ public class tambahKaryawan extends javax.swing.JFrame {
             }
         });
 
+        rdHak.add(rdAd);
+        rdAd.setForeground(new java.awt.Color(255, 255, 255));
+        rdAd.setText("Admin");
+        rdAd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rdAdActionPerformed(evt);
+            }
+        });
+
+        rdHak.add(rdKar);
+        rdKar.setForeground(new java.awt.Color(255, 255, 255));
+        rdKar.setSelected(true);
+        rdKar.setText("Karyawan");
+        rdKar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rdKarActionPerformed(evt);
+            }
+        });
+
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel5.setText("Hak Akses");
+
         javax.swing.GroupLayout container1Layout = new javax.swing.GroupLayout(container1);
         container1.setLayout(container1Layout);
         container1Layout.setHorizontalGroup(
             container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(container1Layout.createSequentialGroup()
-                .addGap(23, 23, 23)
-                .addComponent(jLabel3)
-                .addGap(208, 208, 208))
-            .addGroup(container1Layout.createSequentialGroup()
                 .addGap(15, 15, 15)
                 .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(container1Layout.createSequentialGroup()
-                        .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel2))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, container1Layout.createSequentialGroup()
                         .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(inputNama, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(inputPassword, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(inputUsername, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, container1Layout.createSequentialGroup()
+                                .addGap(4, 4, 4)
+                                .addComponent(jLabel4)
+                                .addGap(0, 0, Short.MAX_VALUE))
                             .addGroup(container1Layout.createSequentialGroup()
+                                .addGap(0, 1, Short.MAX_VALUE)
                                 .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(134, 134, 134)
-                                .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(inputNama, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(inputUsername, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(inputPassword, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(15, 15, 15))))
+                                .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(15, 15, 15))
+                    .addGroup(container1Layout.createSequentialGroup()
+                        .addGap(4, 4, 4)
+                        .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(container1Layout.createSequentialGroup()
+                                .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel3)
+                                    .addComponent(jLabel2))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(container1Layout.createSequentialGroup()
+                                .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(container1Layout.createSequentialGroup()
+                                        .addComponent(rdAd)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(rdKar))
+                                    .addComponent(jLabel5))
+                                .addGap(0, 0, Short.MAX_VALUE))))))
         );
         container1Layout.setVerticalGroup(
             container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(container1Layout.createSequentialGroup()
-                .addGap(18, 18, 18)
+                .addGap(10, 10, 10)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
@@ -155,11 +204,16 @@ public class tambahKaryawan extends javax.swing.JFrame {
                 .addComponent(jLabel4)
                 .addGap(0, 0, 0)
                 .addComponent(inputPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(rdAd)
+                    .addComponent(rdKar))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
                 .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, 0))
+                .addGap(10, 10, 10))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -170,24 +224,30 @@ public class tambahKaryawan extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(container1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(0, 0, 0))
+            .addComponent(container1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatalActionPerformed
-        this.setVisible(false);
-        karyawanF.enabledButton(0);
-        karyawanF.aksi=0;
-         }//GEN-LAST:event_btnBatalActionPerformed
+    private void rdKarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdKarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_rdKarActionPerformed
+
+    private void rdAdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdAdActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_rdAdActionPerformed
 
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
         createData();
     }//GEN-LAST:event_btnSimpanActionPerformed
+
+    private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatalActionPerformed
+        this.dispose();
+        karyawanF.enabledButton(0);
+        karyawanF.aksi = 0;
+    }//GEN-LAST:event_btnBatalActionPerformed
 
     /**
      * @param args the command line arguments
@@ -204,5 +264,9 @@ public class tambahKaryawan extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JRadioButton rdAd;
+    private javax.swing.ButtonGroup rdHak;
+    private javax.swing.JRadioButton rdKar;
     // End of variables declaration//GEN-END:variables
 }

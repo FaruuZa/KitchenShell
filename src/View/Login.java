@@ -194,23 +194,21 @@ public class Login extends javax.swing.JFrame {
                 throw new Exception("Password tidak boleh kosong!");
 
             }
-            String query = "SELECT * FROM user WHERE username='" + usn + "' " + "AND password='" + pass + "' LIMIT 1";
-            Statement stat = connection.createStatement();
-            ResultSet hasil = stat.executeQuery(query);
-            if (hasil.next()) {
-                do {
-                    if (hasil.getString("level").equals("1")) {
+            String query = "SELECT * FROM user WHERE username = ? AND password = ? LIMIT 1";
+            try (PreparedStatement ps = connection.prepareStatement(query)) {
+                ps.setString(1, usn);
+                ps.setString(2, pass);
+                ResultSet hasil = ps.executeQuery();
+                if (hasil.next()) {
+                    do {
                         Session.setKode(hasil.getString("id"));
                         Session.setRole(hasil.getInt("level"));
                         new Main().setVisible(true);
-                        this.setVisible(false);
-                    } else if (hasil.getString("id").equals("0")) {
-                        Session.setKode(hasil.getString("level"));
-                        JOptionPane.showMessageDialog(null, "Masuk Karyawan!");
-                    }
-                } while (hasil.next());
-            } else {
-                throw new Exception("Username atau password salah");
+                        this.dispose();
+                    } while (hasil.next());
+                } else {
+                    throw new Exception("Username atau password salah");
+                }
             }
 
         } catch (Exception e) {
@@ -231,37 +229,37 @@ public class Login extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-//    public static void main(String args[]) {
-//        /* Set the Nimbus look and feel */
-//        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-//        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-//         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-//         */
-//        try {
-//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-//                if ("Nimbus".equals(info.getName())) {
-//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-//                    break;
-//                }
-//            }
-//        } catch (ClassNotFoundException ex) {
-//            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (InstantiationException ex) {
-//            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (IllegalAccessException ex) {
-//            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-//            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        }
-//        //</editor-fold>
-//
-//        /* Create and display the form */
-//        java.awt.EventQueue.invokeLater(new Runnable() {
-//            public void run() {
-//                new Login().setVisible(true);
-//            }
-//        });
-//    }
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new Login().setVisible(true);
+            }
+        });
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javaswingdev.util.Button LoginBtn;

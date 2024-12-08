@@ -32,7 +32,7 @@ public class EditMember extends javax.swing.JFrame {
         getCon();
         ((AbstractDocument) inputNama.getDocument()).setDocumentFilter(new TextFieldFilter("[a-z A-Z]*"));
         ((AbstractDocument) inputNomer.getDocument()).setDocumentFilter(new TextFieldFilter("[0-9]*"));
-        ((AbstractDocument) inputPoin.getDocument()).setDocumentFilter(new TextFieldFilter("[0-9]*"));
+        ((AbstractDocument) inputPoin.getDocument()).setDocumentFilter(new TextFieldFilter("[0-9].*"));
         loadData();
     }
 
@@ -59,6 +59,7 @@ public class EditMember extends javax.swing.JFrame {
                     inputNama.setText(rs.getString(2));
                     inputNomer.setText(rs.getString(3));
                     inputPoin.setText(rs.getString(4));
+//                    inputPoin.setText("00");
                 }
                 rs.close();
                 st.close();

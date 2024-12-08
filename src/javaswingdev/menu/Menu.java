@@ -1,5 +1,6 @@
 package javaswingdev.menu;
 
+import config.Session;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -23,7 +24,7 @@ public class Menu extends JPanel {
         init();
     }
 
-    private void init() {
+    public void init() {
         setBackground(new Color(80, 153, 85));
         setLayout(new BorderLayout());
         JScrollPane scroll = createScroll();
@@ -32,17 +33,10 @@ public class Menu extends JPanel {
         scroll.getViewport().setOpaque(false);
         scroll.setViewportBorder(null);
         add(scroll);
-        addTitle("OWNER");
-        addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.DASHBOARD, "Dashboard"));
-        addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.RESTAURANT, "Menu"));
-        addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.PAYMENT, "Transaksi"));
-        addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.GROUP, "Member"));
-        addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.SUPERVISOR_ACCOUNT, "Karyawan"));
-        addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.HISTORY, "Riwayat Transaksi"));
+//        tmbahMenu();
 //        addTitle("WEB APPS");
 //        addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.MAIL_OUTLINE, "Email", "Inbox", "Read", "Compose"));
-          
- 
+
     }
 
     private JScrollPane createScroll() {
@@ -53,7 +47,28 @@ public class Menu extends JPanel {
         scroll.setVerticalScrollBar(new ScrollBar());
         return scroll;
     }
-
+    public void tmbahMenu(){
+        index = -1;
+        panelMenu.removeAll();
+        if (Session.getRole() == 1) {
+            addTitle("OWNER");
+            addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.DASHBOARD, "Dashboard"));
+            addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.RESTAURANT, "Menu"));
+            addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.PAYMENT, "Transaksi"));
+            addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.GROUP, "Member"));
+            addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.SUPERVISOR_ACCOUNT, "Karyawan"));
+            addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.HISTORY, "Riwayat Transaksi"));
+        } else if(Session.getRole() == 0){
+            addTitle("Karyawan");
+            addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.DASHBOARD, "Dashboard"));
+            addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.PAYMENT, "Transaksi"));
+        }else{
+            addSpace(20);
+            addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.INPUT, "Login"));
+        }
+//        MenuItem.init();
+        setSelectedIndex(0, 0);
+    }
     private JPanel createPanelMenu() {
         JPanel panel = new JPanel();
         panel.setOpaque(false);
@@ -88,7 +103,7 @@ public class Menu extends JPanel {
         panelMenu.add(createMenuItem(menu), "h 40!");
     }
     //Pading sidebar
-    
+
     public void addTitle(String title) {
         JLabel label = new JLabel(title);
         label.setBorder(new EmptyBorder(15, 20, 5, 5));
@@ -97,7 +112,7 @@ public class Menu extends JPanel {
         panelMenu.add(label);
     }
     //tittle owner
-    
+
     public void addSpace(int size) {
         panelMenu.add(new JLabel(), "h " + size + "!");
     }

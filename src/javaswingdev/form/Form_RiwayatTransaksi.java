@@ -4,6 +4,10 @@
  */
 package javaswingdev.form;
 
+import config.DatabaseConfig;
+import java.sql.*;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author MI TA
@@ -13,8 +17,59 @@ public class Form_RiwayatTransaksi extends javax.swing.JPanel {
     /**
      * Creates new form Form_RiwayatTransaksi
      */
+    DefaultTableModel tableModel;
+    Connection connection = null;
+    String kodeTerpilih = "";
+    int aksi = 0;
+
     public Form_RiwayatTransaksi() {
         initComponents();
+        getCon();
+        String[] judul = {"Tanggal Transaksi", "Kode Transaksi", "Nama Admin", "Total Harga"};
+        tableModel = new DefaultTableModel(judul, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        loadData();
+        jTable1.setModel(tableModel);
+        initComponents();
+
+    }
+
+    private void getCon() {
+        try {
+            connection = DatabaseConfig.getConnection();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected void loadData() {
+        if (connection != null) {
+            try {
+                Statement st = connection.createStatement();
+                String query = "SELECT  transaksi.tnggl_transaksi,transaksi.kode_transaksi, user.nama, SUM(detail_transaksi.total) AS total"
+                        + " FROM transaksi"
+                        + " JOIN user ON user.id=transaksi.id_admin"
+                        + " JOIN detail_transaksi ON detail_transaksi.kode_transaksi=transaksi.kode_transaksi"
+                        + " GROUP BY transaksi.tnggl_transaksi, transaksi.kode_transaksi, user.nama";
+                ResultSet rs = st.executeQuery(query);
+                tableModel.setRowCount(0);
+                while (rs.next()) {
+                    String[] data = {rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4)};
+                    tableModel.addRow(data);
+                }
+
+                rs.close();
+                st.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("kon");
+        }
     }
 
     /**
@@ -44,23 +99,12 @@ public class Form_RiwayatTransaksi extends javax.swing.JPanel {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Tanggal", "Kode", "Nama", "Jumlah"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, true, true
-            };
 
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
             }
-        });
+        ));
         jTable1.setRowHeight(40);
         jScrollPane1.setViewportView(jTable1);
 

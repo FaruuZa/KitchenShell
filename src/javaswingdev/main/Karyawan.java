@@ -219,3 +219,4 @@ public class Karyawan extends javax.swing.JFrame {
     private javaswingdev.swing.titlebar.TitleBar titleBar;
     // End of variables declaration//GEN-END:variables
 }
+

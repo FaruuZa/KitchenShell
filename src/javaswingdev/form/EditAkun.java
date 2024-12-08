@@ -13,13 +13,13 @@ import javax.swing.text.AbstractDocument;
  *
  * @author rayag
  */
-public class EditKaryawan extends javax.swing.JFrame {
+public class EditAkun extends javax.swing.JFrame {
 
     Connection connection = null;
-    Form_Karyawan karyawanF = null;
+    Form_Akun karyawanF = null;
     String kodeKaryawan = "";
     
-    public EditKaryawan(Form_Karyawan tKaryawan, String kKaryawan) {
+    public EditAkun(Form_Akun tKaryawan, String kKaryawan) {
         initComponents();
         this.karyawanF = tKaryawan;
         this.kodeKaryawan = kKaryawan;
