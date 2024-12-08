@@ -35,8 +35,6 @@ public class Form_Transaksi extends javax.swing.JPanel {
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
-            
-            
         };
         selectedTableMenu = new DefaultTableModel(titleTblPesanan, 0) {
             @Override
@@ -211,7 +209,7 @@ public class Form_Transaksi extends javax.swing.JPanel {
 
                 for (int j = 0; j < kodeMenu.length; j++) {
                     //Insert detail transaksi
-//                    for (int x = 0; x < jumlah[j]; x++) {
+//                  
                     String insertDetailTransaksi = "INSERT INTO detail_transaksi VALUES (?, ?, ?)";
                     try (PreparedStatement detailTrskStmt = conn.prepareStatement(insertDetailTransaksi)) {
                         detailTrskStmt.setString(1, kodeTransaksi);
@@ -219,11 +217,10 @@ public class Form_Transaksi extends javax.swing.JPanel {
                         detailTrskStmt.setInt(3, jumlah[j]);
                         detailTrskStmt.executeUpdate();
                     }
-//                    }
+//                    
                     String getKodeBhn = "SELECT kode_bahanbaku, jumlah FROM detail_menu WHERE kode_menu = ?";
                     try (PreparedStatement getBhnStmt = conn.prepareStatement(getKodeBhn)) {
                         getBhnStmt.setString(1, kodeMenu[j]);
-
                         ResultSet rs = getBhnStmt.executeQuery();
                         while (rs.next()) {
                             String kodeBahanBaku = rs.getString(1);
@@ -243,7 +240,6 @@ public class Form_Transaksi extends javax.swing.JPanel {
                         pointStmt.setDouble(1, point);
                         pointStmt.setString(2, kodeMember);
                         int rowUpdate = pointStmt.executeUpdate();
-//                        System.out.println("Row updates point: " + rowUpdate);
                         if (rowUpdate == 0) {
                             throw new SQLException("Gagal perbarui data pada member: " + kodeMember);
                         }
@@ -685,7 +681,11 @@ public class Form_Transaksi extends javax.swing.JPanel {
                         txt_harga.setText("");
                         txt_totalBayar.setText("");
                         txt_bayar.setText("");
+                        txt_jumlah.setText("");
                         loadDataMenu();
+                        cbox_member.removeAllItems();
+                        cbox_member.addItem("Pilih Member");
+                        loadDataMember();
                         MessageAlerts.getInstance().showMessage("Transaksi berhasil!", "", MessageAlerts.MessageType.SUCCESS);
                     } else {
                         MessageAlerts.getInstance().showMessage("Gagal!", "Pastikan nominal pembayaran mencukupi", MessageAlerts.MessageType.DEFAULT);
