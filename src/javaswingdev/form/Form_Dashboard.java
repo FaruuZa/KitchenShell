@@ -21,12 +21,10 @@ public class Form_Dashboard extends javax.swing.JPanel {
                 String jumlah = "0";
                 Statement st = connection.createStatement();
 //                String query = "SELECT COUNT(kode_member) AS jumlah FROM member";
-                String query = "SELECT  transaksi.tnggl_transaksi, SUM(detail_transaksi.total) AS jumlah"
+                String query = "SELECT  transaksi.tnggl_transaksi, SUM(transaksi.total_transaksi) AS jumlah"
                         + " FROM transaksi"
-                        + " JOIN detail_transaksi ON detail_transaksi.kode_transaksi=transaksi.kode_transaksi"
                         + " WHERE date(transaksi.tnggl_transaksi)=date(now())"
                         + " GROUP BY transaksi.tnggl_transaksi";
-                System.out.println(query);
                 ResultSet rs = st.executeQuery(query);
                 while (rs.next()) {
                     jumlah = rs.getString(2);
@@ -39,7 +37,7 @@ public class Form_Dashboard extends javax.swing.JPanel {
 
             }
         }
-        return "";
+        return "0";
     }
 
     public String loadMenu() {
@@ -62,7 +60,7 @@ public class Form_Dashboard extends javax.swing.JPanel {
                 e.printStackTrace();
             }
         }
-        return "";
+        return "0";
     }
 
     public String loadPendapatanBulan() {
@@ -70,12 +68,10 @@ public class Form_Dashboard extends javax.swing.JPanel {
             try {
                 String jumlah = "0";
                 Statement st = connection.createStatement();
-                String query = "SELECT EXTRACT(YEAR_MONTH FROM tnggl_transaksi), SUM(detail_transaksi.total) AS jumlah"
+                String query = "SELECT EXTRACT(YEAR_MONTH FROM tnggl_transaksi), SUM(transaksi.total_transaksi) AS jumlah"
                         + " FROM transaksi"
-                        + " JOIN detail_transaksi ON transaksi.kode_transaksi=detail_transaksi.kode_transaksi"
                         + " WHERE EXTRACT(YEAR_MONTH FROM tnggl_transaksi) = EXTRACT(YEAR_MONTH FROM NOW())"
                         + " GROUP BY EXTRACT(YEAR_MONTH FROM tnggl_transaksi)";
-                
                 ResultSet rs = st.executeQuery(query);
                 while (rs.next()) {
                     jumlah = rs.getString(2);
@@ -88,7 +84,7 @@ public class Form_Dashboard extends javax.swing.JPanel {
 
             }
         }
-        return "";
+        return "0";
     }
 
     private void init() {

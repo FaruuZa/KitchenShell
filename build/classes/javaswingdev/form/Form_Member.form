@@ -89,7 +89,7 @@
                           <EmptySpace max="32767" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="search" alignment="1" min="-2" pref="185" max="-2" attributes="0"/>
-                              <Component id="button1" alignment="1" min="-2" pref="80" max="-2" attributes="0"/>
+                              <Component id="addBtn" alignment="1" min="-2" pref="80" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -107,7 +107,7 @@
                   </Group>
                   <EmptySpace min="-2" pref="60" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="button1" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="addBtn" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="editBtn" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="hapusBtn" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -162,7 +162,7 @@
             </Component>
           </SubComponents>
         </Container>
-        <Component class="javaswingdev.util.Button" name="button1">
+        <Component class="javaswingdev.util.Button" name="addBtn">
           <Properties>
             <Property name="text" type="java.lang.String" value="TAMBAH"/>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
@@ -170,7 +170,7 @@
             </Property>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button1ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addBtnActionPerformed"/>
           </Events>
         </Component>
         <Component class="javaswingdev.util.Button" name="editBtn">

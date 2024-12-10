@@ -25,7 +25,7 @@ public class Form_Akun extends javax.swing.JPanel {
 
     public Form_Akun() {
         getCon();
-        String[] judul = {"Nama", "Username", "Hak Akses"};
+        String[] judul = {"", "Nama", "Username", "Hak Akses"};
         tableModel = new DefaultTableModel(judul, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -35,17 +35,20 @@ public class Form_Akun extends javax.swing.JPanel {
         loadDataKaryawan("");
         initComponents();
         tbl_karyawan.setModel(tableModel);
+        tbl_karyawan.getColumnModel().getColumn(0).setMinWidth(0);
+        tbl_karyawan.getColumnModel().getColumn(0).setMaxWidth(0);
         editBtn.setEnabled(false);
         hapusBtn.setEnabled(false);
     }
 
-    protected void popupHandler(String popupMsg, int status, tambahAkun asd, EditAkun dsa) {
+    protected void popupHandler(String popupMsg, int status, popupAkun asd, boolean isEdit) {
         if (asd != null) {
             asd.dispose();
-            addBtn.setEnabled(true);
-        } else if (dsa != null) {
-            dsa.dispose();
+        }
+        if (isEdit) {
             enabledButton(1);
+        } else {
+            addBtn.setEnabled(true);
         }
         if (status == 1) {
             MessageAlerts.getInstance().showMessage("SUCCESS", popupMsg, MessageAlerts.MessageType.SUCCESS);
@@ -90,7 +93,7 @@ public class Form_Akun extends javax.swing.JPanel {
                 while (rs.next()) {
                     if (!rs.getString(1).equals(Session.getKode())) {
                         String hakAkses = rs.getInt(5) == 0 ? "Karyawan" : "Admin";
-                        String[] data = {rs.getString(2), rs.getString(3), hakAkses};
+                        String[] data = {rs.getString(1), rs.getString(2), rs.getString(3), hakAkses};
                         tableModel.addRow(data);
                     }
                 }
@@ -227,7 +230,7 @@ public class Form_Akun extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void addBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBtnActionPerformed
-        tambahAkun tKaryawan = new tambahAkun(this);
+        popupAkun tKaryawan = new popupAkun(this, false);
         tKaryawan.setVisible(true);
         tKaryawan.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         disabledButton();
@@ -249,12 +252,12 @@ public class Form_Akun extends javax.swing.JPanel {
         if (konfirm == 0) {
             try {
                 Statement st = connection.createStatement();
-                String query = "DELETE FROM user WHERE nama='" + kodeTerpilih + "'";
+                String query = "DELETE FROM user WHERE id='" + kodeTerpilih + "'";
                 st.execute(query);
                 kodeTerpilih = "";
                 disabledButton();
                 loadDataKaryawan("");
-                popupHandler("berhasil menghapus data", 1, null, null);
+                popupHandler("berhasil menghapus data", 1, null, true);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -262,9 +265,10 @@ public class Form_Akun extends javax.swing.JPanel {
     }//GEN-LAST:event_hapusBtnActionPerformed
 
     private void editBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBtnActionPerformed
-        EditAkun ekaryawan = new EditAkun(this, kodeTerpilih);
-        ekaryawan.setVisible(true);
-        ekaryawan.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+//        EditAkun ekaryawan = new EditAkun(this, kodeTerpilih);
+        popupAkun pakun = new popupAkun(this, true);
+        pakun.setVisible(true);
+        pakun.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         aksi = 1;
     }//GEN-LAST:event_editBtnActionPerformed
 
