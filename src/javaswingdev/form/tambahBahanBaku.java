@@ -88,8 +88,8 @@ public class tambahBahanBaku extends javax.swing.JPanel {
         inputStok = new javaswingdev.util.TextField();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        button1 = new javaswingdev.util.Button();
-        button2 = new javaswingdev.util.Button();
+        batalBtn = new javaswingdev.util.Button();
+        simpanBtn = new javaswingdev.util.Button();
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 30)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
@@ -121,11 +121,21 @@ public class tambahBahanBaku extends javax.swing.JPanel {
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setText("Stok Bahan");
 
-        button1.setText("BATAL");
-        button1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        batalBtn.setText("BATAL");
+        batalBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        batalBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                batalBtnActionPerformed(evt);
+            }
+        });
 
-        button2.setText("SIMPAN");
-        button2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        simpanBtn.setText("SIMPAN");
+        simpanBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        simpanBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                simpanBtnActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout container1Layout = new javax.swing.GroupLayout(container1);
         container1.setLayout(container1Layout);
@@ -140,9 +150,9 @@ public class tambahBahanBaku extends javax.swing.JPanel {
                     .addComponent(jLabel4)
                     .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                         .addGroup(container1Layout.createSequentialGroup()
-                            .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(batalBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 96, Short.MAX_VALUE)
-                            .addComponent(button2, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(simpanBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addComponent(inputNama, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(inputStok, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGap(20, 20, 20))
@@ -164,8 +174,8 @@ public class tambahBahanBaku extends javax.swing.JPanel {
                 .addComponent(inputStok, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
                 .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(button2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(batalBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(simpanBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(23, 23, 23))
         );
 
@@ -189,10 +199,21 @@ public class tambahBahanBaku extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_inputStokActionPerformed
 
+    private void batalBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_batalBtnActionPerformed
+        BahanBakuF.enabledButton(0);
+        BahanBakuF.aksi = 0;
+//        this.dispose();
+//        pengeluaranF.enabledButton(0);
+//        pengeluaranF.aksi = 0;
+    }//GEN-LAST:event_batalBtnActionPerformed
+
+    private void simpanBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_simpanBtnActionPerformed
+        createData();
+    }//GEN-LAST:event_simpanBtnActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javaswingdev.util.Button button1;
-    private javaswingdev.util.Button button2;
+    private javaswingdev.util.Button batalBtn;
     private javaswingdev.util.Container container1;
     private javaswingdev.util.TextField inputNama;
     private javaswingdev.util.TextField inputStok;
@@ -200,6 +221,7 @@ public class tambahBahanBaku extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javaswingdev.util.Button simpanBtn;
     // End of variables declaration//GEN-END:variables
 
 }

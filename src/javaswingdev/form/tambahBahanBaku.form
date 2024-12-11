@@ -40,9 +40,9 @@
                       <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                       <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
                           <Group type="102" attributes="0">
-                              <Component id="button1" min="-2" pref="80" max="-2" attributes="0"/>
+                              <Component id="batalBtn" min="-2" pref="80" max="-2" attributes="0"/>
                               <EmptySpace pref="96" max="32767" attributes="0"/>
-                              <Component id="button2" min="-2" pref="80" max="-2" attributes="0"/>
+                              <Component id="simpanBtn" min="-2" pref="80" max="-2" attributes="0"/>
                           </Group>
                           <Component id="inputNama" alignment="0" max="32767" attributes="0"/>
                           <Component id="inputStok" alignment="0" max="32767" attributes="0"/>
@@ -69,8 +69,8 @@
                   <Component id="inputStok" min="-2" max="-2" attributes="0"/>
                   <EmptySpace pref="41" max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="button1" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="button2" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="batalBtn" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="simpanBtn" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
               </Group>
@@ -134,21 +134,27 @@
             <Property name="text" type="java.lang.String" value="Stok Bahan"/>
           </Properties>
         </Component>
-        <Component class="javaswingdev.util.Button" name="button1">
+        <Component class="javaswingdev.util.Button" name="batalBtn">
           <Properties>
             <Property name="text" type="java.lang.String" value="BATAL"/>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Segoe UI" size="12" style="1"/>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="batalBtnActionPerformed"/>
+          </Events>
         </Component>
-        <Component class="javaswingdev.util.Button" name="button2">
+        <Component class="javaswingdev.util.Button" name="simpanBtn">
           <Properties>
             <Property name="text" type="java.lang.String" value="SIMPAN"/>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Segoe UI" size="12" style="1"/>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="simpanBtnActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
