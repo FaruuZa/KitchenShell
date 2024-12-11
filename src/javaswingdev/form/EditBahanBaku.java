@@ -22,7 +22,7 @@ public class EditBahanBaku extends javax.swing.JPanel {
         getCon();
         ((AbstractDocument) inputNama.getDocument()).setDocumentFilter(new TextFieldFilter("[a-zA-Z ]*"));
         ((AbstractDocument) inputStok.getDocument()).setDocumentFilter(new TextFieldFilter("[0-9]*"));
-//        loadData();
+        loadData();
     }
 
     private void getCon() {
@@ -60,33 +60,16 @@ public class EditBahanBaku extends javax.swing.JPanel {
                      statement.close();
                      bahanBakuF.loadDatabahanBaku("");
                      bahanBakuF.enabledButton(0);
+//                     bahanBakuF.popupHandler("Data berhasil diedit!", 1, null, this);
                  } else {
                     throw new Exception("Data tidak boleh kosong!");
                  }
              } catch (Exception e) {
+//                 bahanBakuF.popupHandler(e.getMessage(), 0, null, this);
              }
          }
     }
-//     public void editData() {
-//        if (connection != null) {
-//            try {
-//                if (!namaInput.equals("") && !jumlahInput.equals("") && !hargaInput.equals("")) {
-//                    Statement statement = connection.createStatement();
-//                    String query = "UPDATE `Menu` SET `nama_menu` = '" + namaInput.getText() + "', `stok_menu` = '" + jumlahInput.getText() + "', `harga` = '" + hargaInput.getText() + "' WHERE `menu`.`kode_menu` = '" + kodeMenu + "';";
-//                    statement.execute(query);
-//                    statement.close();
-////                    menuF.setEnabled(true);
-//                    menuF.loadDataMenu("");
-//                    menuF.enabledButton(0);
-//                    menuF.popupHandler("Data berhasil diedit!", 1, null, this);
-//                } else {
-//                    throw new Exception("Data tidak boleh kosong!");
-//                }
-//            } catch (Exception e) {
-//                menuF.popupHandler(e.getMessage(), 0, null, this);
-//            }
-//        }
-//    }
+
      
     /**
      * This method is called from within the constructor to initialize the form.
@@ -220,7 +203,7 @@ public class EditBahanBaku extends javax.swing.JPanel {
     }//GEN-LAST:event_inputStokActionPerformed
 
     private void batalBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_batalBtnActionPerformed
-//        BahanBakuF.enabledButton(0);
+        bahanBakuF.enabledButton(1);
 //        BahanBakuF.aksi = 0;
 //        //        this.dispose();
 //        //        pengeluaranF.enabledButton(0);
@@ -228,7 +211,7 @@ public class EditBahanBaku extends javax.swing.JPanel {
     }//GEN-LAST:event_batalBtnActionPerformed
 
     private void simpanBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_simpanBtnActionPerformed
-        
+        editData();
     }//GEN-LAST:event_simpanBtnActionPerformed
 
 

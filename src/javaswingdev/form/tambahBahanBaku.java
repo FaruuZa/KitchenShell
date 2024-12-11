@@ -12,12 +12,12 @@ import javax.swing.text.AbstractDocument;
 public class tambahBahanBaku extends javax.swing.JPanel {
 
     Connection connection = null;
-    Form_BahanBaku BahanBakuF = null;
+    Form_BahanBaku bahanBakuF = null; 
 
-    public tambahBahanBaku(Form_BahanBaku FBahanBaku) {
+    public tambahBahanBaku(Form_BahanBaku FbahanBaku) {
         initComponents();
         getCon();
-        this.BahanBakuF = FBahanBaku;
+        this.bahanBakuF = FbahanBaku;
         ((AbstractDocument) inputNama.getDocument()).setDocumentFilter(new TextFieldFilter("[a-zA-Z ]*"));
         ((AbstractDocument) inputStok.getDocument()).setDocumentFilter(new TextFieldFilter("[0-9]*"));
     }
@@ -61,12 +61,12 @@ public class tambahBahanBaku extends javax.swing.JPanel {
                  String query = "INSERT INTO bahanbaku VALUES ('" + generateCode() + "', '" + inputNama.getText() + "', '" + inputStok.getText() + "')";
                  statement.execute(query);
                  statement.close();
-//                 BahanBakuF.popupHandler("Bahan berhasil ditambahkan", 1, this, null);
+//                 bahanBakuF.popupHandler("Bahan berhasil ditambahkan", 1, this, null);
              }else{
              throw new Exception("Bahan tidak boleh kosong");
              }
          } catch (Exception e) {
-//             BahanBakuF.popupHandler(e.getMessage(), 0, this, null);
+//             bahanBakuF.popupHandler(e.getMessage(), 0, this, null);
          }
      }
     }
@@ -144,7 +144,7 @@ public class tambahBahanBaku extends javax.swing.JPanel {
             .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, container1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(20, 20, 20)
                 .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
                     .addComponent(jLabel4)
@@ -200,11 +200,9 @@ public class tambahBahanBaku extends javax.swing.JPanel {
     }//GEN-LAST:event_inputStokActionPerformed
 
     private void batalBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_batalBtnActionPerformed
-        BahanBakuF.enabledButton(0);
-        BahanBakuF.aksi = 0;
+        bahanBakuF.enabledButton(0);
+        bahanBakuF.aksi = 0;
 //        this.dispose();
-//        pengeluaranF.enabledButton(0);
-//        pengeluaranF.aksi = 0;
     }//GEN-LAST:event_batalBtnActionPerformed
 
     private void simpanBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_simpanBtnActionPerformed
