@@ -10,6 +10,7 @@ import javaswingdev.form.Form_Member;
 import javaswingdev.form.Form_Menu;
 import javaswingdev.form.Form_RiwayatTransaksi;
 import javaswingdev.form.Form_Transaksi;
+import javaswingdev.form.Form_Pengeluaran;
 import javaswingdev.menu.EventMenuSelected;
 import raven.popup.GlassPanePopup;
 import config.Session;
@@ -44,18 +45,19 @@ public class Main extends javax.swing.JFrame {
                     } else if (index == 1 && indexSubMenu == 0) {
                         showForm(new Form_Menu());
                     } else if (index == 2 && indexSubMenu == 0) {
+                        showForm(new Form_BahanBaku());
+//                        showForm(new Form_Empty(index + " " + indexSubMenu));
+                    } else if (index == 3 && indexSubMenu == 0) {
                         showForm(new Form_Transaksi());
-                    } else if (index == 3 && indexSubMenu == 1) {
+                    } else if (index == 4 && indexSubMenu == 1) {
                         showForm(new Form_Member());
-                    } else if (index == 3 && indexSubMenu == 2) {
+                    } else if (index == 4 && indexSubMenu == 2) {
                         showForm(new TestSub());
-                    } else if (index == 4 && indexSubMenu == 0) {
-                        showForm(new Form_Akun());
                     } else if (index == 5 && indexSubMenu == 0) {
-                        showForm(new Form_Karyawan());
-                    } else if (index == 6 && indexSubMenu == 0) {
-                        showForm(new Form_Pengeluaran());
+                        showForm(new Form_Akun());
                     } else if (index == 7 && indexSubMenu == 0) {
+                        showForm(new Form_Pengeluaran());
+                    } else if (index == 8 && indexSubMenu == 0) {
                         showForm(new Form_RiwayatTransaksi());
                     }else {
                         showForm(new Form_Empty(index + " " + indexSubMenu));
