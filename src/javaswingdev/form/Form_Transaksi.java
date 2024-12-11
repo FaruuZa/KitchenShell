@@ -195,21 +195,45 @@ public class Form_Transaksi extends javax.swing.JPanel {
                         }
                     }
                 }
+                String insertTransaksi;
                 //Insert transaksi
-                String insertTransaksi = "INSERT INTO transaksi VALUES (?, ?, ?, NOW(), ?, ?, ?)";
-                try (PreparedStatement transaksiStmt = conn.prepareStatement(insertTransaksi)) {
-                    transaksiStmt.setString(1, kodeTransaksi);
-                    transaksiStmt.setString(2, idAdmin);
-                    transaksiStmt.setString(3, kodeMember);
-                    transaksiStmt.setString(4, namaPelanggan);
-                    transaksiStmt.setDouble(5, totalBayar);
-                    transaksiStmt.setDouble(6, bayar);
-                    transaksiStmt.executeUpdate();
+                if (kodeMember.isEmpty()) {
+                    //Jika tidak memiliki member
+                    insertTransaksi = "INSERT INTO transaksi VALUES (?, ?, NULL, NOW(), ?, ?, ?)";
+                    try (PreparedStatement transaksiStmt = conn.prepareStatement(insertTransaksi)) {
+                        transaksiStmt.setString(1, kodeTransaksi);
+                        transaksiStmt.setString(2, idAdmin);
+                        transaksiStmt.setString(3, namaPelanggan);
+                        transaksiStmt.setDouble(4, totalBayar);
+                        transaksiStmt.setDouble(5, bayar);
+                        transaksiStmt.executeUpdate();
+                    }
+                } else {
+                    // Jika Memiliki Members
+                    insertTransaksi = "INSERT INTO transaksi VALUES (?, ?, ?, NOW(), ?, ?, ?)";
+                    try (PreparedStatement transaksiStmt = conn.prepareStatement(insertTransaksi)) {
+                        transaksiStmt.setString(1, kodeTransaksi);
+                        transaksiStmt.setString(2, idAdmin);
+                        transaksiStmt.setString(3, kodeMember);
+                        transaksiStmt.setString(4, namaPelanggan);
+                        transaksiStmt.setDouble(5, totalBayar);
+                        transaksiStmt.setDouble(6, bayar);
+                        transaksiStmt.executeUpdate();
+                    }
+                    // Insert point
+                    String setPoint = "UPDATE member SET point = point + ? WHERE kode_member = ?";
+                    try (PreparedStatement pointStmt = conn.prepareStatement(setPoint)) {
+                        pointStmt.setDouble(1, point);
+                        pointStmt.setString(2, kodeMember);
+                        int rowUpdate = pointStmt.executeUpdate();
+                        if (rowUpdate == 0) {
+                            throw new SQLException("Gagal perbarui data pada member: " + kodeMember);
+                        }
+                    }
                 }
 
                 for (int j = 0; j < kodeMenu.length; j++) {
                     //Insert detail transaksi
-//                  
                     String insertDetailTransaksi = "INSERT INTO detail_transaksi VALUES (?, ?, ?)";
                     try (PreparedStatement detailTrskStmt = conn.prepareStatement(insertDetailTransaksi)) {
                         detailTrskStmt.setString(1, kodeTransaksi);
@@ -217,7 +241,6 @@ public class Form_Transaksi extends javax.swing.JPanel {
                         detailTrskStmt.setInt(3, jumlah[j]);
                         detailTrskStmt.executeUpdate();
                     }
-//                    
                     String getKodeBhn = "SELECT kode_bahanbaku, jumlah FROM detail_menu WHERE kode_menu = ?";
                     try (PreparedStatement getBhnStmt = conn.prepareStatement(getKodeBhn)) {
                         getBhnStmt.setString(1, kodeMenu[j]);
@@ -234,16 +257,6 @@ public class Form_Transaksi extends javax.swing.JPanel {
                         }
                     }
 
-                    //Insert point
-                    String setPoint = "UPDATE member SET point = point + ? WHERE kode_member = ?";
-                    try (PreparedStatement pointStmt = conn.prepareStatement(setPoint)) {
-                        pointStmt.setDouble(1, point);
-                        pointStmt.setString(2, kodeMember);
-                        int rowUpdate = pointStmt.executeUpdate();
-                        if (rowUpdate == 0) {
-                            throw new SQLException("Gagal perbarui data pada member: " + kodeMember);
-                        }
-                    }
                 }
                 conn.commit();
             } catch (SQLException e) {
@@ -655,8 +668,11 @@ public class Form_Transaksi extends javax.swing.JPanel {
 
         kodeTransaksi = generateKodeTransaksi();
         idAdmin = Session.getKode();
-        kodeMember = cbox_member.getSelectedItem().toString().split("\\ ");
-        bayar = Double.parseDouble(txt_bayar.getText());
+        if (cbox_member.getSelectedIndex() == 0) {
+            kodeMember = cbox_member.getSelectedItem().toString().split("Pilih");
+        } else {
+            kodeMember = cbox_member.getSelectedItem().toString().split("\\ ");
+        }
 
         point = totalBayar * 0.1;
         double updatePoint = cbox_point.isSelected() ? 0 : point;
@@ -673,8 +689,9 @@ public class Form_Transaksi extends javax.swing.JPanel {
                 if (txt_bayar.getText().equals("")) {
                     MessageAlerts.getInstance().showMessage("Gagal!", "Pastikan mengisi nominal pembayaran", MessageAlerts.MessageType.DEFAULT);
                 } else {
+                    bayar = Double.parseDouble(txt_bayar.getText());
                     if (Double.parseDouble(txt_bayar.getText()) >= totalBayar) {
-                        prosesTransaksi(kodeTransaksi, kodeMember[0], namaPelanggan, kodeMenu, idAdmin, jumlah, bayar, updatePoint, totalBayar);
+//                        prosesTransaksi(kodeTransaksi, kodeMember[0], namaPelanggan, kodeMenu, idAdmin, jumlah, bayar, updatePoint, totalBayar);
                         selectedTableMenu.setRowCount(0);
                         txt_kodeMenu.setText("");
                         txt_namaMenu.setText("");
@@ -685,6 +702,7 @@ public class Form_Transaksi extends javax.swing.JPanel {
                         loadDataMenu();
                         cbox_member.removeAllItems();
                         cbox_member.addItem("Pilih Member");
+                        totalBayar = 0;
                         loadDataMember();
                         MessageAlerts.getInstance().showMessage("Transaksi berhasil!", "", MessageAlerts.MessageType.SUCCESS);
                     } else {
