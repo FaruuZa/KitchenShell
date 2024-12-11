@@ -24,7 +24,7 @@ public class Form_Menu extends javax.swing.JPanel {
 
     public Form_Menu() {
         getCon();
-        String[] judul = {"Kode Menu ", "Menu", "Stok", "Harga"};
+        String[] judul = {"Kode Menu ", "Menu", "Harga"};
         tableModel = new DefaultTableModel(judul, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -85,7 +85,7 @@ public class Form_Menu extends javax.swing.JPanel {
                 ResultSet rs = st.executeQuery(query);
                 tableModel.setRowCount(0);
                 while (rs.next()) {
-                    String[] data = {rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4)};
+                    String[] data = {rs.getString(1), rs.getString(2), rs.getString(3)};
                     tableModel.addRow(data);
                 }
                 rs.close();
@@ -124,6 +124,8 @@ public class Form_Menu extends javax.swing.JPanel {
             }
         });
 
+        textFieldSearchOption1.setColorOverlay1(new java.awt.Color(255, 255, 55));
+        textFieldSearchOption1.setColorOverlay2(new java.awt.Color(0, 220, 0));
         textFieldSearchOption1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 textFieldSearchOption1ActionPerformed(evt);

@@ -5,7 +5,7 @@ import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.Component;
 import javaswingdev.form.Form_Dashboard;
 import javaswingdev.form.Form_Empty;
-import javaswingdev.form.Form_Karyawan;
+import javaswingdev.form.Form_Akun;
 import javaswingdev.form.Form_Member;
 import javaswingdev.form.Form_Menu;
 import javaswingdev.form.Form_RiwayatTransaksi;
@@ -16,7 +16,7 @@ import config.Session;
 import javaswingdev.GoogleMaterialDesignIcon;
 import javaswingdev.form.Form_BahanBaku;
 import javaswingdev.form.Form_Login;
-import javaswingdev.form.Form_Pengeluaran;
+import javaswingdev.form.TestSub;
 import javaswingdev.menu.ModelMenuItem;
 import javax.swing.JOptionPane;
 
@@ -25,25 +25,15 @@ public class Main extends javax.swing.JFrame {
     private static Main main;
 
     public Main() {
-//        if (!Session.getKode().equals("")) {
-        if (true) {
-            initComponents();
-            GlassPanePopup.install(this);
-            FlatLightLaf.setup();
-            init();
-            this.setVisible(true);
-        } else {
-            new Login().setVisible(true);
-            this.dispose();
-        }
-
+        initComponents();
+        GlassPanePopup.install(this);
+        FlatLightLaf.setup();
+        init();
     }
 
     public void init() {
         main = this;
-//        menu.removeAll();
         titleBar.initJFram(this);
-//        menu.init();
         if (Session.getRole() == 1) {
             button1.setVisible(true);
             menu.addEvent(new EventMenuSelected() {
@@ -54,11 +44,13 @@ public class Main extends javax.swing.JFrame {
                     } else if (index == 1 && indexSubMenu == 0) {
                         showForm(new Form_Menu());
                     } else if (index == 2 && indexSubMenu == 0) {
-                        showForm(new Form_BahanBaku());
-                    } else if (index == 3 && indexSubMenu == 0) {
                         showForm(new Form_Transaksi());
-                    } else if (index == 4 && indexSubMenu == 0) {
+                    } else if (index == 3 && indexSubMenu == 1) {
                         showForm(new Form_Member());
+                    } else if (index == 3 && indexSubMenu == 2) {
+                        showForm(new TestSub());
+                    } else if (index == 4 && indexSubMenu == 0) {
+                        showForm(new Form_Akun());
                     } else if (index == 5 && indexSubMenu == 0) {
                         showForm(new Form_Karyawan());
                     } else if (index == 6 && indexSubMenu == 0) {
@@ -252,7 +244,7 @@ public class Main extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
 //                if (!Session.getKode().equals("")) {
-                new Main();
+                new Main().setVisible(true);
             }
         });
     }

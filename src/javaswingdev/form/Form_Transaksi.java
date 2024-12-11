@@ -3,11 +3,13 @@ package javaswingdev.form;
 import java.sql.*;
 import config.DatabaseConfig;
 import config.Session;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javaswingdev.util.TextFieldFilter;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.AbstractDocument;
 import raven.alerts.MessageAlerts;
@@ -20,11 +22,11 @@ public class Form_Transaksi extends javax.swing.JPanel {
 
     DefaultTableModel tableModel, selectedTableMenu;
     Connection connection = DatabaseConfig.getConnection();
-    private int totalBayar, token;
+    private double totalBayar;
 
     public Form_Transaksi() {
         initComponents();
-        String[] titleTblMenu = {"Kode menu ", "Nama Menu", "Stok", "Harga"};
+        String[] titleTblMenu = {"Kode menu ", "Nama Menu", "Harga"};
         String[] titleTblPesanan = {"Kode menu ", "Nama Menu", "Jumlah", "Harga", "Total Harga"};
         ((AbstractDocument) txt_jumlah.getDocument()).setDocumentFilter(new TextFieldFilter("[0-9]*"));
         ((AbstractDocument) txt_bayar.getDocument()).setDocumentFilter(new TextFieldFilter("[0-9]*"));
@@ -53,11 +55,14 @@ public class Form_Transaksi extends javax.swing.JPanel {
         if (connection != null) {
             try {
                 Statement st = connection.createStatement();
-                String query = "SELECT * FROM menu WHERE stok_menu != 0";
+                String query = "SELECT * FROM menu";
                 ResultSet rs = st.executeQuery(query);
                 tableModel.setRowCount(0);
+                DecimalFormat df = new DecimalFormat("#");
+
                 while (rs.next()) {
-                    String[] data = {rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4)};
+                    String formatNumber = df.format(rs.getDouble(3));
+                    String[] data = {rs.getString(1), rs.getString(2), formatNumber};
                     tableModel.addRow(data);
                 }
                 st.close();
@@ -77,7 +82,8 @@ public class Form_Transaksi extends javax.swing.JPanel {
                 while (rs.next()) {
                     String kode_member = rs.getString("kode_member");
                     String nama_member = rs.getString("nama_member");
-                    cbox_member.addItem(kode_member + " | " + nama_member);
+                    double point = rs.getDouble("point");
+                    cbox_member.addItem(kode_member + " | " + nama_member + " | " + point);
                 }
                 st.close();
                 rs.close();
@@ -91,7 +97,7 @@ public class Form_Transaksi extends javax.swing.JPanel {
         if (connection != null) {
             try {
                 String kode_menu = txt_kodeMenu.getText();
-                String query = "SELECT kode_menu, nama_menu , harga, stok_menu FROM menu WHERE kode_menu = ?";
+                String query = "SELECT * FROM menu WHERE kode_menu = ?";
                 PreparedStatement ps = connection.prepareStatement(query);
                 ps.setString(1, kode_menu);
                 ResultSet rs = ps.executeQuery();
@@ -99,12 +105,12 @@ public class Form_Transaksi extends javax.swing.JPanel {
                     String kodeMenu = rs.getString(1);
                     String namaMenu = rs.getString(2);
                     int jumlah = Integer.parseInt(txt_jumlah.getText());
-                    int harga = Integer.parseInt(rs.getString(3));
-                    int totalHarga = jumlah * harga;
-                    int stok = rs.getInt(4);
+                    double harga = Double.parseDouble(rs.getString(4));
+                    double totalHarga = jumlah * harga;
+                    int stok = rs.getInt(3);
                     boolean cekStok = true;
                     boolean cekKode = false;
-                    if (jumlah <= stok) {
+                    if (jumlah < stok) {
                         //Cek kode_menu jika sama akan menambah jumlah pesanan
                         int row = tbl_pesanan.getRowCount();
                         for (int i = 0; i < row; i++) {
@@ -113,7 +119,7 @@ public class Form_Transaksi extends javax.swing.JPanel {
                                 int jumlahBaru = Integer.parseInt(tbl_pesanan.getValueAt(i, 2).toString());
 //                                if (stokSelect <= stok && jumlahBaru <= stok) {
                                 tbl_pesanan.setValueAt(jumlahBaru + jumlah, i, 2);
-                                int total = (jumlahBaru + jumlah) * harga;
+                                double total = (jumlahBaru + jumlah) * harga;
                                 tbl_pesanan.setValueAt(total, i, 4);
                                 cekKode = true;
                                 cekStok = false;
@@ -166,19 +172,20 @@ public class Form_Transaksi extends javax.swing.JPanel {
         return kodeTransaksi;
     }
 
-    private static void prosesTransaksi(String kodeTransaksi, String kodeMember, String namaPelanggan, String[] kodeMenu, String idAdmin, int[] jumlah) throws SQLException {
+    private static void prosesTransaksi(String kodeTransaksi, String kodeMember, String namaPelanggan, String[] kodeMenu, String idAdmin, int[] jumlah, double bayar, double point, double totalBayar) throws SQLException {
         Connection conn = DatabaseConfig.getConnection();
         if (conn != null) {
             try {
                 conn.setAutoCommit(false);
+
                 //Cek stok
                 for (int i = 0; i < kodeMenu.length; i++) {
-                    String cekStok = "SELECT stok_menu, harga FROM menu WHERE kode_menu = ?";
+                    String cekStok = "SELECT jumlah_porsi, harga_menu FROM jumlah_porsi_menu WHERE kode_menu = ?";
                     try (PreparedStatement cekStokStmt = conn.prepareStatement(cekStok)) {
                         cekStokStmt.setString(1, kodeMenu[i]);
                         try (ResultSet rs = cekStokStmt.executeQuery()) {
                             if (rs.next()) {
-                                int stok = rs.getInt("stok_menu");
+                                int stok = rs.getInt("jumlah_porsi");
                                 if (stok <= jumlah[i]) {
                                     throw new SQLException("Stok tidak mencukupi pada kode menu: " + kodeMenu[i]);
                                 }
@@ -189,31 +196,53 @@ public class Form_Transaksi extends javax.swing.JPanel {
                     }
                 }
                 //Insert transaksi
-                String insertTransaksi = "INSERT INTO transaksi VALUES (?, ?, ?, NOW(), ?)";
+                String insertTransaksi = "INSERT INTO transaksi VALUES (?, ?, ?, NOW(), ?, ?, ?)";
                 try (PreparedStatement transaksiStmt = conn.prepareStatement(insertTransaksi)) {
                     transaksiStmt.setString(1, kodeTransaksi);
                     transaksiStmt.setString(2, idAdmin);
                     transaksiStmt.setString(3, kodeMember);
                     transaksiStmt.setString(4, namaPelanggan);
+                    transaksiStmt.setDouble(5, totalBayar);
+                    transaksiStmt.setDouble(6, bayar);
                     transaksiStmt.executeUpdate();
                 }
+
                 for (int j = 0; j < kodeMenu.length; j++) {
                     //Insert detail transaksi
-                    for (int x = 0; x < jumlah[j]; x++) {
-                        String insertDetailTransaksi = "INSERT INTO detail_transaksi VALUES (?, ?)";
-                        try (PreparedStatement detailTrskStmt = conn.prepareStatement(insertDetailTransaksi)) {
-                            detailTrskStmt.setString(1, kodeTransaksi);
-                            detailTrskStmt.setString(2, kodeMenu[j]);
-                            detailTrskStmt.executeUpdate();
+//                  
+                    String insertDetailTransaksi = "INSERT INTO detail_transaksi VALUES (?, ?, ?)";
+                    try (PreparedStatement detailTrskStmt = conn.prepareStatement(insertDetailTransaksi)) {
+                        detailTrskStmt.setString(1, kodeTransaksi);
+                        detailTrskStmt.setString(2, kodeMenu[j]);
+                        detailTrskStmt.setInt(3, jumlah[j]);
+                        detailTrskStmt.executeUpdate();
+                    }
+//                    
+                    String getKodeBhn = "SELECT kode_bahanbaku, jumlah FROM detail_menu WHERE kode_menu = ?";
+                    try (PreparedStatement getBhnStmt = conn.prepareStatement(getKodeBhn)) {
+                        getBhnStmt.setString(1, kodeMenu[j]);
+                        ResultSet rs = getBhnStmt.executeQuery();
+                        while (rs.next()) {
+                            String kodeBahanBaku = rs.getString(1);
+                            double jumlahBahan = rs.getDouble(2) * jumlah[j];
+                            String updateBahanBaku = "UPDATE bahanbaku SET stok_bahanbaku = stok_bahanbaku - ? WHERE kode_bahanbaku = ?";
+                            try (PreparedStatement updateBahanStmt = conn.prepareStatement(updateBahanBaku)) {
+                                updateBahanStmt.setDouble(1, jumlahBahan);
+                                updateBahanStmt.setString(2, kodeBahanBaku);
+                                updateBahanStmt.executeUpdate();
+                            }
                         }
                     }
 
-                    //Update stok pada tabel menu
-                    String updateStokMenu = "UPDATE menu SET stok_menu = stok_menu - ? WHERE kode_menu = ?";
-                    try (PreparedStatement upStokStmt = conn.prepareStatement(updateStokMenu)) {
-                        upStokStmt.setInt(1, jumlah[j]);
-                        upStokStmt.setString(2, kodeMenu[j]);
-                        upStokStmt.executeUpdate();
+                    //Insert point
+                    String setPoint = "UPDATE member SET point = point + ? WHERE kode_member = ?";
+                    try (PreparedStatement pointStmt = conn.prepareStatement(setPoint)) {
+                        pointStmt.setDouble(1, point);
+                        pointStmt.setString(2, kodeMember);
+                        int rowUpdate = pointStmt.executeUpdate();
+                        if (rowUpdate == 0) {
+                            throw new SQLException("Gagal perbarui data pada member: " + kodeMember);
+                        }
                     }
                 }
                 conn.commit();
@@ -261,6 +290,7 @@ public class Form_Transaksi extends javax.swing.JPanel {
         btn_pesan = new javaswingdev.util.Button();
         jScrollPane3 = new javax.swing.JScrollPane();
         tbl_menu = new javax.swing.JTable();
+        cbox_point = new javax.swing.JCheckBox();
 
         setOpaque(false);
 
@@ -340,6 +370,7 @@ public class Form_Transaksi extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
+        tbl_pesanan.setDragEnabled(true);
         jScrollPane2.setViewportView(tbl_pesanan);
         if (tbl_pesanan.getColumnModel().getColumnCount() > 0) {
             tbl_pesanan.getColumnModel().getColumn(2).setPreferredWidth(30);
@@ -420,6 +451,8 @@ public class Form_Transaksi extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
+        tbl_menu.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        tbl_menu.setDragEnabled(true);
         tbl_menu.getTableHeader().setReorderingAllowed(false);
         tbl_menu.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -427,6 +460,15 @@ public class Form_Transaksi extends javax.swing.JPanel {
             }
         });
         jScrollPane3.setViewportView(tbl_menu);
+
+        cbox_point.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        cbox_point.setForeground(new java.awt.Color(255, 255, 255));
+        cbox_point.setText("Gunakan point");
+        cbox_point.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbox_pointActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout container1Layout = new javax.swing.GroupLayout(container1);
         container1.setLayout(container1Layout);
@@ -472,17 +514,24 @@ public class Form_Transaksi extends javax.swing.JPanel {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, container1Layout.createSequentialGroup()
                         .addGap(32, 32, 32)
                         .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel5)
+                            .addGroup(container1Layout.createSequentialGroup()
+                                .addComponent(jLabel5)
+                                .addGap(18, 18, 18)
+                                .addComponent(cbox_point)
+                                .addGap(0, 0, Short.MAX_VALUE))
                             .addComponent(cbox_member, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(35, 35, 35)
+                        .addGap(18, 18, 18)
                         .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel6)
-                            .addComponent(txt_namaPelanggan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(txt_namaPelanggan, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel6)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, container1Layout.createSequentialGroup()
-                        .addGap(180, 180, 180)
-                        .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel8)
-                            .addComponent(jLabel7))
+                        .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(container1Layout.createSequentialGroup()
+                                .addGap(180, 180, 180)
+                                .addComponent(jLabel8))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, container1Layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel7)))
                         .addGap(18, 18, 18)
                         .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, container1Layout.createSequentialGroup()
@@ -524,12 +573,13 @@ public class Form_Transaksi extends javax.swing.JPanel {
                     .addComponent(btn_clear, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, container1Layout.createSequentialGroup()
                 .addGap(17, 17, 17)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
-                .addGap(13, 13, 13)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
+                .addGap(11, 11, 11)
                 .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING))
+                    .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel5)
+                        .addComponent(cbox_point)
+                        .addComponent(jLabel6))
                     .addGroup(container1Layout.createSequentialGroup()
                         .addGap(22, 22, 22)
                         .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -591,25 +641,31 @@ public class Form_Transaksi extends javax.swing.JPanel {
 
     private void btn_hapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_hapusActionPerformed
         selectedTableMenu.setRowCount(0);
+        txt_totalBayar.setText("");
+        txt_bayar.setText("");
+        totalBayar = 0;
     }//GEN-LAST:event_btn_hapusActionPerformed
 
     private void btn_pesanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_pesanActionPerformed
         String kodeTransaksi, idAdmin, namaPelanggan;
-        int token;
+        double point, bayar;
         String[] kodeMember;
         List<String> kodeMenuList = new ArrayList<>();
         List<Integer> jumlahList = new ArrayList<>();
 
         kodeTransaksi = generateKodeTransaksi();
         idAdmin = Session.getKode();
-        kodeMember = cbox_member.getSelectedItem().toString().split("\\|");
-        token = totalBayar * (20 / 100);
+        kodeMember = cbox_member.getSelectedItem().toString().split("\\ ");
+        bayar = Double.parseDouble(txt_bayar.getText());
+
+        point = totalBayar * 0.1;
+        double updatePoint = cbox_point.isSelected() ? 0 : point;
+
         namaPelanggan = txt_namaPelanggan.getText();
         for (int i = 0; i < tbl_pesanan.getRowCount(); i++) {
             kodeMenuList.add((String) tbl_pesanan.getValueAt(i, 0));
             jumlahList.add((Integer) tbl_pesanan.getValueAt(i, 2));
         }
-        System.out.println(token);
         String[] kodeMenu = kodeMenuList.toArray(new String[0]);
         int[] jumlah = jumlahList.stream().mapToInt(Integer::intValue).toArray();
         try {
@@ -617,22 +673,25 @@ public class Form_Transaksi extends javax.swing.JPanel {
                 if (txt_bayar.getText().equals("")) {
                     MessageAlerts.getInstance().showMessage("Gagal!", "Pastikan mengisi nominal pembayaran", MessageAlerts.MessageType.DEFAULT);
                 } else {
-                    System.out.println(totalBayar);
-                    System.out.println(Integer.parseInt(txt_bayar.getText()));
-                    if (Integer.parseInt(txt_bayar.getText()) >= totalBayar) {
-//                        prosesTransaksi(kodeTransaksi, kodeMember[0], namaPelanggan, kodeMenu, idAdmin, jumlah);
+                    if (Double.parseDouble(txt_bayar.getText()) >= totalBayar) {
+                        prosesTransaksi(kodeTransaksi, kodeMember[0], namaPelanggan, kodeMenu, idAdmin, jumlah, bayar, updatePoint, totalBayar);
                         selectedTableMenu.setRowCount(0);
                         txt_kodeMenu.setText("");
                         txt_namaMenu.setText("");
                         txt_harga.setText("");
+                        txt_totalBayar.setText("");
+                        txt_bayar.setText("");
                         txt_jumlah.setText("");
                         loadDataMenu();
+                        cbox_member.removeAllItems();
+                        cbox_member.addItem("Pilih Member");
+                        loadDataMember();
                         MessageAlerts.getInstance().showMessage("Transaksi berhasil!", "", MessageAlerts.MessageType.SUCCESS);
                     } else {
-                        MessageAlerts.getInstance().showMessage("Gagal!", "Pastikan nominal bayar mencukupi", MessageAlerts.MessageType.DEFAULT);
+                        MessageAlerts.getInstance().showMessage("Gagal!", "Pastikan nominal pembayaran mencukupi", MessageAlerts.MessageType.DEFAULT);
                     }
                 }
-            }else{
+            } else {
                 MessageAlerts.getInstance().showMessage("Pesan menu terlebih dahulu!", "", MessageAlerts.MessageType.ERROR);
             }
         } catch (Exception ex) {
@@ -650,7 +709,7 @@ public class Form_Transaksi extends javax.swing.JPanel {
         if (selectedRow != -1) {
             String kodeMenu = (String) tableModel.getValueAt(selectedRow, 0);
             String namaMenu = (String) tableModel.getValueAt(selectedRow, 1);
-            String harga = (String) tableModel.getValueAt(selectedRow, 3);
+            String harga = (String) tableModel.getValueAt(selectedRow, 2);
 
             txt_kodeMenu.setText(kodeMenu);
             txt_namaMenu.setText(namaMenu);
@@ -678,11 +737,33 @@ public class Form_Transaksi extends javax.swing.JPanel {
         int cmbox = cbox_member.getSelectedIndex();
 //        System.out.println(cmbox);
         if (cmbox != 0) {
+            cbox_point.setEnabled(true);
             txt_namaPelanggan.setEnabled(false);
         } else {
+            cbox_point.setSelected(false);
+            cbox_point.setEnabled(false);
             txt_namaPelanggan.setEnabled(true);
         }
     }//GEN-LAST:event_cbox_memberMouseEntered
+
+    private void cbox_pointActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbox_pointActionPerformed
+        double getPoint;
+        String[] kodeMember;
+
+        kodeMember = cbox_member.getSelectedItem().toString().split("\\ ");
+
+        Double dObj = Double.valueOf(kodeMember[4]);
+        getPoint = dObj.doubleValue();
+        if (cbox_point.isSelected()) {
+            totalBayar -= getPoint;
+            txt_totalBayar.setText(String.valueOf(totalBayar));
+            cbox_member.setEnabled(false);
+        } else {
+            totalBayar += getPoint;
+            txt_totalBayar.setText(String.valueOf(totalBayar));
+            cbox_member.setEnabled(true);
+        }
+    }//GEN-LAST:event_cbox_pointActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -691,6 +772,7 @@ public class Form_Transaksi extends javax.swing.JPanel {
     private javaswingdev.util.Button btn_pesan;
     private javaswingdev.util.Button btn_tambah;
     private javax.swing.JComboBox<String> cbox_member;
+    private javax.swing.JCheckBox cbox_point;
     private javaswingdev.util.Container container1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

@@ -5,7 +5,7 @@ import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.Component;
 import javaswingdev.form.Form_Dashboard;
 import javaswingdev.form.Form_Empty;
-import javaswingdev.form.Form_Karyawan;
+//import javaswingdev.form.Form_Karyawan;
 import javaswingdev.form.Form_Member;
 import javaswingdev.form.Form_Menu;
 import javaswingdev.form.Form_RiwayatTransaksi;
@@ -13,7 +13,6 @@ import javaswingdev.form.Form_Transaksi;
 import javaswingdev.menu.EventMenuSelected;
 import raven.popup.GlassPanePopup;
 import config.Session;
-import javax.swing.JOptionPane;
 
 public class Karyawan extends javax.swing.JFrame {
     
@@ -26,8 +25,6 @@ public class Karyawan extends javax.swing.JFrame {
             GlassPanePopup.install(this);
             FlatLightLaf.setup();
             init();
-            jLabel2.setText("karyawan");
-            this.setVisible(true);
         } else {
             this.dispose();
             new Login().setVisible(true);
@@ -38,16 +35,27 @@ public class Karyawan extends javax.swing.JFrame {
     private void init() {
         main = this;
         titleBar.initJFram(this);
-        menu.addEvent(new EventMenuSelected() {
+        menu1.addEvent(new EventMenuSelected() {
             @Override
             public void menuSelected(int index, int indexSubMenu) {
                 if (index == 0 && indexSubMenu == 0) {
                     showForm(new Form_Dashboard());
                 } else if (index == 1 && indexSubMenu == 0) {
-                    showForm(new Form_Transaksi());}
+                    showForm(new Form_Menu());
+                } else if (index == 2 && indexSubMenu == 0) {
+                    showForm(new Form_Transaksi());
+                } else if (index == 3 && indexSubMenu == 0) {
+                    showForm(new Form_Member());
+                } else if (index == 4 && indexSubMenu == 0) {
+//                    showForm(new Form_Karyawan());
+                } else if (index == 5 && indexSubMenu == 0) {
+                    showForm(new Form_RiwayatTransaksi());
+                } else {
+                    showForm(new Form_Empty(index + " " + indexSubMenu));
+                }
             }
         });
-        menu.setSelectedIndex(2, 0);
+        menu1.setSelectedIndex(0, 0);
     }
     
     public void showForm(Component com) {
@@ -67,8 +75,8 @@ public class Karyawan extends javax.swing.JFrame {
 
         background = new javax.swing.JPanel();
         panelMenu = new javax.swing.JPanel();
-        menu = new javaswingdev.menu.Menu();
         titleBar = new javaswingdev.swing.titlebar.TitleBar();
+        menu1 = new javaswingdev.menu.Menu();
         body = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         button1 = new javaswingdev.util.Button();
@@ -88,16 +96,16 @@ public class Karyawan extends javax.swing.JFrame {
             panelMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelMenuLayout.createSequentialGroup()
                 .addGroup(panelMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(menu, javax.swing.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
-                    .addComponent(titleBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(0, 0, 0))
+                    .addComponent(titleBar, javax.swing.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
+                    .addComponent(menu1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         panelMenuLayout.setVerticalGroup(
             panelMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelMenuLayout.createSequentialGroup()
                 .addComponent(titleBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addComponent(menu, javax.swing.GroupLayout.DEFAULT_SIZE, 679, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(menu1, javax.swing.GroupLayout.DEFAULT_SIZE, 544, Short.MAX_VALUE)
                 .addGap(0, 0, 0))
         );
 
@@ -130,10 +138,9 @@ public class Karyawan extends javax.swing.JFrame {
                 .addGroup(backgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(body, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(backgroundLayout.createSequentialGroup()
-                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 1060, Short.MAX_VALUE)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 1018, Short.MAX_VALUE)
                         .addGap(0, 0, 0)
-                        .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, 0)))
+                        .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         backgroundLayout.setVerticalGroup(
@@ -166,12 +173,7 @@ public class Karyawan extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button1ActionPerformed
-        int konfirm = JOptionPane.showConfirmDialog(null, "Apakah anda yakin ingin logout?");
-        if (konfirm == 0) {
-            Session.logout();
-            this.dispose();
-            new Login().setVisible(true);
-        }
+        // TODO add your handling code here:
     }//GEN-LAST:event_button1ActionPerformed
 
     public static void main(String args[]) {
@@ -202,7 +204,7 @@ public class Karyawan extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Karyawan();
+                new Karyawan().setVisible(true);
             }
         });
     }
@@ -212,8 +214,9 @@ public class Karyawan extends javax.swing.JFrame {
     private javax.swing.JPanel body;
     private javaswingdev.util.Button button1;
     private javax.swing.JLabel jLabel2;
-    private javaswingdev.menu.Menu menu;
+    private javaswingdev.menu.Menu menu1;
     private javax.swing.JPanel panelMenu;
     private javaswingdev.swing.titlebar.TitleBar titleBar;
     // End of variables declaration//GEN-END:variables
 }
+

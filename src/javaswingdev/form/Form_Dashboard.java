@@ -3,6 +3,8 @@ package javaswingdev.form;
 import java.sql.*;
 import javaswingdev.card.ModelCard;
 import config.DatabaseConfig;
+import java.awt.Color;
+import javaswingdev.GoogleMaterialDesignIcon;
 
 public class Form_Dashboard extends javax.swing.JPanel {
 
@@ -13,16 +15,19 @@ public class Form_Dashboard extends javax.swing.JPanel {
         init();
     }
 
-    public String loadMember() {
+    public String loadPendapatanSkrg() {
         if (connection != null) {
             try {
-                String jumlah = "";
+                String jumlah = "0";
                 Statement st = connection.createStatement();
-                String query = "SELECT COUNT(kode_member) AS jumlah FROM member";
-                
+//                String query = "SELECT COUNT(kode_member) AS jumlah FROM member";
+                String query = "SELECT  transaksi.tnggl_transaksi, SUM(transaksi.total_transaksi) AS jumlah"
+                        + " FROM transaksi"
+                        + " WHERE date(transaksi.tnggl_transaksi)=date(now())"
+                        + " GROUP BY transaksi.tnggl_transaksi";
                 ResultSet rs = st.executeQuery(query);
                 while (rs.next()) {
-                    jumlah = rs.getString("jumlah");
+                    jumlah = rs.getString(2);
                 }
                 rs.close();
                 st.close();
@@ -32,20 +37,21 @@ public class Form_Dashboard extends javax.swing.JPanel {
 
             }
         }
-        return "";
+        return "0";
     }
+
     public String loadMenu() {
         if (connection != null) {
             try {
-                String jumlah = "" ;
+                String jumlah = "0";
                 Statement st = connection.createStatement();
                 String query = "SELECT COUNT(kode_menu) AS jumlah FROM menu";
-                
+
                 ResultSet rs = st.executeQuery(query);
                 while (rs.next()) {
                     jumlah = rs.getString("jumlah");
                 }
-                
+
                 rs.close();
                 st.close();
                 return jumlah;
@@ -54,18 +60,21 @@ public class Form_Dashboard extends javax.swing.JPanel {
                 e.printStackTrace();
             }
         }
-        return "";
+        return "0";
     }
-    public String loadKaryawan() {
+
+    public String loadPendapatanBulan() {
         if (connection != null) {
             try {
-                String jumlah = "";
+                String jumlah = "0";
                 Statement st = connection.createStatement();
-                String query = "SELECT COUNT(kode_akun) AS jumlah FROM akun WHERE role='0'";
-                
+                String query = "SELECT EXTRACT(YEAR_MONTH FROM tnggl_transaksi), SUM(transaksi.total_transaksi) AS jumlah"
+                        + " FROM transaksi"
+                        + " WHERE EXTRACT(YEAR_MONTH FROM tnggl_transaksi) = EXTRACT(YEAR_MONTH FROM NOW())"
+                        + " GROUP BY EXTRACT(YEAR_MONTH FROM tnggl_transaksi)";
                 ResultSet rs = st.executeQuery(query);
                 while (rs.next()) {
-                    jumlah = rs.getString("jumlah");
+                    jumlah = rs.getString(2);
                 }
                 rs.close();
                 st.close();
@@ -75,7 +84,7 @@ public class Form_Dashboard extends javax.swing.JPanel {
 
             }
         }
-        return "";
+        return "0";
     }
 
     private void init() {
@@ -83,9 +92,10 @@ public class Form_Dashboard extends javax.swing.JPanel {
 //        table.addRow(new Object[]{"1", "Mike Bhand", "mikebhand@gmail.com", "Admin", "25 Apr,2018"});
 //
 //        //  init card data
-        card1.setData(new ModelCard(null, null, null, "MENU", loadMenu()));
-        card2.setData(new ModelCard(null, null, null, "MEMBER", loadMember()));
-        card3.setData(new ModelCard(null, null, null, "KARYAWAN", loadKaryawan()));
+        card1.setData(new ModelCard(null, null, null, loadMenu(), "Jumlah Menu"));
+        card2.setData(new ModelCard(GoogleMaterialDesignIcon.ACCOUNT_BALANCE, null, null, "Rp. " + loadPendapatanSkrg(), "Pendapatan hari ini"));
+        card3.setData(new ModelCard(GoogleMaterialDesignIcon.ACCOUNT_BALANCE, null, null, "Rp. " + loadPendapatanBulan(), "Pengeluaran Bulan ini"));
+//        new ModelCard()
     }
 
     @SuppressWarnings("unchecked")
