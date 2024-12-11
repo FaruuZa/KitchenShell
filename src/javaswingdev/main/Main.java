@@ -43,23 +43,20 @@ public class Main extends javax.swing.JFrame {
                     if (index == 0 && indexSubMenu == 0) {
                         showForm(new Form_Dashboard());
                     } else if (index == 1 && indexSubMenu == 0) {
-                        showForm(new Form_Menu());
-                    } else if (index == 2 && indexSubMenu == 0) {
-                        showForm(new Form_BahanBaku());
-//                        showForm(new Form_Empty(index + " " + indexSubMenu));
-                    } else if (index == 3 && indexSubMenu == 0) {
                         showForm(new Form_Transaksi());
-                    } else if (index == 4 && indexSubMenu == 1) {
+                    } else if (index == 2 && indexSubMenu == 1) {
+                        showForm(new Form_Menu());
+                    } else if (index == 2 && indexSubMenu == 2) {
+                        showForm(new Form_BahanBaku());
+                    } else if (index == 3 && indexSubMenu == 0) {
                         showForm(new Form_Member());
-                    } else if (index == 4 && indexSubMenu == 2) {
-                        showForm(new TestSub());
-                    } else if (index == 5 && indexSubMenu == 0) {
+                    } else if (index == 4 && indexSubMenu == 0) {
                         showForm(new Form_Akun());
-                    } else if (index == 7 && indexSubMenu == 0) {
-                        showForm(new Form_Pengeluaran());
-                    } else if (index == 8 && indexSubMenu == 0) {
+                    } else if (index == 5 && indexSubMenu == 1) {
                         showForm(new Form_RiwayatTransaksi());
-                    }else {
+                    } else if (index == 5 && indexSubMenu == 2) {
+                        showForm(new Form_Pengeluaran());
+                    } else {
                         showForm(new Form_Empty(index + " " + indexSubMenu));
                     }
                 }

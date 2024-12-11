@@ -53,13 +53,14 @@ public class Menu extends JPanel {
         if (Session.getRole() == 1) {
             addTitle("OWNER");
             addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.DASHBOARD, "Dashboard"));
-            addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.RESTAURANT, "Menu"));
-            addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.KITCHEN, "Bahan Baku"));
+//            addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.RESTAURANT, "Menu"));
             addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.PAYMENT, "Transaksi"));
-            addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.GROUP, "Member","Daftar member","Test Sub"));
-            addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.SUPERVISOR_ACCOUNT, "Karyawan"));
-            addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.SYSTEM_UPDATE_ALT, "Pengeluaran"));
-            addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.HISTORY, "Riwayat Transaksi"));
+            addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.RESTAURANT, "Menu", "Daftar Menu", "Bahan Baku"));
+//            addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.KITCHEN, "Bahan Baku"));
+            addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.GROUP, "Daftar Member"));
+            addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.SUPERVISOR_ACCOUNT, "Daftar Akun"));
+            addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.REPORT, "Laporan","Riwayat Transaksi" ,"Pengeluaran"));
+//            addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.HISTORY, "Riwayat Transaksi"));
         } else if(Session.getRole() == 0){
             addTitle("Karyawan");
             addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.DASHBOARD, "Dashboard"));

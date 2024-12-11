@@ -6,9 +6,11 @@ package javaswingdev.form;
 
 import config.DatabaseConfig;
 import java.sql.*;
+import java.util.Locale;
 import javax.swing.JFrame;
 import javax.swing.table.DefaultTableModel;
 import raven.alerts.MessageAlerts;
+import java.text.NumberFormat;
 
 /**
  *
@@ -20,21 +22,23 @@ public class Form_Pengeluaran extends javax.swing.JPanel {
     Connection connection = null;
     String kodeTerpilih = "";
     int aksi = 0;
-    
+    Locale localeID = new Locale("in", "ID");
+    NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(localeID);
+
     public Form_Pengeluaran() {
         getCon();
-        String[] judul = {"Kode Pengeluaran", "Nama", "Tanggal Pengeluaran","Nama Barang", "Harga"};
+        String[] judul = {"Kode Pengeluaran", "Nama", "Tanggal Pengeluaran", "keterangan", "Harga"};
         tableModel = new DefaultTableModel(judul, 0) {
-        @Override
-        public boolean isCellEditable(int row, int column) {
-            return false;
-        }
-    };
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         loadDataPengeluaran("");
         initComponents();
         tbl_pengeluaran.setModel(tableModel);
     }
-    
+
     private void getCon() {
         try {
             connection = DatabaseConfig.getConnection();
@@ -42,19 +46,19 @@ public class Form_Pengeluaran extends javax.swing.JPanel {
             e.printStackTrace();
         }
     }
-    
+
     public void enabledButton(int cc) {
         if (cc == 1) {
-             addBtn.setEnabled(true);
+            addBtn.setEnabled(true);
         }
     }
 
     public void disabledButton() {
         addBtn.setEnabled(true);
-        
+
     }
-    
-     protected void popupHandler(String popupMsg, int status, tambahPengeluaran asd) {
+
+    protected void popupHandler(String popupMsg, int status, tambahPengeluaran asd) {
         if (asd != null) {
             asd.dispose();
             addBtn.setEnabled(true);
@@ -66,16 +70,21 @@ public class Form_Pengeluaran extends javax.swing.JPanel {
         }
         aksi = 0;
     }
-    
-    protected void loadDataPengeluaran(String cari){
+
+    protected void loadDataPengeluaran(String cari) {
         if (connection != null) {
             try {
-                Statement st = connection.createStatement();
-                String query = "SELECT * FROM pengeluaran WHERE nama_pengeluaran LIKE '%" + cari + "%'";
-                ResultSet rs = st.executeQuery(query);
+//                String query = "SELECT * FROM pengeluaran WHERE nama_pengeluaran LIKE '%" + cari + "%'";
+                String query = "SELECT kode_pengeluaran, user.nama, tnggl_pengeluaran, nama_pengeluaran, jumlah, harga"
+                        + " FROM pengeluaran"
+                        + " LEFT JOIN user ON user.id=pengeluaran.id_user"
+                        + " WHERE nama_pengeluaran LIKE ?";
+                PreparedStatement st = connection.prepareStatement(query);
+                st.setString(1, "%" + cari + "%");
+                ResultSet rs = st.executeQuery();
                 tableModel.setRowCount(0);
                 while (rs.next()) {
-                    String[] data = {rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4),rs.getString(5)};
+                    String[] data = {rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4),  formatRupiah.format(rs.getDouble(6))};
                     tableModel.addRow(data);
                 }
                 rs.close();
@@ -83,7 +92,7 @@ public class Form_Pengeluaran extends javax.swing.JPanel {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            
+
         }
     }
 
@@ -173,14 +182,14 @@ public class Form_Pengeluaran extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void addBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBtnActionPerformed
-          tambahPengeluaran tpengeluaran = new tambahPengeluaran(this);
-          tpengeluaran.setVisible(true);
-          tpengeluaran.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-          aksi = 1;
+        tambahPengeluaran tpengeluaran = new tambahPengeluaran(this);
+        tpengeluaran.setVisible(true);
+        tpengeluaran.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        aksi = 1;
     }//GEN-LAST:event_addBtnActionPerformed
 
     private void tbl_pengeluaranMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_pengeluaranMouseClicked
-         int selectedRow = tbl_pengeluaran.getSelectedRow();
+        int selectedRow = tbl_pengeluaran.getSelectedRow();
         if (aksi == 0) {
             if (selectedRow != -1 && selectedRow < tbl_pengeluaran.getRowCount()) {
                 kodeTerpilih = (String) tableModel.getValueAt(selectedRow, 0);
