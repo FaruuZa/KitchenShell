@@ -54,9 +54,11 @@ public class Menu extends JPanel {
             addTitle("OWNER");
             addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.DASHBOARD, "Dashboard"));
             addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.RESTAURANT, "Menu"));
+            addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.KITCHEN, "Bahan Baku"));
             addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.PAYMENT, "Transaksi"));
             addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.GROUP, "Member"));
             addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.SUPERVISOR_ACCOUNT, "Karyawan"));
+            addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.SYSTEM_UPDATE_ALT, "Pengeluaran"));
             addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.HISTORY, "Riwayat Transaksi"));
         } else if(Session.getRole() == 0){
             addTitle("Karyawan");
