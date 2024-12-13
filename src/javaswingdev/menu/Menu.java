@@ -50,6 +50,7 @@ public class Menu extends JPanel {
     public void tmbahMenu(){
         index = -1;
         panelMenu.removeAll();
+        this.setVisible(true);
         if (Session.getRole() == 1) {
             addTitle("OWNER");
             addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.DASHBOARD, "Dashboard"));
@@ -66,7 +67,8 @@ public class Menu extends JPanel {
             addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.DASHBOARD, "Dashboard"));
             addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.PAYMENT, "Transaksi"));
         }else{
-            addSpace(20);
+            this.setVisible(false);
+//            addSpace(20);
             addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.INPUT, "Login"));
         }
 //        MenuItem.init();

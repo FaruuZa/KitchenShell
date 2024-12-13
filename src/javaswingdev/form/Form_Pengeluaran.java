@@ -27,7 +27,7 @@ public class Form_Pengeluaran extends javax.swing.JPanel {
 
     public Form_Pengeluaran() {
         getCon();
-        String[] judul = {"Kode Pengeluaran", "Nama", "Tanggal Pengeluaran", "keterangan", "Harga"};
+        String[] judul = {"Kode Pengeluaran", "Nama", "Tanggal Pengeluaran", "keterangan", "Total"};
         tableModel = new DefaultTableModel(judul, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -75,10 +75,10 @@ public class Form_Pengeluaran extends javax.swing.JPanel {
         if (connection != null) {
             try {
 //                String query = "SELECT * FROM pengeluaran WHERE nama_pengeluaran LIKE '%" + cari + "%'";
-                String query = "SELECT kode_pengeluaran, user.nama, tnggl_pengeluaran, nama_pengeluaran, jumlah, harga"
+                String query = "SELECT kode_pengeluaran, user.nama, tnggl_pengeluaran, keterangan, jumlah, harga"
                         + " FROM pengeluaran"
                         + " LEFT JOIN user ON user.id=pengeluaran.id_user"
-                        + " WHERE nama_pengeluaran LIKE ?";
+                        + " WHERE keterangan LIKE ?";
                 PreparedStatement st = connection.prepareStatement(query);
                 st.setString(1, "%" + cari + "%");
                 ResultSet rs = st.executeQuery();

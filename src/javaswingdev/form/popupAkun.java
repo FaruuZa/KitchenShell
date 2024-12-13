@@ -51,7 +51,7 @@ public class popupAkun extends javax.swing.JFrame {
     public void loadData() {
         if (connection != null) {
             try {
-                System.out.println(kode);
+//                System.out.println(kode);
                 Statement st = connection.createStatement();
                 String query = "SELECT * FROM user WHERE id = '" + kode + "';";
                 ResultSet rs = st.executeQuery(query);

@@ -7,6 +7,7 @@ package javaswingdev.form;
 import java.sql.*;
 import config.DatabaseConfig;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import raven.alerts.MessageAlerts;
 
@@ -16,7 +17,7 @@ public class Form_BahanBaku extends javax.swing.JPanel {
     Connection connection = null;
     String kodeTerpilih = "";
     int aksi = 0;
-    
+
     public Form_BahanBaku() {
         getCon();
         String[] judul = {"Kode Bahan", "Nama Bahan", "Stok Bahan"};
@@ -32,15 +33,17 @@ public class Form_BahanBaku extends javax.swing.JPanel {
         editBtn.setEnabled(false);
         hapusBtn.setEnabled(false);
     }
-    
-    protected void popupHandler(String popupMsg, int status, tambahBahanBaku asd, EditBahanBaku dsa) {
+
+    protected void popupHandler(String popupMsg, int status, popupBahanbaku asd, boolean isEdit) {
         if (asd != null) {
             asd.dispose();
-            addBtn.setEnabled(true);
-        } else if (dsa != null) {
-            dsa.dispose();
-            enabledButton(1);
         }
+        if (isEdit) {
+            enabledButton(1);
+        } else {
+            addBtn.setEnabled(true);
+        }
+        addBtn.setEnabled(true);
         if (status == 1) {
             MessageAlerts.getInstance().showMessage("SUCCESS", popupMsg, MessageAlerts.MessageType.SUCCESS);
         } else {
@@ -48,7 +51,7 @@ public class Form_BahanBaku extends javax.swing.JPanel {
         }
         aksi = 0;
     }
-    
+
     private void getCon() {
         try {
             connection = DatabaseConfig.getConnection();
@@ -56,7 +59,7 @@ public class Form_BahanBaku extends javax.swing.JPanel {
             e.printStackTrace();
         }
     }
-    
+
     public void enabledButton(int cc) {
         if (cc == 1) {
             editBtn.setEnabled(true);
@@ -70,7 +73,7 @@ public class Form_BahanBaku extends javax.swing.JPanel {
         editBtn.setEnabled(false);
         hapusBtn.setEnabled(false);
     }
-    
+
     protected void loadDatabahanBaku(String cari) {
         if (connection != null) {
             try {
@@ -79,7 +82,7 @@ public class Form_BahanBaku extends javax.swing.JPanel {
                 ResultSet rs = st.executeQuery(query);
                 tableModel.setRowCount(0);
                 while (rs.next()) {
-                    String[] data = {rs.getString(1), rs.getString(2), rs.getString(3)};
+                    String[] data = {rs.getString(1), rs.getString(2), rs.getString(3) + rs.getString(4)};
                     tableModel.addRow(data);
                 }
                 rs.close();
@@ -87,10 +90,8 @@ public class Form_BahanBaku extends javax.swing.JPanel {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } 
+        }
     }
-    
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -136,6 +137,11 @@ public class Form_BahanBaku extends javax.swing.JPanel {
 
         hapusBtn.setText("HAPUS");
         hapusBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        hapusBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                hapusBtnActionPerformed(evt);
+            }
+        });
 
         addBtn.setText("TAMBAH");
         addBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -194,19 +200,19 @@ public class Form_BahanBaku extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void editBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBtnActionPerformed
-    EditBahanBaku eBahanBaku = new EditBahanBaku(this, kodeTerpilih);
-    eBahanBaku.setVisible(true);
-    eBahanBaku.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    disabledButton();
-    aksi = 1;
+        popupBahanbaku eBahanBaku = new popupBahanbaku(this, kodeTerpilih, true);
+        eBahanBaku.setVisible(true);
+        eBahanBaku.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        disabledButton();
+        aksi = 1;
     }//GEN-LAST:event_editBtnActionPerformed
 
     private void addBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBtnActionPerformed
-    tambahBahanBaku tbahanBaku = new tambahBahanBaku(this);
-    tbahanBaku.setVisible(true);
-    tbahanBaku.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    disabledButton();
-    aksi = 1;
+        popupBahanbaku tbahanBaku = new popupBahanbaku(this, null, false);
+        tbahanBaku.setVisible(true);
+        tbahanBaku.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        disabledButton();
+        aksi = 1;
     }//GEN-LAST:event_addBtnActionPerformed
 
     private void tbl_bahanBakuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_bahanBakuMouseClicked
@@ -214,9 +220,29 @@ public class Form_BahanBaku extends javax.swing.JPanel {
         if (aksi == 0) {
             if (selectedRow != -1 && selectedRow < tbl_bahanBaku.getRowCount()) {
                 kodeTerpilih = (String) tableModel.getValueAt(selectedRow, 0);
+                editBtn.setEnabled(true);
+                hapusBtn.setEnabled(true);
+                aksi = 1;
             }
         }
     }//GEN-LAST:event_tbl_bahanBakuMouseClicked
+
+    private void hapusBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hapusBtnActionPerformed
+        int konfirm = JOptionPane.showConfirmDialog(null, "Yakin Ingin Menghapus Data tersebut?");
+        if (konfirm == 0) {
+            try {
+                Statement st = connection.createStatement();
+                String query = "DELETE FROM bahanbaku WHERE kode_bahanbaku='" + kodeTerpilih + "'";
+                st.execute(query);
+                kodeTerpilih = "";
+                disabledButton();
+                loadDatabahanBaku("");
+                popupHandler("berhasil menghapus data", 1, null, true);
+            } catch (Exception e) {
+                popupHandler(e.getMessage(), 0, null, true);
+            }
+        }
+    }//GEN-LAST:event_hapusBtnActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
