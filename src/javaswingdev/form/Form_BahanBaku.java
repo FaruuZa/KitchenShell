@@ -7,7 +7,6 @@ package javaswingdev.form;
 import java.sql.*;
 import config.DatabaseConfig;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import raven.alerts.MessageAlerts;
 
@@ -34,21 +33,21 @@ public class Form_BahanBaku extends javax.swing.JPanel {
         hapusBtn.setEnabled(false);
     }
     
-//    protected void popupHandler(String popupMsg, int status, tambahBahanBaku asd, EditBahanBaku dsa) {
-//        if (asd != null) {
-//            asd.dispose();
-//            addBtn.setEnabled(true);
-//        } else if (dsa != null) {
-//            dsa.dispose();
-//            enabledButton(1);
-//        }
-//        if (status == 1) {
-//            MessageAlerts.getInstance().showMessage("SUCCESS", popupMsg, MessageAlerts.MessageType.SUCCESS);
-//        } else {
-//            MessageAlerts.getInstance().showMessage("ERROR", popupMsg, MessageAlerts.MessageType.ERROR);
-//        }
-//        aksi = 0;
-//    }
+    protected void popupHandler(String popupMsg, int status, tambahBahanBaku asd, EditBahanBaku dsa) {
+        if (asd != null) {
+            asd.dispose();
+            addBtn.setEnabled(true);
+        } else if (dsa != null) {
+            dsa.dispose();
+            enabledButton(1);
+        }
+        if (status == 1) {
+            MessageAlerts.getInstance().showMessage("SUCCESS", popupMsg, MessageAlerts.MessageType.SUCCESS);
+        } else {
+            MessageAlerts.getInstance().showMessage("ERROR", popupMsg, MessageAlerts.MessageType.ERROR);
+        }
+        aksi = 0;
+    }
     
     private void getCon() {
         try {
@@ -195,17 +194,17 @@ public class Form_BahanBaku extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void editBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBtnActionPerformed
-    EditBahanBaku ebahanBaku = new EditBahanBaku(this , kodeTerpilih);
-    ebahanBaku.setVisible(true);
-//    ebahanBaku.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    EditBahanBaku eBahanBaku = new EditBahanBaku(this, kodeTerpilih);
+    eBahanBaku.setVisible(true);
+    eBahanBaku.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     disabledButton();
     aksi = 1;
     }//GEN-LAST:event_editBtnActionPerformed
 
     private void addBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBtnActionPerformed
-    tambahBahanBaku tBahanBaku = new tambahBahanBaku(this);
-    tBahanBaku.setVisible(true);
-//    tBahanBaku.setDefaultCloseOpration(JFrame.DISPOSE_ON_CLOSE);
+    tambahBahanBaku tbahanBaku = new tambahBahanBaku(this);
+    tbahanBaku.setVisible(true);
+    tbahanBaku.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     disabledButton();
     aksi = 1;
     }//GEN-LAST:event_addBtnActionPerformed

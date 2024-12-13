@@ -1,15 +1,16 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package javaswingdev.form;
+
 
 import config.DatabaseConfig;
 import java.sql.*;
 import javaswingdev.util.TextFieldFilter;
 import javax.swing.text.AbstractDocument;
 
-public class EditBahanBaku extends javax.swing.JPanel {
+public class EditBahanBaku extends javax.swing.JFrame {
 
     Connection connection = null;
     Form_BahanBaku bahanBakuF = null;
@@ -24,7 +25,7 @@ public class EditBahanBaku extends javax.swing.JPanel {
         ((AbstractDocument) inputStok.getDocument()).setDocumentFilter(new TextFieldFilter("[0-9]*"));
         loadData();
     }
-
+    
     private void getCon() {
         try {
             connection = DatabaseConfig.getConnection();
@@ -50,8 +51,8 @@ public class EditBahanBaku extends javax.swing.JPanel {
             }
         }
     }
-    
-     public void editData() {
+     
+    public void editData() {
          if (connection != null) {
              try {
                  if (!inputNama.equals("") && !inputStok.equals("")) {
@@ -70,7 +71,6 @@ public class EditBahanBaku extends javax.swing.JPanel {
          }
     }
 
-     
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -85,10 +85,14 @@ public class EditBahanBaku extends javax.swing.JPanel {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         inputNama = new javaswingdev.util.TextField();
-        inputStok = new javaswingdev.util.TextField();
         jLabel4 = new javax.swing.JLabel();
+        inputStok = new javaswingdev.util.TextField();
         batalBtn = new javaswingdev.util.Button();
         simpanBtn = new javaswingdev.util.Button();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setUndecorated(true);
+        setResizable(false);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 30)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
@@ -110,15 +114,15 @@ public class EditBahanBaku extends javax.swing.JPanel {
             }
         });
 
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel4.setText("Stok Bahan");
+
         inputStok.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 inputStokActionPerformed(evt);
             }
         });
-
-        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel4.setText("Stok Bahan");
 
         batalBtn.setText("BATAL");
         batalBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -178,8 +182,8 @@ public class EditBahanBaku extends javax.swing.JPanel {
                 .addGap(23, 23, 23))
         );
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
@@ -192,6 +196,9 @@ public class EditBahanBaku extends javax.swing.JPanel {
                 .addComponent(container1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
+
+        pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void inputNamaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputNamaActionPerformed
@@ -203,16 +210,18 @@ public class EditBahanBaku extends javax.swing.JPanel {
     }//GEN-LAST:event_inputStokActionPerformed
 
     private void batalBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_batalBtnActionPerformed
-        bahanBakuF.enabledButton(1);
-//        BahanBakuF.aksi = 0;
-//        //        this.dispose();
-//        //        pengeluaranF.enabledButton(0);
-//        //        pengeluaranF.aksi = 0;
+        bahanBakuF.enabledButton(0);
+        bahanBakuF.aksi = 0;
+        this.dispose();
     }//GEN-LAST:event_batalBtnActionPerformed
 
     private void simpanBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_simpanBtnActionPerformed
         editData();
     }//GEN-LAST:event_simpanBtnActionPerformed
+
+    /**
+     * @param args the command line arguments
+     */
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
