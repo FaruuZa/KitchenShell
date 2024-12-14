@@ -28,7 +28,7 @@ public class Form_Transaksi extends javax.swing.JPanel {
 
     public Form_Transaksi() {
         initComponents();
-        String[] titleTblMenu = {"Kode menu ", "Nama Menu", "Harga"};
+        String[] titleTblMenu = {"Kode menu ", "Nama Menu", "Porsi", "Harga"};
         String[] titleTblPesanan = {"Kode menu ", "Nama Menu", "Jumlah", "Harga", "Total Harga"};
         ((AbstractDocument) txt_jumlah.getDocument()).setDocumentFilter(new TextFieldFilter("[0-9]*"));
         ((AbstractDocument) txt_bayar.getDocument()).setDocumentFilter(new TextFieldFilter("[0-9]*"));
@@ -64,7 +64,7 @@ public class Form_Transaksi extends javax.swing.JPanel {
 
                 while (rs.next()) {
                     String formatNumber = df.format(rs.getDouble(3));
-                    String[] data = {rs.getString(1), rs.getString(2), formatNumber};
+                    String[] data = {rs.getString(1), rs.getString(2), formatNumber, rs.getString(4)};
                     tableModel.addRow(data);
                 }
                 st.close();
@@ -724,6 +724,7 @@ public class Form_Transaksi extends javax.swing.JPanel {
                             totalBayar = 0;
                             loadDataMember();
                             cbox_member.setEnabled(true);
+                            txt_namaPelanggan.setText("");
                             MessageAlerts.getInstance().showMessage("Transaksi berhasil!", "", MessageAlerts.MessageType.SUCCESS);
                         } else {
                             MessageAlerts.getInstance().showMessage("Gagal!", "Pastikan nominal pembayaran mencukupi!", MessageAlerts.MessageType.DEFAULT);
@@ -748,7 +749,7 @@ public class Form_Transaksi extends javax.swing.JPanel {
         if (selectedRow != -1) {
             String kodeMenu = (String) tableModel.getValueAt(selectedRow, 0);
             String namaMenu = (String) tableModel.getValueAt(selectedRow, 1);
-            String harga = (String) tableModel.getValueAt(selectedRow, 2);
+            String harga = (String) tableModel.getValueAt(selectedRow, 3);
 
             txt_kodeMenu.setText(kodeMenu);
             txt_namaMenu.setText(namaMenu);

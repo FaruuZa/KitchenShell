@@ -5,8 +5,10 @@ import javaswingdev.card.ModelCard;
 import config.DatabaseConfig;
 import config.ModelData;
 import java.awt.Color;
-import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+import java.text.NumberFormat;
 import javaswingdev.GoogleMaterialDesignIcon;
 import javaswingdev.chart.ModelChart;
 
@@ -32,7 +34,7 @@ public class Form_Dashboard extends javax.swing.JPanel {
                 Double jumlah = 0.0;
                 Statement st = connection.createStatement();
 //                String query = "SELECT COUNT(kode_member) AS jumlah FROM member";
-                String query = "SELECT  transaksi.tnggl_transaksi, SUM(transaksi.total_transaksi) AS jumlah"
+                String query = "SELECT  transaksi.tnggl_transaksi, SUM(detail_transaksi.total) AS jumlah"
                         + " FROM transaksi"
                         + " WHERE date(transaksi.tnggl_transaksi)=date(now())"
                         + " GROUP BY transaksi.tnggl_transaksi";
@@ -42,7 +44,7 @@ public class Form_Dashboard extends javax.swing.JPanel {
                 }
                 rs.close();
                 st.close();
-                return formatRupiah.format(jumlah);
+                return jumlah.toString();
 //                System.out.println(jumlahKaryawan + jumlahMember + jumlahMenu);
             } catch (Exception e) {
 
@@ -73,23 +75,49 @@ public class Form_Dashboard extends javax.swing.JPanel {
         return "0";
     }
 
+    private void setData() {
+        try {
+            System.out.println("woi");
+            List<ModelData> list = new ArrayList<>();
+            String query = "SELECT * FROM v_pemasukan LIMIT 7";
+            PreparedStatement p = connection.prepareStatement(query);
+            ResultSet rs = p.executeQuery();
+            while(rs.next()){
+                String bulan = rs.getString("bulan");
+                double pemasukan = rs.getDouble("pemasukan");
+               
+                list.add(new ModelData(bulan, pemasukan));
+            }
+            rs.close();
+            p.close();
+            
+            for(int i = list.size() - 1; i >= 0; i--){
+                ModelData d = list.get(i);
+                chart.addData(new ModelChart(d.getBulan(), new double[]{d.getPemasukkan()}));
+            }
+            chart.start();
+        } catch (Exception e) {
+        }
+    }
+
     public String loadPengeluaranBulan() {
         if (connection != null) {
             try {
                 Double jumlah = 0.0;
                 Statement st = connection.createStatement();
-                String query = "SELECT EXTRACT(YEAR_MONTH FROM tnggl_pengeluaran), SUM(harga) AS jumlah"
-                        + " FROM pengeluaran"
-                        + " WHERE EXTRACT(YEAR_MONTH FROM tnggl_pengeluaran) = EXTRACT(YEAR_MONTH FROM NOW())"
-                        + " GROUP BY EXTRACT(YEAR_MONTH FROM tnggl_pengeluaran)";
-                System.out.println(query);
+                String query = "SELECT EXTRACT(YEAR_MONTH FROM tnggl_transaksi), SUM(detail_transaksi.total) AS jumlah"
+                        + " FROM transaksi"
+                        + " JOIN detail_transaksi ON transaksi.kode_transaksi=detail_transaksi.kode_transaksi"
+                        + " WHERE EXTRACT(YEAR_MONTH FROM tnggl_transaksi) = EXTRACT(YEAR_MONTH FROM NOW())"
+                        + " GROUP BY EXTRACT(YEAR_MONTH FROM tnggl_transaksi)";
+                
                 ResultSet rs = st.executeQuery(query);
                 while (rs.next()) {
                     jumlah = rs.getDouble(2);
                 }
                 rs.close();
                 st.close();
-                return formatRupiah.format(jumlah);
+                return jumlah.toString();
 //                System.out.println(jumlahKaryawan + jumlahMember + jumlahMenu);
             } catch (Exception e) {
 
