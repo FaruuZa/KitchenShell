@@ -25,7 +25,7 @@ public class Form_RiwayatTransaksi extends javax.swing.JPanel {
     public Form_RiwayatTransaksi() {
         initComponents();
         getCon();
-        String[] judul = {"Tanggal Transaksi", "Kode Transaksi", "Nama Admin", "Total Harga"};
+        String[] judul = {"Kode Transaksi","Nama Pelanggan", "Total Transaksi" , "Tanggal Transaksi"};
         tableModel = new DefaultTableModel(judul, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -50,11 +50,12 @@ public class Form_RiwayatTransaksi extends javax.swing.JPanel {
         if (connection != null) {
             try {
                 Statement st = connection.createStatement();
-                String query = "SELECT  transaksi.tnggl_transaksi,transaksi.kode_transaksi, user.nama, SUM(detail_transaksi.total) AS total"
-                        + " FROM transaksi"
-                        + " JOIN user ON user.id=transaksi.id_admin"
-                        + " JOIN detail_transaksi ON detail_transaksi.kode_transaksi=transaksi.kode_transaksi"
-                        + " GROUP BY transaksi.tnggl_transaksi, transaksi.kode_transaksi, user.nama";
+                String query = "SELECT * FROM `v_struk_transaksi` WHERE 1";
+//                String query = "SELECT  transaksi.tnggl_transaksi,transaksi.kode_transaksi, user.nama, SUM(transaksi.total) AS total"
+//                        + " FROM transaksi"
+//                        + " JOIN user ON user.id=transaksi.id_admin"
+//                        + " JOIN detail_transaksi ON detail_transaksi.kode_transaksi=transaksi.kode_transaksi"
+//                        + " GROUP BY transaksi.tnggl_transaksi, transaksi.kode_transaksi, user.nama";
                 ResultSet rs = st.executeQuery(query);
                 tableModel.setRowCount(0);
                 while (rs.next()) {
@@ -67,8 +68,6 @@ public class Form_RiwayatTransaksi extends javax.swing.JPanel {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } else {
-            System.out.println("kon");
         }
     }
 
