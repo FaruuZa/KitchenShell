@@ -14,9 +14,6 @@ import javax.swing.table.DefaultTableModel;
  */
 public class Form_RiwayatTransaksi extends javax.swing.JPanel {
 
-    /**
-     * Creates new form Form_RiwayatTransaksi
-     */
     DefaultTableModel tableModel;
     Connection connection = null;
     String kodeTerpilih = "";
@@ -25,17 +22,15 @@ public class Form_RiwayatTransaksi extends javax.swing.JPanel {
     public Form_RiwayatTransaksi() {
         initComponents();
         getCon();
-        String[] judul = {"Kode Transaksi","Nama Pelanggan", "Total Transaksi" , "Tanggal Transaksi"};
+        String[] judul = {"Kode Transaksi", "Nama Pelanggan", "Total Transaksi" , "Tanggal Transaksi"};
         tableModel = new DefaultTableModel(judul, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
-        loadData();
-        jTable1.setModel(tableModel);
-        initComponents();
-
+        loadDataRiwayatTransaksi();
+        tbl_riwayatTransaksi.setModel(tableModel);
     }
 
     private void getCon() {
@@ -46,23 +41,17 @@ public class Form_RiwayatTransaksi extends javax.swing.JPanel {
         }
     }
 
-    protected void loadData() {
+    protected void loadDataRiwayatTransaksi() {
         if (connection != null) {
             try {
                 Statement st = connection.createStatement();
-                String query = "SELECT * FROM `v_struk_transaksi` WHERE 1";
-//                String query = "SELECT  transaksi.tnggl_transaksi,transaksi.kode_transaksi, user.nama, SUM(transaksi.total) AS total"
-//                        + " FROM transaksi"
-//                        + " JOIN user ON user.id=transaksi.id_admin"
-//                        + " JOIN detail_transaksi ON detail_transaksi.kode_transaksi=transaksi.kode_transaksi"
-//                        + " GROUP BY transaksi.tnggl_transaksi, transaksi.kode_transaksi, user.nama";
+                String query = "SELECT transaksi.kode_transaksi, transaksi.nama_pelanggan, transaksi.total_transaksi, transaksi.tnggl_transaksi FROM transaksi";
                 ResultSet rs = st.executeQuery(query);
                 tableModel.setRowCount(0);
                 while (rs.next()) {
                     String[] data = {rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4)};
                     tableModel.addRow(data);
                 }
-
                 rs.close();
                 st.close();
             } catch (Exception e) {
@@ -82,10 +71,10 @@ public class Form_RiwayatTransaksi extends javax.swing.JPanel {
 
         container1 = new javaswingdev.util.Container();
         jLabel1 = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
         button1 = new javaswingdev.util.Button();
         textFieldSearchOption1 = new javaswingdev.util.TextFieldSearchOption();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tbl_riwayatTransaksi = new javax.swing.JTable();
 
         setOpaque(false);
 
@@ -95,17 +84,6 @@ public class Form_RiwayatTransaksi extends javax.swing.JPanel {
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("RIWAYAT TRANSAKSI");
-
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-
-            }
-        ));
-        jTable1.setRowHeight(40);
-        jScrollPane1.setViewportView(jTable1);
 
         button1.setText("DETAIL");
         button1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -121,39 +99,52 @@ public class Form_RiwayatTransaksi extends javax.swing.JPanel {
             }
         });
 
+        tbl_riwayatTransaksi.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane2.setViewportView(tbl_riwayatTransaksi);
+
         javax.swing.GroupLayout container1Layout = new javax.swing.GroupLayout(container1);
         container1.setLayout(container1Layout);
         container1Layout.setHorizontalGroup(
             container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, container1Layout.createSequentialGroup()
+            .addGroup(container1Layout.createSequentialGroup()
                 .addGap(15, 15, 15)
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(270, 270, 270)
-                .addComponent(textFieldSearchOption1, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(6, 6, 6))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, container1Layout.createSequentialGroup()
-                .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(container1Layout.createSequentialGroup()
-                        .addGap(744, 744, 744)
-                        .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jScrollPane2)
+                        .addGap(15, 15, 15))
                     .addGroup(container1Layout.createSequentialGroup()
-                        .addGap(25, 25, 25)
-                        .addComponent(jScrollPane1)))
-                .addGap(25, 25, 25))
+                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(270, 270, 270)
+                        .addComponent(textFieldSearchOption1, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(6, 6, 6))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, container1Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(25, 25, 25))))
         );
         container1Layout.setVerticalGroup(
             container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(container1Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
                     .addGroup(container1Layout.createSequentialGroup()
                         .addComponent(textFieldSearchOption1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(39, 39, 39)
-                        .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 253, Short.MAX_VALUE)
-                .addGap(25, 25, 25))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 241, Short.MAX_VALUE)
+                .addGap(15, 15, 15))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -184,8 +175,8 @@ public class Form_RiwayatTransaksi extends javax.swing.JPanel {
     private javaswingdev.util.Button button1;
     private javaswingdev.util.Container container1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTable tbl_riwayatTransaksi;
     private javaswingdev.util.TextFieldSearchOption textFieldSearchOption1;
     // End of variables declaration//GEN-END:variables
 }

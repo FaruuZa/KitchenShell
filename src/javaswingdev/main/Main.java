@@ -14,10 +14,12 @@ import javaswingdev.form.Form_Pengeluaran;
 import javaswingdev.menu.EventMenuSelected;
 import raven.popup.GlassPanePopup;
 import config.Session;
+import java.awt.Color;
 import javaswingdev.GoogleMaterialDesignIcon;
 import javaswingdev.form.Form_BahanBaku;
 import javaswingdev.form.Form_Login;
 import javaswingdev.form.TestSub;
+import javaswingdev.menu.Menu;
 import javaswingdev.menu.ModelMenuItem;
 import javax.swing.JOptionPane;
 
@@ -62,6 +64,10 @@ public class Main extends javax.swing.JFrame {
                     }
                 }
             });
+//            menu.add(body);
+//            menu.tmbahMenu();
+//            menu.repaint();
+//            menu.revalidate();
         } else if (Session.getRole() == 0) {
             menu.addEvent(new EventMenuSelected() {
                 @Override
@@ -84,14 +90,14 @@ public class Main extends javax.swing.JFrame {
                     }
                 }
             });
-
+//            menu.removeAll();
+//            menu.setBackground(new Color(115,200,120));
         }
         menu.tmbahMenu();
         menu.repaint();
         menu.revalidate();
 
     }
-
     public void showForm(Component com) {
         body.removeAll();
         body.add(com);
@@ -116,6 +122,7 @@ public class Main extends javax.swing.JFrame {
         button1 = new javaswingdev.util.Button();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setBackground(new java.awt.Color(115, 200, 120));
         setUndecorated(true);
 
         background.setBackground(new java.awt.Color(115, 200, 120));
