@@ -17,22 +17,31 @@ import javax.swing.text.AbstractDocument;
 import java.util.Date;
 //import raven.alerts.MessageAlerts;
 
-public class tambahMember extends javax.swing.JFrame {
+public class popupMember extends javax.swing.JFrame {
 
     Connection connection = null;
-    Date date = new Date();
-    private static final SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
+//    Date date = new Date();
+//    private static final SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    String kodeMember = "";
     Form_Member memberF = null;
-
+    boolean isEdit = false;
 //    public tambahMember() {
 //    }
-    public tambahMember(Form_Member member) {
+
+    public popupMember(Form_Member member, boolean isEdits) {
         initComponents();
         getCon();
         ((AbstractDocument) inputNama.getDocument()).setDocumentFilter(new TextFieldFilter("[a-z A-Z]*"));
         ((AbstractDocument) inputNomer.getDocument()).setDocumentFilter(new TextFieldFilter("[0-9]*"));
         this.memberF = member;
+        this.isEdit = isEdits;
+        if (isEdit) {
+            jLabel1.setText("EDIT MEMBER");
+            this.kodeMember = memberF.kodeTerpilih;
+            loadData();
+        } else {
+            jLabel1.setText("TAMBAH MEMBER");
+        }
     }
 
     private void getCon() {
@@ -43,8 +52,28 @@ public class tambahMember extends javax.swing.JFrame {
         }
     }
 
+    public void loadData() {
+        if (connection != null) {
+            try {
+                Statement st = connection.createStatement();
+                String query = "SELECT * FROM member WHERE kode_member='" + kodeMember + "';";
+                ResultSet rs = st.executeQuery(query);
+                while (rs.next()) {
+                    inputNama.setText(rs.getString(2));
+                    inputNomer.setText(rs.getString(3));
+//                    inputPoin.setText(rs.getString(4));
+//                    inputPoin.setText("00");
+                }
+                rs.close();
+                st.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     private String generateCode() {
-        String kodeMenu = "";
+        String kodeMenu = "MEM001";
         if (connection != null) {
             try {
                 Statement statement = connection.createStatement();
@@ -71,24 +100,44 @@ public class tambahMember extends javax.swing.JFrame {
         if (connection != null) {
             try {
                 if (!inputNama.getText().equals("") && !inputNomer.getText().equals("")) {
-                    Timestamp timestamp2 = new Timestamp(date.getTime());
+//                    Timestamp timestamp2 = new Timestamp(date.getTime());
                     Statement statement = connection.createStatement();
-                    String query = "INSERT INTO member VALUES ('" + generateCode() + "','" + inputNama.getText() + "','" + inputNomer.getText() + "','0','" + new Timestamp(date.getTime()) + "')";
+                    String query = "INSERT INTO member VALUES ('" + generateCode() + "','" + inputNama.getText() + "','" + inputNomer.getText() + "','0',NOW())";
                     Boolean resultSet = statement.execute(query);
                     statement.close();
                     memberF.loadDataMember("");
-                    memberF.popupHandler("data berhasil ditambah!", 1, this, null);
+                    memberF.popupHandler("data berhasil ditambah!", 1, this, false);
 
-                }else{
+                } else {
                     throw new Exception("data tidak boleh kosong!");
                 }
             } catch (Exception e) {
-                memberF.popupHandler(e.getMessage(), 0, this, null);
+                memberF.popupHandler(e.getMessage(), 0, this, false);
             }
         }
 
     }
 
+    public void editData() {
+        if (connection != null) {
+            try {
+                if (!inputNama.equals("") && !inputNomer.equals("")) {
+                    Statement statement = connection.createStatement();
+                    String query = "UPDATE `member` SET `nama_member` = '" + inputNama.getText() + "', `noTelp_member` = '" + inputNomer.getText() + "' WHERE `member`.`kode_member` = '" + kodeMember + "';";
+                    Boolean resultSet = statement.execute(query);
+                    statement.close();
+                    memberF.loadDataMember("");
+                    memberF.enabledButton(1);
+                    memberF.popupHandler("berhasil mengedit data", 1, this, true);
+                }else{
+                    throw new Exception("data tidak boleh kosong");
+                }
+            } catch (Exception e) {
+                memberF.popupHandler(e.getMessage(), 0, this, true);
+            }
+        }
+    }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -228,7 +277,11 @@ public class tambahMember extends javax.swing.JFrame {
     }//GEN-LAST:event_inputNamaActionPerformed
 
     private void button3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button3ActionPerformed
-        createData();
+        if (isEdit) {
+            editData();
+        } else {
+            createData();
+        }
     }//GEN-LAST:event_button3ActionPerformed
 
     private void batalkanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_batalkanActionPerformed

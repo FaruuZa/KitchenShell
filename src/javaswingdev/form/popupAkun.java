@@ -13,15 +13,28 @@ import javax.swing.text.AbstractDocument;
  *
  * @author rayag
  */
-public class tambahAkun extends javax.swing.JFrame {
+public class popupAkun extends javax.swing.JFrame {
 
     Connection connection = null;
     Form_Akun karyawanF = null;
+    boolean isEdit = false;
+    String kode = "";
 
-    public tambahAkun(Form_Akun Fkaryawan) {
+    public popupAkun(Form_Akun Fkaryawan, boolean isEdits) {
         getCon();
         initComponents();
         this.karyawanF = Fkaryawan;
+        this.isEdit = isEdits;
+        if (isEdit) {
+            this.kode = karyawanF.kodeTerpilih;
+            inputPassword.setEditable(false);
+            jLabel1.setText("EDIT AKUN");
+            loadData();
+        } else {
+            jLabel1.setText("TAMBAH AKUN");
+            inputPassword.setEditable(true);
+        }
+
         ((AbstractDocument) inputNama.getDocument()).setDocumentFilter(new TextFieldFilter("[a-zA-Z ] *"));
         ((AbstractDocument) inputUsername.getDocument()).setDocumentFilter(new TextFieldFilter("[a-zA-Z ] *"));
         ((AbstractDocument) inputPassword.getDocument()).setDocumentFilter(new TextFieldFilter("[0-9a-zA-Z ] *"));
@@ -35,13 +48,36 @@ public class tambahAkun extends javax.swing.JFrame {
         }
     }
 
+    public void loadData() {
+        if (connection != null) {
+            try {
+//                System.out.println(kode);
+                Statement st = connection.createStatement();
+                String query = "SELECT * FROM user WHERE id = '" + kode + "';";
+                ResultSet rs = st.executeQuery(query);
+                while (rs.next()) {
+                    inputNama.setText(rs.getString(2));
+                    inputUsername.setText(rs.getString(3));
+                    inputPassword.setText(rs.getString(4));
+                    if (rs.getInt(5) == 1) {
+                        rdAd.setSelected(true);
+                    } else {
+                        rdKar.setSelected(true);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     private void createData() {
         try {
             int hak = -1;
             if (rdAd.isSelected()) {
-                hak= 1;
-            }else{
-                hak=0;
+                hak = 1;
+            } else {
+                hak = 0;
             }
             if (!inputNama.getText().equals("") && !inputUsername.getText().equals("") && !inputPassword.getText().equals("") && hak != -1) {
                 Statement statement = connection.createStatement();
@@ -53,12 +89,44 @@ public class tambahAkun extends javax.swing.JFrame {
                 ps.setInt(4, hak);
                 ps.execute();
                 karyawanF.loadDataKaryawan("");
-                karyawanF.popupHandler("Data berhasil ditambahkan", 1, this, null);
+                karyawanF.popupHandler("Data berhasil ditambahkan", 1, this, false);
             } else {
                 throw new Exception("Data tidak boleh kosong");
             }
         } catch (Exception e) {
-            karyawanF.popupHandler(e.getMessage(), 0, this, null);
+            karyawanF.popupHandler(e.getMessage(), 0, this, false);
+        }
+    }
+
+    private void editData() {
+        if (connection != null) {
+            try {
+                if (!inputNama.equals("") && !inputUsername.equals("") && !inputPassword.equals("")) {
+                    Statement statement = connection.createStatement();
+//                    String query = "UPDATE 'user' SET 'nama' = '" + inputNama.getText() + "', 'username' = '" + inputUsername.getText() + "', 'password' = '" + inputPassword.getText() + "' ";
+                    String query = "UPDATE user SET nama = ?, username = ?, level = ? WHERE id=?";
+                    PreparedStatement ps = connection.prepareStatement(query);
+                    ps.setString(1, inputNama.getText());
+                    ps.setString(2, inputUsername.getText());
+//                    ps.setString(3, query);
+                    if (rdAd.isSelected()) {
+                        ps.setInt(3, 1);
+                    } else {
+                        ps.setInt(3, 0);
+                    }
+                    ps.setString(4, kode);
+                    ps.executeUpdate();
+                    statement.close();
+                    karyawanF.loadDataKaryawan("");
+                    karyawanF.enabledButton(0);
+                    karyawanF.popupHandler("Data berhasil diedit!", 1, this, true);
+                } else {
+                    throw new Exception("Data tidak boleh kosong!");
+                }
+            } catch (Exception e) {
+                karyawanF.popupHandler(e.getMessage(), 0, this, true);
+            }
+
         }
     }
 
@@ -204,6 +272,7 @@ public class tambahAkun extends javax.swing.JFrame {
                 .addComponent(jLabel4)
                 .addGap(0, 0, 0)
                 .addComponent(inputPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -240,7 +309,11 @@ public class tambahAkun extends javax.swing.JFrame {
     }//GEN-LAST:event_rdAdActionPerformed
 
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
-        createData();
+        if (isEdit) {
+            editData();
+        } else {
+            createData();
+        }
     }//GEN-LAST:event_btnSimpanActionPerformed
 
     private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatalActionPerformed

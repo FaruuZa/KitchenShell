@@ -6,6 +6,8 @@ package javaswingdev.form;
 
 import java.sql.*;
 import config.DatabaseConfig;
+import java.text.NumberFormat;
+import java.util.Locale;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -21,10 +23,12 @@ public class Form_Menu extends javax.swing.JPanel {
     Connection connection = null;
     String kodeTerpilih = "";
     int aksi = 0;
+    Locale localeID = new Locale("in", "ID");
+    NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(localeID);
 
     public Form_Menu() {
         getCon();
-        String[] judul = {"Kode Menu ", "Menu", "Stok", "Harga"};
+        String[] judul = {"Kode Menu ", "Menu", "Harga"};
         tableModel = new DefaultTableModel(judul, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -85,7 +89,7 @@ public class Form_Menu extends javax.swing.JPanel {
                 ResultSet rs = st.executeQuery(query);
                 tableModel.setRowCount(0);
                 while (rs.next()) {
-                    String[] data = {rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4)};
+                    String[] data = {rs.getString(1), rs.getString(2),formatRupiah.format(rs.getDouble(3)) };
                     tableModel.addRow(data);
                 }
                 rs.close();

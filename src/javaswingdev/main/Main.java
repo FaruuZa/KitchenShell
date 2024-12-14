@@ -10,11 +10,13 @@ import javaswingdev.form.Form_Member;
 import javaswingdev.form.Form_Menu;
 import javaswingdev.form.Form_RiwayatTransaksi;
 import javaswingdev.form.Form_Transaksi;
+import javaswingdev.form.Form_Pengeluaran;
 import javaswingdev.menu.EventMenuSelected;
 import raven.popup.GlassPanePopup;
 import config.Session;
 import java.awt.Color;
 import javaswingdev.GoogleMaterialDesignIcon;
+import javaswingdev.form.Form_BahanBaku;
 import javaswingdev.form.Form_Login;
 import javaswingdev.form.TestSub;
 import javaswingdev.menu.Menu;
@@ -35,27 +37,28 @@ public class Main extends javax.swing.JFrame {
     public void init() {
         main = this;
         titleBar.initJFram(this);
+        button1.setVisible(true);
+        jLabel2.setVisible(true);
         if (Session.getRole() == 1) {
-            button1.setVisible(true);
-//            menu.removeAll();
-//            menu.setBackground(Color.red);
             menu.addEvent(new EventMenuSelected() {
                 @Override
                 public void menuSelected(int index, int indexSubMenu) {
                     if (index == 0 && indexSubMenu == 0) {
                         showForm(new Form_Dashboard());
                     } else if (index == 1 && indexSubMenu == 0) {
-                        showForm(new Form_Menu());
-                    } else if (index == 2 && indexSubMenu == 0) {
                         showForm(new Form_Transaksi());
-                    } else if (index == 3 && indexSubMenu == 1) {
+                    } else if (index == 2 && indexSubMenu == 1) {
+                        showForm(new Form_Menu());
+                    } else if (index == 2 && indexSubMenu == 2) {
+                        showForm(new Form_BahanBaku());
+                    } else if (index == 3 && indexSubMenu == 0) {
                         showForm(new Form_Member());
-                    } else if (index == 3 && indexSubMenu == 2) {
-                        showForm(new TestSub());
                     } else if (index == 4 && indexSubMenu == 0) {
                         showForm(new Form_Akun());
-                    } else if (index == 5 && indexSubMenu == 0) {
+                    } else if (index == 5 && indexSubMenu == 1) {
                         showForm(new Form_RiwayatTransaksi());
+                    } else if (index == 5 && indexSubMenu == 2) {
+                        showForm(new Form_Pengeluaran());
                     } else {
                         showForm(new Form_Empty(index + " " + indexSubMenu));
                     }
@@ -66,7 +69,6 @@ public class Main extends javax.swing.JFrame {
 //            menu.repaint();
 //            menu.revalidate();
         } else if (Session.getRole() == 0) {
-            button1.setVisible(true);
             menu.addEvent(new EventMenuSelected() {
                 @Override
                 public void menuSelected(int index, int indexSubMenu) {
@@ -79,6 +81,7 @@ public class Main extends javax.swing.JFrame {
             });
         } else {
             button1.setVisible(false);
+            jLabel2.setVisible(false);
             menu.addEvent(new EventMenuSelected() {
                 @Override
                 public void menuSelected(int index, int indexSubMenu) {
@@ -143,19 +146,20 @@ public class Main extends javax.swing.JFrame {
         panelMenuLayout.setVerticalGroup(
             panelMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelMenuLayout.createSequentialGroup()
-                .addComponent(titleBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(titleBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(0, 0, 0)
-                .addComponent(menu, javax.swing.GroupLayout.DEFAULT_SIZE, 679, Short.MAX_VALUE)
+                .addComponent(menu, javax.swing.GroupLayout.PREFERRED_SIZE, 679, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0))
         );
 
+        body.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Green"));
         body.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
         body.setOpaque(false);
         body.setLayout(new java.awt.BorderLayout());
 
         jLabel2.setBackground(new java.awt.Color(0, 153, 0));
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setForeground(javax.swing.UIManager.getDefaults().getColor("Button.background"));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("KITCHEN SHELL");
         jLabel2.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 1, 1, 1));
@@ -174,11 +178,11 @@ public class Main extends javax.swing.JFrame {
             backgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(backgroundLayout.createSequentialGroup()
                 .addComponent(panelMenu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(0, 0, 0)
                 .addGroup(backgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(body, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(backgroundLayout.createSequentialGroup()
-                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 1060, Short.MAX_VALUE)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 1066, Short.MAX_VALUE)
                         .addGap(0, 0, 0)
                         .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())

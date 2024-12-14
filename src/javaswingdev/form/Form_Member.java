@@ -55,22 +55,39 @@ public class Form_Member extends javax.swing.JPanel {
             editBtn.setEnabled(true);
             hapusBtn.setEnabled(true);
         }
-        button1.setEnabled(true);
+        addBtn.setEnabled(true);
     }
 
     public void disabledButton() {
-        button1.setEnabled(false);
+        addBtn.setEnabled(false);
         editBtn.setEnabled(false);
         hapusBtn.setEnabled(false);
     }
 
-    protected void popupHandler(String popupMsg, int status, tambahMember asd, EditMember dsa) {
+//    protected void popupHandler(String popupMsg, int status, popupMember asd, EditMember dsa) {
+//        if (asd != null) {
+//            asd.dispose();
+//            enabledButton(0);
+//        } else if (dsa != null) {
+//            dsa.dispose();
+//            enabledButton(1);
+//        }
+//        if (status == 1) {
+//            MessageAlerts.getInstance().showMessage("SUCCESS", popupMsg, MessageAlerts.MessageType.SUCCESS);
+//        } else {
+//            MessageAlerts.getInstance().showMessage("ERROR", popupMsg, MessageAlerts.MessageType.ERROR);
+//        }
+//        aksi = 0;
+//    }
+
+    protected void popupHandler(String popupMsg, int status, popupMember asd, boolean isEdit) {
         if (asd != null) {
             asd.dispose();
-            enabledButton(0);
-        } else if (dsa != null) {
-            dsa.dispose();
+        }
+        if (isEdit) {
             enabledButton(1);
+        } else {
+            addBtn.setEnabled(true);
         }
         if (status == 1) {
             MessageAlerts.getInstance().showMessage("SUCCESS", popupMsg, MessageAlerts.MessageType.SUCCESS);
@@ -79,7 +96,7 @@ public class Form_Member extends javax.swing.JPanel {
         }
         aksi = 0;
     }
-
+    
     protected void loadDataMember(String cari) {
         if (connection != null) {
             try {
@@ -116,7 +133,7 @@ public class Form_Member extends javax.swing.JPanel {
         search = new javaswingdev.util.TextFieldSearchOption();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbl_member = new javax.swing.JTable();
-        button1 = new javaswingdev.util.Button();
+        addBtn = new javaswingdev.util.Button();
         editBtn = new javaswingdev.util.Button();
         hapusBtn = new javaswingdev.util.Button();
 
@@ -153,11 +170,11 @@ public class Form_Member extends javax.swing.JPanel {
         });
         jScrollPane1.setViewportView(tbl_member);
 
-        button1.setText("TAMBAH");
-        button1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        button1.addActionListener(new java.awt.event.ActionListener() {
+        addBtn.setText("TAMBAH");
+        addBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        addBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                button1ActionPerformed(evt);
+                addBtnActionPerformed(evt);
             }
         });
 
@@ -195,7 +212,7 @@ public class Form_Member extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(search, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(button1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(addBtn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(30, 30, 30))
         );
         container1Layout.setVerticalGroup(
@@ -207,7 +224,7 @@ public class Form_Member extends javax.swing.JPanel {
                     .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(60, 60, 60)
                 .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(addBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(editBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(hapusBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -236,13 +253,13 @@ public class Form_Member extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_searchActionPerformed
 
-    private void button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button1ActionPerformed
-        tambahMember tmember = new tambahMember(this);
+    private void addBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBtnActionPerformed
+        popupMember tmember = new popupMember(this, false);
         tmember.setVisible(true);
         tmember.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         disabledButton();
         aksi = 1;
-    }//GEN-LAST:event_button1ActionPerformed
+    }//GEN-LAST:event_addBtnActionPerformed
 
     private void tbl_memberMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_memberMouseClicked
         int selectedRow = tbl_member.getSelectedRow();
@@ -268,7 +285,7 @@ public class Form_Member extends javax.swing.JPanel {
                 disabledButton();
                 enabledButton(0);
                 loadDataMember("");
-                popupHandler("data berhasil dihapus!", 1, null, null);
+                popupHandler("data berhasil dihapus!", 1, null, false   );
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -276,7 +293,7 @@ public class Form_Member extends javax.swing.JPanel {
     }//GEN-LAST:event_hapusBtnActionPerformed
 
     private void editBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBtnActionPerformed
-        EditMember emember = new EditMember(this, kodeTerpilih);
+        popupMember emember = new popupMember(this, true);
         emember.setVisible(true);
         emember.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         disabledButton();
@@ -289,7 +306,7 @@ public class Form_Member extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javaswingdev.util.Button button1;
+    private javaswingdev.util.Button addBtn;
     private javaswingdev.util.Container container1;
     private javaswingdev.util.Button editBtn;
     private javaswingdev.util.Button hapusBtn;
