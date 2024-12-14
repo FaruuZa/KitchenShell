@@ -32,7 +32,14 @@ public class Menu extends JPanel {
         scroll.setViewportView(panelMenu);
         scroll.getViewport().setOpaque(false);
         scroll.setViewportBorder(null);
+//        if(Session.getRole() == 0 || Session.getRole() == 1){
+//            setOpaque(true);
+//        }else{
+//            setOpaque(false);
+//            remove(panelMenu);
+//        }
         add(scroll);
+        
 //        tmbahMenu();
 //        addTitle("WEB APPS");
 //        addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.MAIL_OUTLINE, "Email", "Inbox", "Read", "Compose"));

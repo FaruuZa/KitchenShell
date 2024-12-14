@@ -4,6 +4,8 @@ import java.sql.*;
 import config.DatabaseConfig;
 import config.Session;
 import java.text.DecimalFormat;
+import java.time.LocalDate;
+import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -55,7 +57,7 @@ public class Form_Transaksi extends javax.swing.JPanel {
         if (connection != null) {
             try {
                 Statement st = connection.createStatement();
-                String query = "SELECT * FROM jumlah_porsi_menu WHERE jumlah_porsi != 0";
+                String query = "SELECT * FROM v_jumlah_porsi_menu WHERE jumlah_porsi != 0";
                 ResultSet rs = st.executeQuery(query);
                 tableModel.setRowCount(0);
                 DecimalFormat df = new DecimalFormat("#");
@@ -97,7 +99,7 @@ public class Form_Transaksi extends javax.swing.JPanel {
         if (connection != null) {
             try {
                 String kode_menu = txt_kodeMenu.getText();
-                String query = "SELECT * FROM jumlah_porsi_menu WHERE kode_menu = ?";
+                String query = "SELECT * FROM v_jumlah_porsi_menu WHERE kode_menu = ?";
                 PreparedStatement ps = connection.prepareStatement(query);
                 ps.setString(1, kode_menu);
                 ResultSet rs = ps.executeQuery();
@@ -172,15 +174,15 @@ public class Form_Transaksi extends javax.swing.JPanel {
         return kodeTransaksi;
     }
 
-    private static void prosesTransaksi(String kodeTransaksi, String kodeMember, String namaPelanggan, String[] kodeMenu, String idAdmin, int[] jumlah, double bayar, double point, double totalBayar) throws SQLException {
+    private static void prosesTransaksi(String kodeTransaksi, String kodeMember, String namaPelanggan, String[] kodeMenu, String idAdmin, int[] jumlah, double bayar, double point, double totalBayar, boolean gunakanPoint) throws SQLException {
         Connection conn = DatabaseConfig.getConnection();
         if (conn != null) {
             try {
                 conn.setAutoCommit(false);
-
+                String tanggal = LocalDate.now().toString();
                 //Cek stok
                 for (int i = 0; i < kodeMenu.length; i++) {
-                    String cekStok = "SELECT jumlah_porsi, harga_menu FROM jumlah_porsi_menu WHERE kode_menu = ?";
+                    String cekStok = "SELECT jumlah_porsi, harga_menu FROM v_jumlah_porsi_menu WHERE kode_menu = ?";
                     try (PreparedStatement cekStokStmt = conn.prepareStatement(cekStok)) {
                         cekStokStmt.setString(1, kodeMenu[i]);
                         try (ResultSet rs = cekStokStmt.executeQuery()) {
@@ -199,35 +201,49 @@ public class Form_Transaksi extends javax.swing.JPanel {
                 //Insert transaksi
                 if (kodeMember.isEmpty()) {
                     //Jika tidak memiliki member
-                    insertTransaksi = "INSERT INTO transaksi VALUES (?, ?, NULL, NOW(), ?, ?, ?)";
+                    insertTransaksi = "INSERT INTO transaksi VALUES (?, ?, NULL, ?, ?, ?, ?)";
                     try (PreparedStatement transaksiStmt = conn.prepareStatement(insertTransaksi)) {
                         transaksiStmt.setString(1, kodeTransaksi);
                         transaksiStmt.setString(2, idAdmin);
-                        transaksiStmt.setString(3, namaPelanggan);
-                        transaksiStmt.setDouble(4, totalBayar);
-                        transaksiStmt.setDouble(5, bayar);
-                        transaksiStmt.executeUpdate();
-                    }
-                } else {
-                    // Jika Memiliki Members
-                    insertTransaksi = "INSERT INTO transaksi VALUES (?, ?, ?, NOW(), ?, ?, ?)";
-                    try (PreparedStatement transaksiStmt = conn.prepareStatement(insertTransaksi)) {
-                        transaksiStmt.setString(1, kodeTransaksi);
-                        transaksiStmt.setString(2, idAdmin);
-                        transaksiStmt.setString(3, kodeMember);
+                        transaksiStmt.setString(3, tanggal);
                         transaksiStmt.setString(4, namaPelanggan);
                         transaksiStmt.setDouble(5, totalBayar);
                         transaksiStmt.setDouble(6, bayar);
                         transaksiStmt.executeUpdate();
                     }
-                    // Insert point
-                    String setPoint = "UPDATE member SET point = point + ? WHERE kode_member = ?";
-                    try (PreparedStatement pointStmt = conn.prepareStatement(setPoint)) {
-                        pointStmt.setDouble(1, point);
-                        pointStmt.setString(2, kodeMember);
-                        int rowUpdate = pointStmt.executeUpdate();
-                        if (rowUpdate == 0) {
-                            throw new SQLException("Gagal perbarui data pada member: " + kodeMember);
+                } else {
+                    // Jika Memiliki Members
+                    insertTransaksi = "INSERT INTO transaksi VALUES (?, ?, ?, ?, ?, ?, ?)";
+                    try (PreparedStatement transaksiStmt = conn.prepareStatement(insertTransaksi)) {
+                        transaksiStmt.setString(1, kodeTransaksi);
+                        transaksiStmt.setString(2, idAdmin);
+                        transaksiStmt.setString(3, kodeMember);
+                        transaksiStmt.setString(4, tanggal);
+                        transaksiStmt.setString(5, namaPelanggan);
+                        transaksiStmt.setDouble(6, totalBayar);
+                        transaksiStmt.setDouble(7, bayar);
+                        transaksiStmt.executeUpdate();
+                    }
+
+                    if (gunakanPoint) {
+                        String delPoint = "UPDATE member SET point = point - point WHERE kode_member = ?";
+                        try (PreparedStatement delPointStmt = conn.prepareStatement(delPoint)) {
+                            delPointStmt.setString(1, kodeMember);
+                            int rowUpdate = delPointStmt.executeUpdate();
+                            if (rowUpdate == 0) {
+                                throw new SQLException("Gagal perbarui data pada member: " + kodeMember);
+                            }
+                        }
+                    } else {
+                        // Insert point
+                        String setPoint = "UPDATE member SET point = point + ? WHERE kode_member = ?";
+                        try (PreparedStatement pointStmt = conn.prepareStatement(setPoint)) {
+                            pointStmt.setDouble(1, point);
+                            pointStmt.setString(2, kodeMember);
+                            int rowUpdate = pointStmt.executeUpdate();
+                            if (rowUpdate == 0) {
+                                throw new SQLException("Gagal perbarui data pada member: " + kodeMember);
+                            }
                         }
                     }
                 }
@@ -676,7 +692,7 @@ public class Form_Transaksi extends javax.swing.JPanel {
 
         point = totalBayar * 0.1;
         double updatePoint = cbox_point.isSelected() ? 0 : point;
-
+        boolean gunakanPoint = cbox_point.isSelected();
         namaPelanggan = txt_namaPelanggan.getText();
         for (int i = 0; i < tbl_pesanan.getRowCount(); i++) {
             kodeMenuList.add((String) tbl_pesanan.getValueAt(i, 0));
@@ -686,31 +702,36 @@ public class Form_Transaksi extends javax.swing.JPanel {
         int[] jumlah = jumlahList.stream().mapToInt(Integer::intValue).toArray();
         try {
             if (tbl_pesanan.getRowCount() != 0) {
-                if (txt_bayar.getText().equals("")) {
-                    MessageAlerts.getInstance().showMessage("Gagal!", "Pastikan mengisi nominal pembayaran", MessageAlerts.MessageType.DEFAULT);
+                if (cbox_member.getSelectedIndex() == 0 && txt_namaPelanggan.getText().equals("")) {
+                    MessageAlerts.getInstance().showMessage("Gagal!", "Pastikan nama pelanggan tidak kosong!", MessageAlerts.MessageType.ERROR);
                 } else {
-                    bayar = Double.parseDouble(txt_bayar.getText());
-                    if (Double.parseDouble(txt_bayar.getText()) >= totalBayar) {
-//                        prosesTransaksi(kodeTransaksi, kodeMember[0], namaPelanggan, kodeMenu, idAdmin, jumlah, bayar, updatePoint, totalBayar);
-                        selectedTableMenu.setRowCount(0);
-                        txt_kodeMenu.setText("");
-                        txt_namaMenu.setText("");
-                        txt_harga.setText("");
-                        txt_totalBayar.setText("");
-                        txt_bayar.setText("");
-                        txt_jumlah.setText("");
-                        loadDataMenu();
-                        cbox_member.removeAllItems();
-                        cbox_member.addItem("Pilih Member");
-                        totalBayar = 0;
-                        loadDataMember();
-                        MessageAlerts.getInstance().showMessage("Transaksi berhasil!", "", MessageAlerts.MessageType.SUCCESS);
+                    if (txt_bayar.getText().equals("")) {
+                        MessageAlerts.getInstance().showMessage("Gagal!", "Pastikan mengisi nominal pembayaran!", MessageAlerts.MessageType.ERROR);
                     } else {
-                        MessageAlerts.getInstance().showMessage("Gagal!", "Pastikan nominal pembayaran mencukupi", MessageAlerts.MessageType.DEFAULT);
+                        bayar = Double.parseDouble(txt_bayar.getText());
+                        if (Double.parseDouble(txt_bayar.getText()) >= totalBayar) {
+                            prosesTransaksi(kodeTransaksi, kodeMember[0], namaPelanggan, kodeMenu, idAdmin, jumlah, bayar, updatePoint, totalBayar, gunakanPoint);
+                            selectedTableMenu.setRowCount(0);
+                            txt_kodeMenu.setText("");
+                            txt_namaMenu.setText("");
+                            txt_harga.setText("");
+                            txt_totalBayar.setText("");
+                            txt_bayar.setText("");
+                            txt_jumlah.setText("");
+                            loadDataMenu();
+                            cbox_member.removeAllItems();
+                            cbox_member.addItem("Pilih Member");
+                            totalBayar = 0;
+                            loadDataMember();
+                            cbox_member.setEnabled(true);
+                            MessageAlerts.getInstance().showMessage("Transaksi berhasil!", "", MessageAlerts.MessageType.SUCCESS);
+                        } else {
+                            MessageAlerts.getInstance().showMessage("Gagal!", "Pastikan nominal pembayaran mencukupi!", MessageAlerts.MessageType.DEFAULT);
+                        }
                     }
                 }
             } else {
-                MessageAlerts.getInstance().showMessage("Pesan menu terlebih dahulu!", "", MessageAlerts.MessageType.ERROR);
+                MessageAlerts.getInstance().showMessage("Pilih menu terlebih dahulu!", "", MessageAlerts.MessageType.ERROR);
             }
         } catch (Exception ex) {
             MessageAlerts.getInstance().showMessage("Transaksi gagal!", "", MessageAlerts.MessageType.ERROR);

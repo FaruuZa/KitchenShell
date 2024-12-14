@@ -3,8 +3,12 @@ package javaswingdev.form;
 import java.sql.*;
 import javaswingdev.card.ModelCard;
 import config.DatabaseConfig;
+import config.ModelData;
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 import javaswingdev.GoogleMaterialDesignIcon;
+import javaswingdev.chart.ModelChart;
 
 public class Form_Dashboard extends javax.swing.JPanel {
 
@@ -12,6 +16,10 @@ public class Form_Dashboard extends javax.swing.JPanel {
 
     public Form_Dashboard() {
         initComponents();
+        chart.setTitle("Chart Data");
+        chart.addLegend("Pemasukan", Color.decode("#00ff87"), Color.decode("#60efff"));
+        chart.addLegend("Pengeluaran", Color.decode("#57ebde"), Color.decode("#aefb2a"));
+        setData();
         init();
     }
 
@@ -20,13 +28,11 @@ public class Form_Dashboard extends javax.swing.JPanel {
             try {
                 String jumlah = "0";
                 Statement st = connection.createStatement();
-//                String query = "SELECT COUNT(kode_member) AS jumlah FROM member";
                 String query = "SELECT  transaksi.tnggl_transaksi, SUM(detail_transaksi.total) AS jumlah"
                         + " FROM transaksi"
                         + " JOIN detail_transaksi ON detail_transaksi.kode_transaksi=transaksi.kode_transaksi"
                         + " WHERE date(transaksi.tnggl_transaksi)=date(now())"
                         + " GROUP BY transaksi.tnggl_transaksi";
-                System.out.println(query);
                 ResultSet rs = st.executeQuery(query);
                 while (rs.next()) {
                     jumlah = rs.getString(2);
@@ -34,7 +40,6 @@ public class Form_Dashboard extends javax.swing.JPanel {
                 rs.close();
                 st.close();
                 return jumlah;
-//                System.out.println(jumlahKaryawan + jumlahMember + jumlahMenu);
             } catch (Exception e) {
 
             }
@@ -57,12 +62,36 @@ public class Form_Dashboard extends javax.swing.JPanel {
                 rs.close();
                 st.close();
                 return jumlah;
-//                System.out.println(jumlahKaryawan + jumlahMember + jumlahMenu);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
         return "";
+    }
+
+    private void setData() {
+        try {
+            System.out.println("woi");
+            List<ModelData> list = new ArrayList<>();
+            String query = "SELECT * FROM v_pemasukan LIMIT 7";
+            PreparedStatement p = connection.prepareStatement(query);
+            ResultSet rs = p.executeQuery();
+            while(rs.next()){
+                String bulan = rs.getString("bulan");
+                double pemasukan = rs.getDouble("pemasukan");
+               
+                list.add(new ModelData(bulan, pemasukan));
+            }
+            rs.close();
+            p.close();
+            
+            for(int i = list.size() - 1; i >= 0; i--){
+                ModelData d = list.get(i);
+                chart.addData(new ModelChart(d.getBulan(), new double[]{d.getPemasukkan()}));
+            }
+            chart.start();
+        } catch (Exception e) {
+        }
     }
 
     public String loadPendapatanBulan() {
@@ -75,7 +104,7 @@ public class Form_Dashboard extends javax.swing.JPanel {
                         + " JOIN detail_transaksi ON transaksi.kode_transaksi=detail_transaksi.kode_transaksi"
                         + " WHERE EXTRACT(YEAR_MONTH FROM tnggl_transaksi) = EXTRACT(YEAR_MONTH FROM NOW())"
                         + " GROUP BY EXTRACT(YEAR_MONTH FROM tnggl_transaksi)";
-                
+
                 ResultSet rs = st.executeQuery(query);
                 while (rs.next()) {
                     jumlah = rs.getString(2);
@@ -83,7 +112,6 @@ public class Form_Dashboard extends javax.swing.JPanel {
                 rs.close();
                 st.close();
                 return jumlah;
-//                System.out.println(jumlahKaryawan + jumlahMember + jumlahMenu);
             } catch (Exception e) {
 
             }
@@ -95,7 +123,6 @@ public class Form_Dashboard extends javax.swing.JPanel {
 //        table.fixTable(jScrollPane1);
 //        table.addRow(new Object[]{"1", "Mike Bhand", "mikebhand@gmail.com", "Admin", "25 Apr,2018"});
 //
-//        //  init card data
         card1.setData(new ModelCard(null, null, null, loadMenu(), "Jumlah Menu"));
         card2.setData(new ModelCard(GoogleMaterialDesignIcon.ACCOUNT_BALANCE, null, null, "Rp. " + loadPendapatanSkrg(), "Pendapatan hari ini"));
         card3.setData(new ModelCard(GoogleMaterialDesignIcon.ACCOUNT_BALANCE, null, null, "Rp. " + loadPendapatanBulan(), "Pengeluaran Bulan ini"));
@@ -110,9 +137,10 @@ public class Form_Dashboard extends javax.swing.JPanel {
         card2 = new javaswingdev.card.Card();
         card3 = new javaswingdev.card.Card();
         roundPanel1 = new javaswingdev.swing.RoundPanel();
-        jLabel1 = new javax.swing.JLabel();
+        chart = new javaswingdev.chart.CurveLineChart();
         roundPanel2 = new javaswingdev.swing.RoundPanel();
-        jLabel2 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
 
         setOpaque(false);
 
@@ -132,32 +160,39 @@ public class Form_Dashboard extends javax.swing.JPanel {
         roundPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
         roundPanel1.setRound(10);
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Grafik cart");
-
         javax.swing.GroupLayout roundPanel1Layout = new javax.swing.GroupLayout(roundPanel1);
         roundPanel1.setLayout(roundPanel1Layout);
         roundPanel1Layout.setHorizontalGroup(
             roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(roundPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(chart, javax.swing.GroupLayout.DEFAULT_SIZE, 471, Short.MAX_VALUE)
                 .addContainerGap())
         );
         roundPanel1Layout.setVerticalGroup(
             roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(roundPanel1Layout.createSequentialGroup()
-                .addGap(104, 104, 104)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(165, 165, 165))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, roundPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(chart, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         roundPanel2.setBackground(new java.awt.Color(255, 255, 255));
 
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setText("Menu yang akan habis");
+        jTable1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {"beras", "500g"},
+                {"telur", "720g"},
+                {"mie", "320g"},
+                {"minyak", "870ml"}
+            },
+            new String [] {
+                "Nama bahan", "Sisa stok"
+            }
+        ));
+        jTable1.setRowHeight(30);
+        jScrollPane1.setViewportView(jTable1);
 
         javax.swing.GroupLayout roundPanel2Layout = new javax.swing.GroupLayout(roundPanel2);
         roundPanel2.setLayout(roundPanel2Layout);
@@ -165,15 +200,15 @@ public class Form_Dashboard extends javax.swing.JPanel {
             roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(roundPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                 .addContainerGap())
         );
         roundPanel2Layout.setVerticalGroup(
             roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(roundPanel2Layout.createSequentialGroup()
-                .addGap(128, 128, 128)
-                .addComponent(jLabel2)
-                .addGap(0, 0, 0))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, roundPanel2Layout.createSequentialGroup()
+                .addGap(10, 10, 10)
+                .addComponent(jScrollPane1)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -185,9 +220,9 @@ public class Form_Dashboard extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(roundPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(card1, javax.swing.GroupLayout.DEFAULT_SIZE, 240, Short.MAX_VALUE)
+                        .addComponent(card1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                         .addGap(30, 30, 30)
-                        .addComponent(card2, javax.swing.GroupLayout.DEFAULT_SIZE, 240, Short.MAX_VALUE)))
+                        .addComponent(card2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
                 .addGap(30, 30, 30)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(card3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -215,8 +250,9 @@ public class Form_Dashboard extends javax.swing.JPanel {
     private javaswingdev.card.Card card1;
     private javaswingdev.card.Card card2;
     private javaswingdev.card.Card card3;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
+    private javaswingdev.chart.CurveLineChart chart;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jTable1;
     private javaswingdev.swing.RoundPanel roundPanel1;
     private javaswingdev.swing.RoundPanel roundPanel2;
     // End of variables declaration//GEN-END:variables

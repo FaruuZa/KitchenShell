@@ -13,9 +13,11 @@ import javaswingdev.form.Form_Transaksi;
 import javaswingdev.menu.EventMenuSelected;
 import raven.popup.GlassPanePopup;
 import config.Session;
+import java.awt.Color;
 import javaswingdev.GoogleMaterialDesignIcon;
 import javaswingdev.form.Form_Login;
 import javaswingdev.form.TestSub;
+import javaswingdev.menu.Menu;
 import javaswingdev.menu.ModelMenuItem;
 import javax.swing.JOptionPane;
 
@@ -35,6 +37,8 @@ public class Main extends javax.swing.JFrame {
         titleBar.initJFram(this);
         if (Session.getRole() == 1) {
             button1.setVisible(true);
+//            menu.removeAll();
+//            menu.setBackground(Color.red);
             menu.addEvent(new EventMenuSelected() {
                 @Override
                 public void menuSelected(int index, int indexSubMenu) {
@@ -57,6 +61,10 @@ public class Main extends javax.swing.JFrame {
                     }
                 }
             });
+//            menu.add(body);
+//            menu.tmbahMenu();
+//            menu.repaint();
+//            menu.revalidate();
         } else if (Session.getRole() == 0) {
             button1.setVisible(true);
             menu.addEvent(new EventMenuSelected() {
@@ -79,14 +87,14 @@ public class Main extends javax.swing.JFrame {
                     }
                 }
             });
-
+//            menu.removeAll();
+//            menu.setBackground(new Color(115,200,120));
         }
         menu.tmbahMenu();
         menu.repaint();
         menu.revalidate();
 
     }
-
     public void showForm(Component com) {
         body.removeAll();
         body.add(com);
@@ -111,6 +119,7 @@ public class Main extends javax.swing.JFrame {
         button1 = new javaswingdev.util.Button();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setBackground(new java.awt.Color(115, 200, 120));
         setUndecorated(true);
 
         background.setBackground(new java.awt.Color(115, 200, 120));
