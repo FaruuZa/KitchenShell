@@ -19,11 +19,6 @@ public class Form_Dashboard extends javax.swing.JPanel {
 
     public Form_Dashboard() {
         initComponents();
-        chart.setTitle("Chart Data");
-        chart.addLegend("Pemasukan", Color.decode("#00ff87"), Color.decode("#60efff"));
-        chart.addLegend("Pengeluaran", Color.decode("#57ebde"), Color.decode("#aefb2a"));
-        System.out.println(chart.getTitle());
-        setData();
         init();
         showChart(new ChartPemasukan());
     }
@@ -71,31 +66,6 @@ public class Form_Dashboard extends javax.swing.JPanel {
             }
         }
         return "0";
-    }
-
-    private void setData() {
-        try {
-            System.out.println("woi");
-            List<ModelData> list = new ArrayList<>();
-            String query = "SELECT * FROM v_pemasukan LIMIT 7";
-            PreparedStatement p = connection.prepareStatement(query);
-            ResultSet rs = p.executeQuery();
-            while (rs.next()) {
-                String bulan = rs.getString("bulan");
-                double pemasukan = rs.getDouble("pemasukan");
-
-                list.add(new ModelData(bulan, pemasukan));
-            }
-            rs.close();
-            p.close();
-
-            for (int i = list.size() - 1; i >= 0; i--) {
-                ModelData d = list.get(i);
-                chart.addData(new ModelChart(d.getBulan(), new double[]{d.getPemasukkan()}));
-            }
-            chart.start();
-        } catch (Exception e) {
-        }
     }
 
     public String loadPengeluaranBulan() {
