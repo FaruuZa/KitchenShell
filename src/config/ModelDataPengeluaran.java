@@ -8,7 +8,7 @@ package config;
  *
  * @author MI TA
  */
-public class ModelData {
+public class ModelDataPengeluaran {
 
     /**
      * @return the bulan
@@ -25,27 +25,27 @@ public class ModelData {
     }
 
     /**
-     * @return the pemasukkan
+     * @return the pengeluaran
      */
-    public double getPemasukkan() {
-        return pemasukkan;
+    public double getPengeluaran() {
+        return pengeluaran;
     }
 
     /**
-     * @param pemasukkan the pemasukkan to set
+     * @param pengeluaran the pengeluaran to set
      */
-    public void setPemasukkan(double pemasukkan) {
-        this.pemasukkan = pemasukkan;
-    }
-
-    public ModelData(String bulan, double pemasukkan) {
-        this.bulan = bulan;
-        this.pemasukkan = pemasukkan;
-    }
-
-    public ModelData() {
-    }
     
+    public ModelDataPengeluaran(String bulan, double pengeluaran) {
+        this.bulan = bulan;
+        this.pengeluaran = pengeluaran;
+    }
+
+    public ModelDataPengeluaran() {
+    }
+
+    public void setPengeluaran(double pengeluaran) {
+        this.pengeluaran = pengeluaran;
+    }
     private String bulan;
-    private double pemasukkan;
+    private double pengeluaran;
 }

@@ -73,7 +73,7 @@ public class popupMember extends javax.swing.JFrame {
     }
 
     private String generateCode() {
-        String kodeMenu = "MEM001";
+        String kodeMenu = "";
         if (connection != null) {
             try {
                 Statement statement = connection.createStatement();
@@ -82,8 +82,8 @@ public class popupMember extends javax.swing.JFrame {
 
                 if (resultSet.next()) {
                     String lastKode = resultSet.getString("kode_member");
-                    int kodeNum = Integer.parseInt(lastKode.substring(3)) + 1;
-                    kodeMenu = String.format("MEM%03d", kodeNum);
+                    int kodeNum = Integer.parseInt(lastKode.substring(4)) + 1;
+                    kodeMenu = String.format("MB%04d", kodeNum);
                 }
 
                 resultSet.close();
