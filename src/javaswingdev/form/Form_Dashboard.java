@@ -8,8 +8,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.text.NumberFormat;
 import javaswingdev.GoogleMaterialDesignIcon;
 import javaswingdev.chart.ChartPemasukan;
 import javaswingdev.chart.ChartPengeluaran;
@@ -19,11 +17,13 @@ public class Form_Dashboard extends javax.swing.JPanel {
 
     Connection connection = DatabaseConfig.getConnection();
 
-    Locale localeID = new Locale("in", "ID");
-    NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(localeID);
-
     public Form_Dashboard() {
         initComponents();
+        chart.setTitle("Chart Data");
+        chart.addLegend("Pemasukan", Color.decode("#00ff87"), Color.decode("#60efff"));
+        chart.addLegend("Pengeluaran", Color.decode("#57ebde"), Color.decode("#aefb2a"));
+        System.out.println(chart.getTitle());
+        setData();
         init();
         showChart(new ChartPemasukan());
     }
@@ -73,6 +73,31 @@ public class Form_Dashboard extends javax.swing.JPanel {
         return "0";
     }
 
+    private void setData() {
+        try {
+            System.out.println("woi");
+            List<ModelData> list = new ArrayList<>();
+            String query = "SELECT * FROM v_pemasukan LIMIT 7";
+            PreparedStatement p = connection.prepareStatement(query);
+            ResultSet rs = p.executeQuery();
+            while (rs.next()) {
+                String bulan = rs.getString("bulan");
+                double pemasukan = rs.getDouble("pemasukan");
+
+                list.add(new ModelData(bulan, pemasukan));
+            }
+            rs.close();
+            p.close();
+
+            for (int i = list.size() - 1; i >= 0; i--) {
+                ModelData d = list.get(i);
+                chart.addData(new ModelChart(d.getBulan(), new double[]{d.getPemasukkan()}));
+            }
+            chart.start();
+        } catch (Exception e) {
+        }
+    }
+
     public String loadPengeluaranBulan() {
         if (connection != null) {
             try {
@@ -83,7 +108,7 @@ public class Form_Dashboard extends javax.swing.JPanel {
                         + " JOIN detail_transaksi ON transaksi.kode_transaksi=detail_transaksi.kode_transaksi"
                         + " WHERE EXTRACT(YEAR_MONTH FROM tnggl_transaksi) = EXTRACT(YEAR_MONTH FROM NOW())"
                         + " GROUP BY EXTRACT(YEAR_MONTH FROM tnggl_transaksi)";
-                
+
                 ResultSet rs = st.executeQuery(query);
                 while (rs.next()) {
                     jumlah = rs.getDouble(2);
