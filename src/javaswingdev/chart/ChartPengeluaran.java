@@ -7,18 +7,17 @@ package javaswingdev.chart;
 import java.sql.*;
 import config.DatabaseConfig;
 import java.awt.Color;
-import config.ModelDataPemasukan;
 import config.ModelDataPengeluaran;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
-import javaswingdev.chart.ModelChart;
 
 /**
  *
  * @author MI TA
  */
 public class ChartPengeluaran extends javax.swing.JPanel {
+
     Connection connection = DatabaseConfig.getConnection();
 
     /**
@@ -34,16 +33,24 @@ public class ChartPengeluaran extends javax.swing.JPanel {
 
     private void setData() {
         try {
-            System.out.println("woi keluar");
+            String[] bln = {"Dec", "Nov", "Oct", "Sep", "Aug", "Jul", "Jun", "May", "Apr", "Mar", "Feb", "Jan"};
+            double[] ttl = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
             List<ModelDataPengeluaran> list = new ArrayList<>();
-            String query = "SELECT * FROM v_pengeluaran LIMIT 7";
+            String query = "SELECT * FROM v_pengeluaran LIMIT 12";
             PreparedStatement p = connection.prepareStatement(query);
             ResultSet rs = p.executeQuery();
             while (rs.next()) {
                 String bulan = rs.getString("bulan");
                 double pengeluaran = rs.getDouble("pengeluaran");
-
-                list.add(new ModelDataPengeluaran(bulan, pengeluaran));
+                for (int i = 0; i < bln.length; i++) {
+                    if (bln[i].equals(bulan)) {
+                        ttl[i] = pengeluaran;
+                    }
+                }
+            }
+            for (int i = 0; i < bln.length; i++) {
+                System.out.println(bln[i] + ttl[i]);
+                list.add(new ModelDataPengeluaran(bln[i], ttl[i]));
             }
             rs.close();
             p.close();

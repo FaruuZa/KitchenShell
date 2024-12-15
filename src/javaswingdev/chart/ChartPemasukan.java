@@ -11,7 +11,6 @@ import config.ModelDataPemasukan;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
-import javaswingdev.chart.ModelChart;
 
 /**
  *
@@ -34,16 +33,25 @@ public class ChartPemasukan extends javax.swing.JPanel {
 
     private void setData() {
         try {
-            System.out.println("woi");
+            String[] bln = {"Dec", "Nov", "Oct", "Sep", "Aug", "Jul", "Jun", "May", "Apr", "Mar", "Feb", "Jan"};
+            double[] ttl = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
             List<ModelDataPemasukan> list = new ArrayList<>();
-            String query = "SELECT * FROM v_pemasukan LIMIT 7";
+            String query = "SELECT * FROM v_pemasukan LIMIT 12";
             PreparedStatement p = connection.prepareStatement(query);
             ResultSet rs = p.executeQuery();
             while (rs.next()) {
+//                int index=0;
                 String bulan = rs.getString("bulan");
                 double pemasukan = rs.getDouble("pemasukan");
+                for (int i = 0; i < bln.length; i++) {
+                    if (bln[i].equals(bulan)) {
+                        ttl[i] = pemasukan;
+                    }
+                }
+            }
+            for (int i = 0; i < bln.length; i++) {
+                list.add(new ModelDataPemasukan(bln[i], ttl[i]));
 
-                list.add(new ModelDataPemasukan(bulan, pemasukan));
             }
             rs.close();
             p.close();

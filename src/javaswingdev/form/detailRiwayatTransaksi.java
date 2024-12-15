@@ -46,14 +46,16 @@ public class detailRiwayatTransaksi extends javax.swing.JFrame {
                 int index = 1;
                 while (rs.next()) {
                     String pelanggan = rs.getString(3) == null ? rs.getString(4) : rs.getString(3) + " (member)";
+                    double kbl = rs.getDouble(9) - rs.getDouble(8);
+                    String kembalian = Main.formatRupiah(kbl < 0 ? 0.0 : kbl);
                     txtPelanggan.setText(": " + pelanggan);
                     txtKasir.setText(": " + rs.getString(2));
                     fieldKode.setText(kodeTr);
-                    txtTgl.setText("TANGGAL: " + rs.getString(9));
+                    txtTgl.setText("TANGGAL: " + rs.getString(10));
                     txtTotal.setText(": " + Main.formatRupiah(rs.getDouble(8)));
-                    txtDibayar.setText(": " + "Rp0");
-                    txtKembalian.setText(": Rp0");
-                    String[] data = {Integer.toString(index++),rs.getString(5),rs.getString(6), Main.formatRupiah(rs.getDouble(7))};
+                    txtDibayar.setText(": " + Main.formatRupiah(rs.getDouble(9)));
+                    txtKembalian.setText(": " + kembalian);
+                    String[] data = {Integer.toString(index++), rs.getString(5), rs.getString(6), Main.formatRupiah(rs.getDouble(7))};
                     model.addRow(data);
                 }
             } catch (Exception e) {
@@ -172,11 +174,11 @@ public class detailRiwayatTransaksi extends javax.swing.JFrame {
 
         txtKasir.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
         txtKasir.setForeground(new java.awt.Color(255, 255, 255));
-        txtKasir.setText(": Yuviar");
+        txtKasir.setText(": default");
 
         txtPelanggan.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
         txtPelanggan.setForeground(new java.awt.Color(255, 255, 255));
-        txtPelanggan.setText(": Raya (member)");
+        txtPelanggan.setText(": default");
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
         jLabel8.setForeground(new java.awt.Color(255, 255, 255));

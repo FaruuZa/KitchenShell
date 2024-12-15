@@ -12,15 +12,46 @@ import javaswingdev.GoogleMaterialDesignIcon;
 import javaswingdev.chart.ChartPemasukan;
 import javaswingdev.chart.ChartPengeluaran;
 import javaswingdev.chart.ModelChart;
+import javaswingdev.main.Main;
+import javax.swing.table.DefaultTableModel;
 
 public class Form_Dashboard extends javax.swing.JPanel {
 
     Connection connection = DatabaseConfig.getConnection();
+    DefaultTableModel model;
 
     public Form_Dashboard() {
         initComponents();
         init();
         showChart(new ChartPemasukan());
+        String[] judul = {"Bahan baku", "Sisa bahan"};
+        model = new DefaultTableModel(judul, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+       tblsisa.setModel(model);
+       cekBahan();
+    }
+
+    public void cekBahan() {
+        if (connection != null) {
+            try {
+                Statement st = connection.createStatement();
+                String query = "SELECT * FROM bahanBaku WHERE stok_bahanbaku < 1000";
+                ResultSet rs = st.executeQuery(query);
+                while (rs.next()) {
+                    String[] data = {rs.getString(2), rs.getString(3)+rs.getString(4)};
+                    model.addRow(data);
+                }
+
+                rs.close();
+                st.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public String loadPendapatanSkrg() {
@@ -28,7 +59,7 @@ public class Form_Dashboard extends javax.swing.JPanel {
             try {
                 Double jumlah = 0.0;
                 Statement st = connection.createStatement();
-                String query = "SELECT  transaksi.tnggl_transaksi, SUM(detail_transaksi.total) AS jumlah"
+                String query = "SELECT  transaksi.tnggl_transaksi, SUM(transaksi.total_transaksi) AS jumlah"
                         + " FROM transaksi"
                         + " WHERE date(transaksi.tnggl_transaksi)=date(now())"
                         + " GROUP BY transaksi.tnggl_transaksi";
@@ -38,7 +69,7 @@ public class Form_Dashboard extends javax.swing.JPanel {
                 }
                 rs.close();
                 st.close();
-                return jumlah.toString();
+                return Main.formatRupiah(jumlah);
             } catch (Exception e) {
 
             }
@@ -73,19 +104,14 @@ public class Form_Dashboard extends javax.swing.JPanel {
             try {
                 Double jumlah = 0.0;
                 Statement st = connection.createStatement();
-                String query = "SELECT EXTRACT(YEAR_MONTH FROM tnggl_transaksi), SUM(detail_transaksi.total) AS jumlah"
-                        + " FROM transaksi"
-                        + " JOIN detail_transaksi ON transaksi.kode_transaksi=detail_transaksi.kode_transaksi"
-                        + " WHERE EXTRACT(YEAR_MONTH FROM tnggl_transaksi) = EXTRACT(YEAR_MONTH FROM NOW())"
-                        + " GROUP BY EXTRACT(YEAR_MONTH FROM tnggl_transaksi)";
-
+                String query = "SELECT * FROM `v_pengeluaran` WHERE bulan=date_format(now(),'%b')";
                 ResultSet rs = st.executeQuery(query);
                 while (rs.next()) {
                     jumlah = rs.getDouble(2);
                 }
                 rs.close();
                 st.close();
-                return jumlah.toString();
+                return Main.formatRupiah(jumlah);
 //                System.out.println(jumlahKaryawan + jumlahMember + jumlahMenu);
             } catch (Exception e) {
 
@@ -99,13 +125,14 @@ public class Form_Dashboard extends javax.swing.JPanel {
         card2.setData(new ModelCard(GoogleMaterialDesignIcon.ACCOUNT_BALANCE, null, null, loadPendapatanSkrg(), "Pendapatan hari ini"));
         card3.setData(new ModelCard(GoogleMaterialDesignIcon.ACCOUNT_BALANCE, null, null, loadPengeluaranBulan(), "Pengeluaran Bulan ini"));
     }
-    
-    public void showChart(Component com){
+
+    public void showChart(Component com) {
         chart.removeAll();
         chart.add(com);
         chart.repaint();
         chart.revalidate();
     }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -119,7 +146,7 @@ public class Form_Dashboard extends javax.swing.JPanel {
         chart = new javax.swing.JPanel();
         roundPanel2 = new javaswingdev.swing.RoundPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblsisa = new javax.swing.JTable();
 
         setOpaque(false);
 
@@ -189,8 +216,8 @@ public class Form_Dashboard extends javax.swing.JPanel {
 
         roundPanel2.setBackground(new java.awt.Color(255, 255, 255));
 
-        jTable1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblsisa.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        tblsisa.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {"beras", "500g"},
                 {"telur", "720g"},
@@ -201,8 +228,8 @@ public class Form_Dashboard extends javax.swing.JPanel {
                 "Nama bahan", "Sisa stok"
             }
         ));
-        jTable1.setRowHeight(30);
-        jScrollPane1.setViewportView(jTable1);
+        tblsisa.setRowHeight(30);
+        jScrollPane1.setViewportView(tblsisa);
 
         javax.swing.GroupLayout roundPanel2Layout = new javax.swing.GroupLayout(roundPanel2);
         roundPanel2.setLayout(roundPanel2Layout);
@@ -272,8 +299,8 @@ public class Form_Dashboard extends javax.swing.JPanel {
     private javaswingdev.card.Card card3;
     private javax.swing.JPanel chart;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     private javaswingdev.swing.RoundPanel roundPanel1;
     private javaswingdev.swing.RoundPanel roundPanel2;
+    private javax.swing.JTable tblsisa;
     // End of variables declaration//GEN-END:variables
 }
