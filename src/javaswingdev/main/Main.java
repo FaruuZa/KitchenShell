@@ -1,6 +1,5 @@
 package javaswingdev.main;
 
-import View.Login;
 import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.Component;
 import javaswingdev.form.Form_Dashboard;
@@ -15,6 +14,8 @@ import javaswingdev.menu.EventMenuSelected;
 import raven.popup.GlassPanePopup;
 import config.Session;
 import java.awt.Color;
+import java.text.NumberFormat;
+import java.util.Locale;
 import javaswingdev.GoogleMaterialDesignIcon;
 import javaswingdev.form.Form_BahanBaku;
 import javaswingdev.form.Form_Login;
@@ -64,10 +65,6 @@ public class Main extends javax.swing.JFrame {
                     }
                 }
             });
-//            menu.add(body);
-//            menu.tmbahMenu();
-//            menu.repaint();
-//            menu.revalidate();
         } else if (Session.getRole() == 0) {
             menu.addEvent(new EventMenuSelected() {
                 @Override
@@ -90,14 +87,13 @@ public class Main extends javax.swing.JFrame {
                     }
                 }
             });
-//            menu.removeAll();
-//            menu.setBackground(new Color(115,200,120));
         }
         menu.tmbahMenu();
         menu.repaint();
         menu.revalidate();
 
     }
+
     public void showForm(Component com) {
         body.removeAll();
         body.add(com);
@@ -107,6 +103,12 @@ public class Main extends javax.swing.JFrame {
 
     public static Main getMain() {
         return main;
+    }
+
+    public static String formatRupiah(Double inp) {
+        Locale localeID = new Locale("in", "ID");
+        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(localeID);
+        return formatRupiah.format(inp);
     }
 
     @SuppressWarnings("unchecked")
@@ -139,8 +141,8 @@ public class Main extends javax.swing.JFrame {
             panelMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelMenuLayout.createSequentialGroup()
                 .addGroup(panelMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(menu, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(titleBar, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(menu, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(titleBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(0, 0, 0))
         );
         panelMenuLayout.setVerticalGroup(

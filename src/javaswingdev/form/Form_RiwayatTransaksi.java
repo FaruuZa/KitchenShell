@@ -6,6 +6,7 @@ package javaswingdev.form;
 
 import config.DatabaseConfig;
 import java.sql.*;
+import javaswingdev.main.Main;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -45,11 +46,13 @@ public class Form_RiwayatTransaksi extends javax.swing.JPanel {
         if (connection != null) {
             try {
                 Statement st = connection.createStatement();
-                String query = "SELECT transaksi.kode_transaksi, transaksi.nama_pelanggan, transaksi.total_transaksi, transaksi.tnggl_transaksi FROM transaksi";
+                String query = "SELECT transaksi.kode_transaksi,member.nama_member, transaksi.nama_pelanggan, transaksi.total_transaksi, transaksi.tnggl_transaksi FROM transaksi"
+                        + " LEFT JOIN member ON member.kode_member=transaksi.kode_member";
                 ResultSet rs = st.executeQuery(query);
                 tableModel.setRowCount(0);
                 while (rs.next()) {
-                    String[] data = {rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4)};
+                    String pelanggan = rs.getString(2) == null ? rs.getString(3) : "👤 "+rs.getString(2);
+                    String[] data = {rs.getString(1), pelanggan, Main.formatRupiah(rs.getDouble(4)) , rs.getString(5)};
                     tableModel.addRow(data);
                 }
                 rs.close();
@@ -110,6 +113,11 @@ public class Form_RiwayatTransaksi extends javax.swing.JPanel {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tbl_riwayatTransaksi.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbl_riwayatTransaksiMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(tbl_riwayatTransaksi);
 
         javax.swing.GroupLayout container1Layout = new javax.swing.GroupLayout(container1);
@@ -163,12 +171,24 @@ public class Form_RiwayatTransaksi extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button1ActionPerformed
-        // TODO add your handling code here:
+        if(!kodeTerpilih.equals("")){
+            new detailRiwayatTransaksi(kodeTerpilih).setVisible(true);
+            tbl_riwayatTransaksi.clearSelection();
+        }
     }//GEN-LAST:event_button1ActionPerformed
 
     private void textFieldSearchOption1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textFieldSearchOption1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_textFieldSearchOption1ActionPerformed
+
+    private void tbl_riwayatTransaksiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_riwayatTransaksiMouseClicked
+        int selectedRow = tbl_riwayatTransaksi.getSelectedRow();
+
+        if (selectedRow != -1 && selectedRow < tbl_riwayatTransaksi.getRowCount()) {
+            kodeTerpilih = (String) tableModel.getValueAt(selectedRow, 0);
+            
+        }
+    }//GEN-LAST:event_tbl_riwayatTransaksiMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -160,8 +160,8 @@ public class Form_Transaksi extends javax.swing.JPanel {
 
                 if (resultSet.next()) {
                     String lastKode = resultSet.getString("kode_transaksi");
-                    int kodeNum = Integer.parseInt(lastKode.substring(3)) + 1;
-                    kodeTransaksi = String.format("TRS%03d", kodeNum);
+                    int kodeNum = Integer.parseInt(lastKode.substring(5)) + 1;
+                    kodeTransaksi = String.format("T24%05d", kodeNum);
                 }
 
                 resultSet.close();
@@ -182,14 +182,14 @@ public class Form_Transaksi extends javax.swing.JPanel {
                 String tanggal = LocalDate.now().toString();
                 //Cek stok
                 for (int i = 0; i < kodeMenu.length; i++) {
-                    String cekStok = "SELECT jumlah_porsi, harga_menu FROM v_jumlah_porsi_menu WHERE kode_menu = ?";
+                    String cekStok = "SELECT nama_menu ,jumlah_porsi, harga_menu FROM v_jumlah_porsi_menu WHERE kode_menu = ?";
                     try (PreparedStatement cekStokStmt = conn.prepareStatement(cekStok)) {
                         cekStokStmt.setString(1, kodeMenu[i]);
                         try (ResultSet rs = cekStokStmt.executeQuery()) {
                             if (rs.next()) {
                                 int stok = rs.getInt("jumlah_porsi");
                                 if (stok <= jumlah[i]) {
-                                    throw new SQLException("Stok tidak mencukupi pada kode menu: " + kodeMenu[i]);
+                                    throw new SQLException("Stok tidak mencukupi pada menu: " + rs.getString(1));
                                 }
                             } else {
                                 throw new SQLException("Kode tidak ditemukan: " + kodeMenu[i]);
@@ -735,7 +735,7 @@ public class Form_Transaksi extends javax.swing.JPanel {
                 MessageAlerts.getInstance().showMessage("Pilih menu terlebih dahulu!", "", MessageAlerts.MessageType.ERROR);
             }
         } catch (Exception ex) {
-            MessageAlerts.getInstance().showMessage("Transaksi gagal!", "", MessageAlerts.MessageType.ERROR);
+            MessageAlerts.getInstance().showMessage("Transaksi gagal!", ex.getMessage(), MessageAlerts.MessageType.ERROR);
             Logger.getLogger(Form_Transaksi.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btn_pesanActionPerformed

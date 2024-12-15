@@ -3,29 +3,29 @@ package javaswingdev.form;
 import java.sql.*;
 import javaswingdev.card.ModelCard;
 import config.DatabaseConfig;
-import config.ModelData;
+import config.ModelDataPemasukan;
 import java.awt.Color;
+import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.text.NumberFormat;
 import javaswingdev.GoogleMaterialDesignIcon;
+import javaswingdev.chart.ChartPemasukan;
+import javaswingdev.chart.ChartPengeluaran;
 import javaswingdev.chart.ModelChart;
 
 public class Form_Dashboard extends javax.swing.JPanel {
 
     Connection connection = DatabaseConfig.getConnection();
 
-    Locale localeID = new Locale("in", "ID");
-    NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(localeID);
-
     public Form_Dashboard() {
         initComponents();
         chart.setTitle("Chart Data");
         chart.addLegend("Pemasukan", Color.decode("#00ff87"), Color.decode("#60efff"));
         chart.addLegend("Pengeluaran", Color.decode("#57ebde"), Color.decode("#aefb2a"));
+        System.out.println(chart.getTitle());
         setData();
         init();
+        showChart(new ChartPemasukan());
     }
 
     public String loadPendapatanSkrg() {
@@ -33,7 +33,6 @@ public class Form_Dashboard extends javax.swing.JPanel {
             try {
                 Double jumlah = 0.0;
                 Statement st = connection.createStatement();
-//                String query = "SELECT COUNT(kode_member) AS jumlah FROM member";
                 String query = "SELECT  transaksi.tnggl_transaksi, SUM(detail_transaksi.total) AS jumlah"
                         + " FROM transaksi"
                         + " WHERE date(transaksi.tnggl_transaksi)=date(now())"
@@ -45,7 +44,6 @@ public class Form_Dashboard extends javax.swing.JPanel {
                 rs.close();
                 st.close();
                 return jumlah.toString();
-//                System.out.println(jumlahKaryawan + jumlahMember + jumlahMenu);
             } catch (Exception e) {
 
             }
@@ -82,16 +80,16 @@ public class Form_Dashboard extends javax.swing.JPanel {
             String query = "SELECT * FROM v_pemasukan LIMIT 7";
             PreparedStatement p = connection.prepareStatement(query);
             ResultSet rs = p.executeQuery();
-            while(rs.next()){
+            while (rs.next()) {
                 String bulan = rs.getString("bulan");
                 double pemasukan = rs.getDouble("pemasukan");
-               
+
                 list.add(new ModelData(bulan, pemasukan));
             }
             rs.close();
             p.close();
-            
-            for(int i = list.size() - 1; i >= 0; i--){
+
+            for (int i = list.size() - 1; i >= 0; i--) {
                 ModelData d = list.get(i);
                 chart.addData(new ModelChart(d.getBulan(), new double[]{d.getPemasukkan()}));
             }
@@ -110,7 +108,7 @@ public class Form_Dashboard extends javax.swing.JPanel {
                         + " JOIN detail_transaksi ON transaksi.kode_transaksi=detail_transaksi.kode_transaksi"
                         + " WHERE EXTRACT(YEAR_MONTH FROM tnggl_transaksi) = EXTRACT(YEAR_MONTH FROM NOW())"
                         + " GROUP BY EXTRACT(YEAR_MONTH FROM tnggl_transaksi)";
-                
+
                 ResultSet rs = st.executeQuery(query);
                 while (rs.next()) {
                     jumlah = rs.getDouble(2);
@@ -127,15 +125,17 @@ public class Form_Dashboard extends javax.swing.JPanel {
     }
 
     private void init() {
-//        table.fixTable(jScrollPane1);
-//        table.addRow(new Object[]{"1", "Mike Bhand", "mikebhand@gmail.com", "Admin", "25 Apr,2018"});
-//
         card1.setData(new ModelCard(null, null, null, loadMenu(), "Jumlah Menu"));
         card2.setData(new ModelCard(GoogleMaterialDesignIcon.ACCOUNT_BALANCE, null, null, loadPendapatanSkrg(), "Pendapatan hari ini"));
         card3.setData(new ModelCard(GoogleMaterialDesignIcon.ACCOUNT_BALANCE, null, null, loadPengeluaranBulan(), "Pengeluaran Bulan ini"));
-//        new ModelCard()
     }
-
+    
+    public void showChart(Component com){
+        chart.removeAll();
+        chart.add(com);
+        chart.repaint();
+        chart.revalidate();
+    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -144,7 +144,9 @@ public class Form_Dashboard extends javax.swing.JPanel {
         card2 = new javaswingdev.card.Card();
         card3 = new javaswingdev.card.Card();
         roundPanel1 = new javaswingdev.swing.RoundPanel();
-        chart = new javaswingdev.chart.CurveLineChart();
+        btn_pemasukan = new javaswingdev.util.Button();
+        btn_pengeluaran = new javaswingdev.util.Button();
+        chart = new javax.swing.JPanel();
         roundPanel2 = new javaswingdev.swing.RoundPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
@@ -167,20 +169,51 @@ public class Form_Dashboard extends javax.swing.JPanel {
         roundPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
         roundPanel1.setRound(10);
 
+        btn_pemasukan.setText("Pemasukan");
+        btn_pemasukan.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btn_pemasukan.setShadowColor(new java.awt.Color(10, 212, 9));
+        btn_pemasukan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_pemasukanActionPerformed(evt);
+            }
+        });
+
+        btn_pengeluaran.setText("Pengeluaran");
+        btn_pengeluaran.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btn_pengeluaran.setShadowColor(new java.awt.Color(214, 15, 22));
+        btn_pengeluaran.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_pengeluaranActionPerformed(evt);
+            }
+        });
+
+        chart.setOpaque(false);
+        chart.setLayout(new java.awt.BorderLayout());
+
         javax.swing.GroupLayout roundPanel1Layout = new javax.swing.GroupLayout(roundPanel1);
         roundPanel1.setLayout(roundPanel1Layout);
         roundPanel1Layout.setHorizontalGroup(
             roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(roundPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(chart, javax.swing.GroupLayout.DEFAULT_SIZE, 471, Short.MAX_VALUE)
+                .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(roundPanel1Layout.createSequentialGroup()
+                        .addGap(0, 287, Short.MAX_VALUE)
+                        .addComponent(btn_pemasukan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_pengeluaran, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(chart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         roundPanel1Layout.setVerticalGroup(
             roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, roundPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(chart, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btn_pemasukan, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_pengeluaran, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(chart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -214,7 +247,7 @@ public class Form_Dashboard extends javax.swing.JPanel {
             roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, roundPanel2Layout.createSequentialGroup()
                 .addGap(10, 10, 10)
-                .addComponent(jScrollPane1)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 447, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -232,7 +265,7 @@ public class Form_Dashboard extends javax.swing.JPanel {
                         .addComponent(card2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
                 .addGap(30, 30, 30)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(card3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(card3, javax.swing.GroupLayout.DEFAULT_SIZE, 248, Short.MAX_VALUE)
                     .addComponent(roundPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(30, 30, 30))
         );
@@ -253,11 +286,21 @@ public class Form_Dashboard extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btn_pemasukanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_pemasukanActionPerformed
+        showChart(new ChartPemasukan());
+    }//GEN-LAST:event_btn_pemasukanActionPerformed
+
+    private void btn_pengeluaranActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_pengeluaranActionPerformed
+        showChart(new ChartPengeluaran());
+    }//GEN-LAST:event_btn_pengeluaranActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javaswingdev.util.Button btn_pemasukan;
+    private javaswingdev.util.Button btn_pengeluaran;
     private javaswingdev.card.Card card1;
     private javaswingdev.card.Card card2;
     private javaswingdev.card.Card card3;
-    private javaswingdev.chart.CurveLineChart chart;
+    private javax.swing.JPanel chart;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     private javaswingdev.swing.RoundPanel roundPanel1;
