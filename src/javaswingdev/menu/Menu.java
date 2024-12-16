@@ -67,10 +67,10 @@ public class Menu extends JPanel {
 //            addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.KITCHEN, "Bahan Baku"));
             addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.GROUP, "Daftar Member"));
             addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.SUPERVISOR_ACCOUNT, "Daftar Akun"));
-            addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.REPORT, "Laporan","Riwayat Transaksi" ,"Pengeluaran"));
-//            addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.HISTORY, "Riwayat Transaksi"));
+            addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.HISTORY, "Riwayat", "Pemasukan" ,"Pengeluaran"));
+            addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.RECEIPT, "Laporan"));
         } else if(Session.getRole() == 0){
-            addTitle("Karyawan");
+            addTitle("KASIR");
             addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.DASHBOARD, "Dashboard"));
             addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.PAYMENT, "Transaksi"));
         }else{

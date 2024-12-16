@@ -49,7 +49,7 @@ public class ChartPengeluaran extends javax.swing.JPanel {
                 }
             }
             for (int i = 0; i < bln.length; i++) {
-                System.out.println(bln[i] + ttl[i]);
+//                System.out.println(bln[i] + ttl[i]);
                 list.add(new ModelDataPengeluaran(bln[i], ttl[i]));
             }
             rs.close();
