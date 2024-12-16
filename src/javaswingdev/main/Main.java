@@ -18,6 +18,7 @@ import java.text.NumberFormat;
 import java.util.Locale;
 import javaswingdev.GoogleMaterialDesignIcon;
 import javaswingdev.form.Form_BahanBaku;
+import javaswingdev.form.Form_Laporan;
 import javaswingdev.form.Form_Login;
 import javaswingdev.form.TestSub;
 import javaswingdev.menu.Menu;
@@ -60,8 +61,8 @@ public class Main extends javax.swing.JFrame {
                         showForm(new Form_RiwayatTransaksi());
                     } else if (index == 5 && indexSubMenu == 2) {
                         showForm(new Form_Pengeluaran());
-                    } else {
-                        showForm(new Form_Empty(index + " " + indexSubMenu));
+                    } else if (index == 6 && indexSubMenu == 0) {
+                        showForm(new Form_Laporan());
                     }
                 }
             });
