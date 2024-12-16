@@ -27,7 +27,7 @@ public class Form_Pengeluaran extends javax.swing.JPanel {
 
     public Form_Pengeluaran() {
         getCon();
-        String[] judul = {"Kode Pengeluaran", "Nama","Kode Bahan Baku", "Tanggal Pengeluaran", "keterangan","Jumlah", "Total"};
+        String[] judul = {"Kode Pengeluaran", "Nama", "keterangan","Jumlah", "Total Harga", "Tanggal Pengeluaran"};
         tableModel = new DefaultTableModel(judul, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -75,7 +75,7 @@ public class Form_Pengeluaran extends javax.swing.JPanel {
     protected void loadDataPengeluaran(String cari) {
         if (connection != null) {
             try {
-                String query = "SELECT kode_pengeluaran, user.nama, bahanbaku.kode_bahanbaku, tnggl_pengeluaran, keterangan, jumlah, harga"
+                String query = "SELECT kode_pengeluaran, user.nama,  tnggl_pengeluaran, keterangan, jumlah, harga"
                         + " FROM pengeluaran"
                         + " LEFT JOIN user ON user.id=pengeluaran.id_user"
                         + " LEFT JOIN bahanbaku ON bahanbaku.kode_bahanbaku=pengeluaran.kode_bahanbaku"
@@ -85,7 +85,7 @@ public class Form_Pengeluaran extends javax.swing.JPanel {
                 ResultSet rs = st.executeQuery();
                 tableModel.setRowCount(0);
                 while (rs.next()) {
-                    String[] data = {rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), formatRupiah.format(rs.getDouble(7))};
+                    String[] data = {rs.getString(1), rs.getString(2), rs.getString(4), rs.getString(5), formatRupiah.format(rs.getDouble(6)), rs.getString(3)};
                     tableModel.addRow(data);
                 }
                 rs.close();

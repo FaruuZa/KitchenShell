@@ -32,17 +32,7 @@ public class Menu extends JPanel {
         scroll.setViewportView(panelMenu);
         scroll.getViewport().setOpaque(false);
         scroll.setViewportBorder(null);
-//        if(Session.getRole() == 0 || Session.getRole() == 1){
-//            setOpaque(true);
-//        }else{
-//            setOpaque(false);
-//            remove(panelMenu);
-//        }
         add(scroll);
-        
-//        tmbahMenu();
-//        addTitle("WEB APPS");
-//        addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.MAIL_OUTLINE, "Email", "Inbox", "Read", "Compose"));
 
     }
 
@@ -61,10 +51,8 @@ public class Menu extends JPanel {
         if (Session.getRole() == 1) {
             addTitle("OWNER");
             addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.DASHBOARD, "Dashboard"));
-//            addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.RESTAURANT, "Menu"));
             addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.PAYMENT, "Transaksi"));
             addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.RESTAURANT, "Menu", "Daftar Menu", "Bahan Baku"));
-//            addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.KITCHEN, "Bahan Baku"));
             addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.GROUP, "Daftar Member"));
             addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.SUPERVISOR_ACCOUNT, "Daftar Akun"));
             addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.HISTORY, "Riwayat", "Pemasukan" ,"Pengeluaran"));
@@ -75,10 +63,8 @@ public class Menu extends JPanel {
             addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.PAYMENT, "Transaksi"));
         }else{
             this.setVisible(false);
-//            addSpace(20);
             addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.INPUT, "Login"));
         }
-//        MenuItem.init();
         setSelectedIndex(0, 0);
     }
     private JPanel createPanelMenu() {

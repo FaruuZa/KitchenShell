@@ -12,24 +12,23 @@ import javaswingdev.util.TextFieldFilter;
 import javax.swing.text.AbstractDocument;
 import java.util.Date;
 
-
 public class tambahPengeluaran extends javax.swing.JFrame {
 
     Connection connection = null;
     Date date = new Date();
     private static final SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     Form_Pengeluaran pengeluaranF = null;
-    
+
     public tambahPengeluaran(Form_Pengeluaran pengeluaran) {
         initComponents();
         getCon();
         ((AbstractDocument) inputKeterangan.getDocument()).setDocumentFilter(new TextFieldFilter("[a-z A-Z]*"));
-        ((AbstractDocument) inputJumlah.getDocument()).setDocumentFilter(new TextFieldFilter("[0-9]*"));
+        ((AbstractDocument) jumlah.getDocument()).setDocumentFilter(new TextFieldFilter("[0-9]*"));
         ((AbstractDocument) inputTotal.getDocument()).setDocumentFilter(new TextFieldFilter("[0-9]*"));
         inputBahanBaku.addItem("Pilih bahan baku");
         inputBahanBaku.setSelectedIndex(0);
         loadDatabahanBaku();
-        
+        jumlah.setRound(0);
         this.pengeluaranF = pengeluaran;
     }
 
@@ -40,15 +39,15 @@ public class tambahPengeluaran extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }
-    
+
     private String generateCode() {
         String kodePengeluaran = "";
         if (connection != null) {
             try {
                 Statement statement = connection.createStatement();
-                String query ="SELECT kode_pengeluaran FROM pengeluaran ORDER BY kode_pengeluaran DESC LIMIT 1";
+                String query = "SELECT kode_pengeluaran FROM pengeluaran ORDER BY kode_pengeluaran DESC LIMIT 1";
                 ResultSet resultSet = statement.executeQuery(query);
-                
+
                 if (resultSet.next()) {
                     String lastkode = resultSet.getString("kode_pengeluaran");
                     int kodenum = Integer.parseInt(lastkode.substring(3)) + 1;
@@ -62,38 +61,65 @@ public class tambahPengeluaran extends javax.swing.JFrame {
         }
         return kodePengeluaran;
     }
-    
+
     private void createData() {
-        
+
         if (connection != null) {
             try {
                 String idAdmin = Session.getKode();
-                if (!inputKeterangan.getText().equals("") && !inputJumlah.getText().equals("") && !inputTotal.getText().equals("")) {
-                    Statement statement = connection.createStatement();
-                    String[] kodeBahan = inputBahanBaku.getSelectedItem().toString().split("\\ ");
-                    String query = "INSERT INTO pengeluaran VALUES ('" + generateCode() +"','"+ idAdmin +"', '" + kodeBahan[0] + "', NOW(), '" + inputKeterangan.getText() + "', '" + inputJumlah.getText() +"', '" + inputTotal.getText() +"' ) ";
-                    Boolean resultSet = statement.execute(query);
+                if (!inputKeterangan.getText().equals("") && !jumlah.getText().equals("") && !inputTotal.getText().equals("")) {
+                    String[] kodeBahan = inputBahanBaku.getSelectedItem().toString().split(" | ");
+//                    String query1 = "INSERT INTO pengeluaran VALUES ('" + generateCode() + "','" + idAdmin + "', '" + kodeBahan[0] + "', NOW(), '" + inputKeterangan.getText() + "', '" + jumlah.getText() + "', '" + inputTotal.getText() + "' ) ";
+                    String query = "INSERT INTO pengeluaran VALUES (?, ?, ?, NOW(), ?, ?, ? )";
+                    PreparedStatement statement = connection.prepareStatement(query);
+                    statement.setString(1, generateCode());
+                    statement.setString(2, idAdmin);
+                    statement.setString(4, inputKeterangan.getText());
+                    statement.setString(6, inputTotal.getText());
+                    if (inputBahanBaku.getSelectedIndex() != 0) {
+                        statement.setString(3, kodeBahan[0]);
+                        statement.setString(5, jumlah.getText() + satuan.getSelectedItem());
+                        try {
+                            String queryBahan = "UPDATE `bahanbaku` SET `stok_bahanbaku`= stok_bahanBaku + ? WHERE kode_bahanbaku= ?";
+                            PreparedStatement stBahan = connection.prepareStatement(queryBahan);
+                            if(satuan.getSelectedIndex() > 1){
+                                stBahan.setString(1, jumlah.getText());
+                            }else{
+                                stBahan.setString(1, Double.toString(Double.parseDouble(jumlah.getText())*1000));
+                            }
+                            stBahan.setString(2, kodeBahan[0]);
+                            stBahan.executeUpdate();
+                            stBahan.close();
+                        } catch (Exception e) {
+                            throw new Exception(e.getMessage());
+                        }
+                    } else {
+                        statement.setNull(3, java.sql.Types.NULL);
+                        statement.setString(5, jumlah.getText());
+                    }
+                    statement.execute();
                     statement.close();
                     pengeluaranF.loadDataPengeluaran("");
                     pengeluaranF.popupHandler("data berhasil ditambah!", 1, this);
-                }else{
+                } else {
+                    throw new Exception("data tidak boleh kosong");
                 }
             } catch (Exception e) {
                 pengeluaranF.popupHandler(e.getMessage(), 0, this);
             }
         }
     }
-    
-    private void loadDatabahanBaku(){
+
+    private void loadDatabahanBaku() {
         if (connection != null) {
             try {
                 Statement st = connection.createStatement();
                 String query = "SELECT * FROM bahanbaku";
                 ResultSet rs = st.executeQuery(query);
-                while (rs.next()) {                    
+                while (rs.next()) {
                     String kode_bahanbaku = rs.getString("kode_bahanbaku");
                     String nama_bahanbaku = rs.getString("nama_bahanbaku");
-                    
+
                     inputBahanBaku.addItem(kode_bahanbaku + " | " + nama_bahanbaku);
                 }
                 st.close();
@@ -121,13 +147,14 @@ public class tambahPengeluaran extends javax.swing.JFrame {
         btn_batal = new javaswingdev.util.Button();
         btn_simpan = new javaswingdev.util.Button();
         jLabel5 = new javax.swing.JLabel();
-        inputJumlah = new javaswingdev.util.TextField();
         jLabel6 = new javax.swing.JLabel();
         inputTotal = new javaswingdev.util.TextField();
         inputBahanBaku = new javax.swing.JComboBox<>();
+        inputJumlah = new javax.swing.JLayeredPane();
+        satuan = new javax.swing.JComboBox<>();
+        jumlah = new javaswingdev.util.TextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setAlwaysOnTop(true);
         setUndecorated(true);
         setResizable(false);
 
@@ -166,7 +193,7 @@ public class tambahPengeluaran extends javax.swing.JFrame {
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel6.setText("Total");
+        jLabel6.setText("Total harga");
 
         inputBahanBaku.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         inputBahanBaku.addActionListener(new java.awt.event.ActionListener() {
@@ -175,59 +202,82 @@ public class tambahPengeluaran extends javax.swing.JFrame {
             }
         });
 
+        inputJumlah.setBackground(new java.awt.Color(255, 255, 255));
+        inputJumlah.setToolTipText("");
+        inputJumlah.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        satuan.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        satuan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Kg", "L", "g", "ml" }));
+        satuan.setBorder(null);
+        satuan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                satuanActionPerformed(evt);
+            }
+        });
+        inputJumlah.add(satuan, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 2, 60, 30));
+
+        jumlah.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jumlahActionPerformed(evt);
+            }
+        });
+        inputJumlah.add(jumlah, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 340, 40));
+
         javax.swing.GroupLayout container2Layout = new javax.swing.GroupLayout(container2);
         container2.setLayout(container2Layout);
         container2Layout.setHorizontalGroup(
             container2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(container2Layout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addGroup(container2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                .addGap(40, 40, 40)
+                .addGroup(container2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(container2Layout.createSequentialGroup()
-                        .addComponent(btn_batal, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btn_simpan, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(container2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(btn_simpan, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(container2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(container2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jLabel3)
+                                    .addComponent(jLabel4)
+                                    .addComponent(jLabel5)
+                                    .addGroup(container2Layout.createSequentialGroup()
+                                        .addGap(6, 6, 6)
+                                        .addComponent(inputBahanBaku, javax.swing.GroupLayout.PREFERRED_SIZE, 333, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(inputKeterangan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(inputTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 340, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(container2Layout.createSequentialGroup()
-                        .addGroup(container2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel4)
-                            .addComponent(inputKeterangan, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(inputBahanBaku, javax.swing.GroupLayout.Alignment.TRAILING, 0, 255, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
                         .addGroup(container2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(inputJumlah, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel5)
-                            .addComponent(inputTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel6))))
-                .addGap(20, 20, 20))
+                            .addComponent(jLabel6)
+                            .addComponent(inputJumlah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btn_batal, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(39, Short.MAX_VALUE))))
+            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         container2Layout.setVerticalGroup(
             container2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(container2Layout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(jLabel1)
+                .addGap(23, 23, 23)
+                .addComponent(jLabel3)
+                .addGap(0, 0, 0)
+                .addComponent(inputBahanBaku, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(jLabel4)
+                .addGap(0, 0, 0)
+                .addComponent(inputKeterangan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(jLabel5)
+                .addGap(0, 0, 0)
+                .addComponent(inputJumlah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(jLabel6)
+                .addGap(0, 0, 0)
+                .addComponent(inputTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(30, 30, 30)
                 .addGroup(container2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel5))
-                .addGroup(container2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(container2Layout.createSequentialGroup()
-                        .addGap(41, 41, 41)
-                        .addComponent(jLabel4)
-                        .addGap(0, 0, 0)
-                        .addComponent(inputKeterangan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(container2Layout.createSequentialGroup()
-                        .addGroup(container2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(inputJumlah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(inputBahanBaku, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, 0)
-                        .addComponent(jLabel6)
-                        .addGap(0, 0, 0)
-                        .addComponent(inputTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, 18)
-                .addGroup(container2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btn_simpan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_batal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(20, Short.MAX_VALUE))
+                    .addComponent(btn_batal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_simpan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(17, 17, 17))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -235,14 +285,13 @@ public class tambahPengeluaran extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(0, 0, 0)
                 .addComponent(container2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(container2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(container2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -260,8 +309,25 @@ public class tambahPengeluaran extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_batalActionPerformed
 
     private void inputBahanBakuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputBahanBakuActionPerformed
-        // TODO add your handling code here:
+        if (inputBahanBaku.getSelectedIndex() == 0) {
+            satuan.setVisible(false);
+            inputKeterangan.setEnabled(true);
+            inputKeterangan.setText("");
+        } else {
+            inputKeterangan.setEnabled(false);
+            String[] kodeMember = inputBahanBaku.getSelectedItem().toString().split(" | ");
+            inputKeterangan.setText("Menambah stok " + kodeMember[2]);
+            satuan.setVisible(true);
+        }
     }//GEN-LAST:event_inputBahanBakuActionPerformed
+
+    private void satuanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_satuanActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_satuanActionPerformed
+
+    private void jumlahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jumlahActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jumlahActionPerformed
 
     /**
      * @param args the command line arguments
@@ -293,7 +359,7 @@ public class tambahPengeluaran extends javax.swing.JFrame {
         /* Create and display the form */
 //        java.awt.EventQueue.invokeLater(new Runnable() {
 //            public void run() {
-//                new tambahPengeluaran().setVisible(true);
+//                new tambahPengeluaran(new Form_Pengeluaran()).setVisible(true);
 //            }
 //        });
     }
@@ -303,7 +369,7 @@ public class tambahPengeluaran extends javax.swing.JFrame {
     private javaswingdev.util.Button btn_simpan;
     private javaswingdev.util.Container container2;
     private javax.swing.JComboBox<String> inputBahanBaku;
-    private javaswingdev.util.TextField inputJumlah;
+    private javax.swing.JLayeredPane inputJumlah;
     private javaswingdev.util.TextField inputKeterangan;
     private javaswingdev.util.TextField inputTotal;
     private javax.swing.JLabel jLabel1;
@@ -311,5 +377,7 @@ public class tambahPengeluaran extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javaswingdev.util.TextField jumlah;
+    private javax.swing.JComboBox<String> satuan;
     // End of variables declaration//GEN-END:variables
 }
