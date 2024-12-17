@@ -6,6 +6,8 @@ package javaswingdev.form;
 
 import java.sql.*;
 import config.DatabaseConfig;
+import javaswingdev.form.popupBahanbaku;
+import javaswingdev.form.tambahPengeluaran;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -34,10 +36,7 @@ public class Form_BahanBaku extends javax.swing.JPanel {
         hapusBtn.setEnabled(false);
     }
 
-    protected void popupHandler(String popupMsg, int status, popupBahanbaku asd, boolean isEdit) {
-        if (asd != null) {
-            asd.dispose();
-        }
+    protected void popupHandler(String popupMsg, int status, boolean isEdit) {
         if (isEdit) {
             enabledButton(1);
         } else {
@@ -82,7 +81,13 @@ public class Form_BahanBaku extends javax.swing.JPanel {
                 ResultSet rs = st.executeQuery(query);
                 tableModel.setRowCount(0);
                 while (rs.next()) {
-                    String[] data = {rs.getString(1), rs.getString(2), rs.getString(3) + rs.getString(4)};
+                    String a;
+                    if (rs.getDouble(3) > 1000) {
+                        a = Double.toString(rs.getDouble(3) / 1000) + (rs.getString(4).equals("g") ? "Kg" : "L") ;
+                    }else{
+                        a = rs.getString(3) + rs.getString(4);
+                    }
+                    String[] data = {rs.getString(1), rs.getString(2), a};
                     tableModel.addRow(data);
                 }
                 rs.close();
@@ -109,6 +114,7 @@ public class Form_BahanBaku extends javax.swing.JPanel {
         editBtn = new javaswingdev.util.Button();
         hapusBtn = new javaswingdev.util.Button();
         addBtn = new javaswingdev.util.Button();
+        addBtn1 = new javaswingdev.util.Button();
 
         setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
         setOpaque(false);
@@ -151,6 +157,14 @@ public class Form_BahanBaku extends javax.swing.JPanel {
             }
         });
 
+        addBtn1.setText("BELI");
+        addBtn1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        addBtn1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addBtn1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout container1Layout = new javax.swing.GroupLayout(container1);
         container1.setLayout(container1Layout);
         container1Layout.setHorizontalGroup(
@@ -160,7 +174,7 @@ public class Form_BahanBaku extends javax.swing.JPanel {
                 .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(container1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
-                        .addContainerGap(627, Short.MAX_VALUE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, container1Layout.createSequentialGroup()
                         .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(container1Layout.createSequentialGroup()
@@ -168,8 +182,10 @@ public class Form_BahanBaku extends javax.swing.JPanel {
                                 .addGap(18, 18, 18)
                                 .addComponent(hapusBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(addBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
                                 .addComponent(addBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jScrollPane1))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 833, Short.MAX_VALUE))
                         .addGap(30, 30, 30))))
         );
         container1Layout.setVerticalGroup(
@@ -181,10 +197,11 @@ public class Form_BahanBaku extends javax.swing.JPanel {
                 .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(editBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(hapusBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(addBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 288, Short.MAX_VALUE)
-                .addGap(44, 44, 44))
+                    .addComponent(addBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(addBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 308, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(30, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -237,16 +254,22 @@ public class Form_BahanBaku extends javax.swing.JPanel {
                 kodeTerpilih = "";
                 disabledButton();
                 loadDatabahanBaku("");
-                popupHandler("berhasil menghapus data", 1, null, true);
+                popupHandler("berhasil menghapus data", 1, true);
             } catch (Exception e) {
-                popupHandler(e.getMessage(), 0, null, true);
+                popupHandler(e.getMessage(), 0, true);
             }
         }
     }//GEN-LAST:event_hapusBtnActionPerformed
 
+    private void addBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBtn1ActionPerformed
+        new tambahPengeluaran(null, this).setVisible(true);
+        loadDatabahanBaku("");
+    }//GEN-LAST:event_addBtn1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javaswingdev.util.Button addBtn;
+    private javaswingdev.util.Button addBtn1;
     private javaswingdev.util.Container container1;
     private javaswingdev.util.Button editBtn;
     private javaswingdev.util.Button hapusBtn;

@@ -27,7 +27,7 @@ public class Form_Pengeluaran extends javax.swing.JPanel {
 
     public Form_Pengeluaran() {
         getCon();
-        String[] judul = {"Kode Pengeluaran", "Nama", "keterangan","Jumlah", "Total Harga", "Tanggal Pengeluaran"};
+        String[] judul = {"Kode Pengeluaran", "Nama", "keterangan", "Jumlah", "Total Harga", "Tanggal Pengeluaran"};
         tableModel = new DefaultTableModel(judul, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -35,7 +35,7 @@ public class Form_Pengeluaran extends javax.swing.JPanel {
             }
         };
         loadDataPengeluaran("");
-    
+
         initComponents();
         tbl_pengeluaran.setModel(tableModel);
     }
@@ -59,11 +59,8 @@ public class Form_Pengeluaran extends javax.swing.JPanel {
 
     }
 
-    protected void popupHandler(String popupMsg, int status, tambahPengeluaran asd) {
-        if (asd != null) {
-            asd.dispose();
-            addBtn.setEnabled(true);
-        }
+    protected void popupHandler(String popupMsg, int status) {
+        addBtn.setEnabled(true);
         if (status == 1) {
             MessageAlerts.getInstance().showMessage("SUCCESS", popupMsg, MessageAlerts.MessageType.SUCCESS);
         } else {
@@ -96,8 +93,7 @@ public class Form_Pengeluaran extends javax.swing.JPanel {
 
         }
     }
-    
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -184,7 +180,7 @@ public class Form_Pengeluaran extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void addBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBtnActionPerformed
-        tambahPengeluaran tpengeluaran = new tambahPengeluaran(this);
+        tambahPengeluaran tpengeluaran = new tambahPengeluaran(this, null);
         tpengeluaran.setVisible(true);
         tpengeluaran.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         aksi = 1;

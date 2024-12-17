@@ -18,18 +18,20 @@ public class tambahPengeluaran extends javax.swing.JFrame {
     Date date = new Date();
     private static final SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     Form_Pengeluaran pengeluaranF = null;
+    Form_BahanBaku bahanF = null;
 
-    public tambahPengeluaran(Form_Pengeluaran pengeluaran) {
+    public tambahPengeluaran(Form_Pengeluaran pengeluaran, Form_BahanBaku bahan) {
         initComponents();
         getCon();
         ((AbstractDocument) inputKeterangan.getDocument()).setDocumentFilter(new TextFieldFilter("[a-z A-Z]*"));
-        ((AbstractDocument) jumlah.getDocument()).setDocumentFilter(new TextFieldFilter("[0-9]*"));
+        ((AbstractDocument) jumlah.getDocument()).setDocumentFilter(new TextFieldFilter("[0-9a-zA-Z ]*"));
         ((AbstractDocument) inputTotal.getDocument()).setDocumentFilter(new TextFieldFilter("[0-9]*"));
         inputBahanBaku.addItem("Pilih bahan baku");
         inputBahanBaku.setSelectedIndex(0);
         loadDatabahanBaku();
         jumlah.setRound(0);
         this.pengeluaranF = pengeluaran;
+        this.bahanF = bahan;
     }
 
     private void getCon() {
@@ -78,14 +80,17 @@ public class tambahPengeluaran extends javax.swing.JFrame {
                     statement.setString(6, inputTotal.getText());
                     if (inputBahanBaku.getSelectedIndex() != 0) {
                         statement.setString(3, kodeBahan[0]);
-                        statement.setString(5, jumlah.getText() + satuan.getSelectedItem());
                         try {
                             String queryBahan = "UPDATE `bahanbaku` SET `stok_bahanbaku`= stok_bahanBaku + ? WHERE kode_bahanbaku= ?";
                             PreparedStatement stBahan = connection.prepareStatement(queryBahan);
-                            if(satuan.getSelectedIndex() > 1){
+                            if (satuan.getSelectedIndex() > 1) {
                                 stBahan.setString(1, jumlah.getText());
-                            }else{
-                                stBahan.setString(1, Double.toString(Double.parseDouble(jumlah.getText())*1000));
+                                Double a = Double.parseDouble(jumlah.getText());
+                                String b = a >= 1000 ? Double.toString(a / 1000) : Double.toString(a);
+                                statement.setString(5, b + (satuan.getSelectedIndex() == 2 ? "Kg" : "L"));
+                            } else {
+                                stBahan.setString(1, Double.toString(Double.parseDouble(jumlah.getText()) * 1000));
+                                statement.setString(5, jumlah.getText() + satuan.getSelectedItem());
                             }
                             stBahan.setString(2, kodeBahan[0]);
                             stBahan.executeUpdate();
@@ -99,13 +104,23 @@ public class tambahPengeluaran extends javax.swing.JFrame {
                     }
                     statement.execute();
                     statement.close();
-                    pengeluaranF.loadDataPengeluaran("");
-                    pengeluaranF.popupHandler("data berhasil ditambah!", 1, this);
+                    if (pengeluaranF != null) {
+                        pengeluaranF.loadDataPengeluaran("");
+                        pengeluaranF.popupHandler("data berhasil ditambah!", 1);
+                    } else {
+                        bahanF.loadDatabahanBaku("");
+                        bahanF.popupHandler("berhasil membeli bahan", 1, false);
+                    }
+                    this.dispose();
                 } else {
                     throw new Exception("data tidak boleh kosong");
                 }
             } catch (Exception e) {
-                pengeluaranF.popupHandler(e.getMessage(), 0, this);
+                if (pengeluaranF != null) {
+                    pengeluaranF.popupHandler(e.getMessage(), 0);
+                } else {
+                    bahanF.popupHandler(e.getMessage(), 0, false);
+                }
             }
         }
     }
@@ -303,9 +318,14 @@ public class tambahPengeluaran extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_simpanActionPerformed
 
     private void btn_batalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_batalActionPerformed
+        if (pengeluaranF != null) {
+            pengeluaranF.enabledButton(0);
+            pengeluaranF.aksi = 0;
+        }else{
+            bahanF.enabledButton(0);
+            bahanF.aksi = 0;
+        }
         this.dispose();
-        pengeluaranF.enabledButton(0);
-        pengeluaranF.aksi = 0;
     }//GEN-LAST:event_btn_batalActionPerformed
 
     private void inputBahanBakuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputBahanBakuActionPerformed
@@ -332,37 +352,6 @@ public class tambahPengeluaran extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(tambahPengeluaran.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(tambahPengeluaran.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(tambahPengeluaran.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(tambahPengeluaran.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-//        java.awt.EventQueue.invokeLater(new Runnable() {
-//            public void run() {
-//                new tambahPengeluaran(new Form_Pengeluaran()).setVisible(true);
-//            }
-//        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javaswingdev.util.Button btn_batal;

@@ -96,12 +96,14 @@ public class popupBahanbaku extends javax.swing.JFrame {
                     statement.execute();
                     statement.close();
                     bahanBakuF.loadDatabahanBaku("");
-                    bahanBakuF.popupHandler("Bahan berhasil ditambah", 1, this, false);
+                    bahanBakuF.popupHandler("Bahan berhasil ditambah", 1, false);
+                    this.dispose();
                 } else {
                     throw new Exception("Bahan tidak boleh kosong");
                 }
             } catch (Exception e) {
-                bahanBakuF.popupHandler(e.getMessage(), 0, this, false);
+                bahanBakuF.popupHandler(e.getMessage(), 0, false);
+                this.dispose();
             }
         }
     }
@@ -117,13 +119,14 @@ public class popupBahanbaku extends javax.swing.JFrame {
                     statement.setString(3, kode);
                     statement.execute();
                     bahanBakuF.loadDatabahanBaku("");
-                    bahanBakuF.popupHandler("Data berhasil diedit!", 1, this, true);
-                    
+                    bahanBakuF.popupHandler("Data berhasil diedit!", 1, true);
+                    this.dispose();
                 } else {
                     throw new Exception("Data tidak boleh kosong!");
                 }
             } catch (Exception e) {
-                bahanBakuF.popupHandler(e.getMessage(), 0, this, true);
+                bahanBakuF.popupHandler(e.getMessage(), 0, true);
+                this.dispose();
             }
         }
     }
