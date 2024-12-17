@@ -2,16 +2,10 @@ package javaswingdev.form;
 
 import java.sql.*;
 import config.DatabaseConfig;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import javaswingdev.util.TextFieldFilter;
-import javax.swing.JOptionPane;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellEditor;
 import javax.swing.text.AbstractDocument;
 
 /**
@@ -24,13 +18,14 @@ public class tambahMenu extends javax.swing.JFrame {
     Form_Menu menuF = null;
     DefaultTableModel modelBahan;
     DefaultTableModel modelResep;
+    String kodeEdit = "";
 
-    public tambahMenu(Form_Menu Fmenu) {
+    public tambahMenu(Form_Menu Fmenu, String kode) {
         initComponents();
         getCon();
         this.menuF = Fmenu;
         ((AbstractDocument) inputMenu.getDocument()).setDocumentFilter(new TextFieldFilter("[a-zA-Z ]*"));
-        ((AbstractDocument) inputHarga.getDocument()).setDocumentFilter(new TextFieldFilter("[0-9]*"));
+        ((AbstractDocument) inputHarga.getDocument()).setDocumentFilter(new TextFieldFilter("[0-9.]*"));
         String[] judul = {"Kode Bahan", "Nama Bahan", "Jumlah", "Satuan"};
         modelResep = new DefaultTableModel(judul, 0) {
             @Override
@@ -42,11 +37,12 @@ public class tambahMenu extends javax.swing.JFrame {
                         false;
                 };
             }
+
             @Override
-            public Class<?> getColumnClass(int columnIndex){
+            public Class<?> getColumnClass(int columnIndex) {
                 return switch (columnIndex) {
                     case 2 ->
-                        Double.class;
+                        Integer.class;
                     default ->
                         String.class;
                 };
@@ -57,7 +53,7 @@ public class tambahMenu extends javax.swing.JFrame {
             public void tableChanged(TableModelEvent e) {
                 if (e.getType() == TableModelEvent.UPDATE) {
                     int baris = e.getFirstRow();
-                    if ((double) modelResep.getValueAt(baris, 2) <= 0) {
+                    if ((int) modelResep.getValueAt(baris, 2) <= 0) {
                         modelResep.removeRow(baris);
                     }
                 }
@@ -65,6 +61,11 @@ public class tambahMenu extends javax.swing.JFrame {
         });
         tblRsp.setModel(modelResep);
         loadBahan();
+        if (!kode.equals("")) {
+            this.kodeEdit = kode;
+            loadMenu();
+            loadResep();
+        }
     }
 
     private void getCon() {
@@ -93,6 +94,48 @@ public class tambahMenu extends javax.swing.JFrame {
                 while (rs.next()) {
                     String[] data = {rs.getString(1), rs.getString(2)};
                     modelBahan.addRow(data);
+                }
+                rs.close();
+                st.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void loadMenu() {
+        if (connection != null) {
+            try {
+                String query = "SELECT * FROM menu WHERE kode_menu= ?";
+                PreparedStatement st = connection.prepareStatement(query);
+                st.setString(1, kodeEdit);
+                ResultSet rs = st.executeQuery();
+                while (rs.next()) {
+                    inputMenu.setText(rs.getString(2));
+                    inputHarga.setText(rs.getString(3));
+                }
+                rs.close();
+                st.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void loadResep() {
+        if (connection != null) {
+            try {
+                String query = "SELECT detail_menu.kode_bahanbaku, bahanbaku.nama_bahanbaku, detail_menu.jumlah, bahanbaku.satuan"
+                        + " FROM `detail_menu`"
+                        + " JOIN bahanbaku ON bahanbaku.kode_bahanbaku=detail_menu.kode_bahanbaku"
+                        + " WHERE detail_menu.kode_menu=?";
+                PreparedStatement st = connection.prepareStatement(query);
+                st.setString(1, kodeEdit);
+                ResultSet rs = st.executeQuery();
+                modelResep.setRowCount(0);
+                while (rs.next()) {
+                    Object[] data = {rs.getString(1), rs.getString(2), rs.getInt(3), rs.getString(4)};
+                    modelResep.addRow(data);
                 }
                 rs.close();
                 st.close();
@@ -131,13 +174,65 @@ public class tambahMenu extends javax.swing.JFrame {
         if (connection != null) {
             try {
                 if (!inputMenu.getText().equals("") && !inputHarga.getText().equals("")) {
-                    Statement statement = connection.createStatement();
-                    String query = "INSERT INTO menu VALUES ('" + generateCode() + "', '" + inputMenu.getText() + "', '" + inputHarga.getText() + "')";
-                    statement.execute(query);
-                    statement.close();
+                    String query = "INSERT INTO menu VALUES (?, ?, ?)";
+                    String kode = generateCode();
+                    PreparedStatement stMn = connection.prepareStatement(query);
+                    stMn.setString(1, kode);
+                    stMn.setString(2, inputMenu.getText());
+                    stMn.setString(3, inputHarga.getText());
+                    stMn.execute();
+                    int reseps = tblRsp.getRowCount();
+                    if (reseps > 0) {
+                        for (int i = 0; i < reseps; i++) {
+                            String queryBhn = "INSERT INTO detail_menu VALUES (?,?,?)";
+                            PreparedStatement stBhn = connection.prepareStatement(queryBhn);
+                            stBhn.setString(2, (String) tblRsp.getValueAt(i, 0));
+                            stBhn.setString(1, kode);
+                            stBhn.setInt(3, (int) tblRsp.getValueAt(i, 2));
+                            stBhn.execute();
+                        }
+                    }
+                    stMn.close();
                     menuF.loadDataMenu("");
                     menuF.popupHandler("Menu berhasil ditambahkan", 1, this, null);
-//                  
+                } else {
+                    throw new Exception("data tidak boleh kosong");
+                }
+            } catch (Exception e) {
+                menuF.popupHandler(e.getMessage(), 0, this, null);
+            }
+
+        }
+    }
+
+    private void editData() {
+        if (connection != null) {
+            try {
+                if (!inputMenu.getText().equals("") && !inputHarga.getText().equals("")) {
+                    String query = "UPDATE menu SET `nama_menu`= ?,`harga`= ? WHERE kode_menu=?";
+                    PreparedStatement stMn = connection.prepareStatement(query);
+                    stMn.setString(3, kodeEdit);
+                    stMn.setString(1, inputMenu.getText());
+                    stMn.setString(2, inputHarga.getText());
+                    stMn.execute();
+                    int reseps = tblRsp.getRowCount();
+                    if (reseps > 0) {
+                        String queryHps = "DELETE FROM `detail_menu` WHERE `kode_menu`=?";
+                        PreparedStatement stHps = connection.prepareStatement(queryHps);
+                        stHps.setString(1, kodeEdit);
+                        stHps.execute();
+                        for (int i = 0; i < reseps; i++) {
+                            String queryBhn = "INSERT INTO detail_menu VALUES (?,?,?)";
+                            PreparedStatement stBhn = connection.prepareStatement(queryBhn);
+                            stBhn.setString(2, (String) tblRsp.getValueAt(i, 0));
+                            stBhn.setString(1, kodeEdit);
+                            stBhn.setInt(3, (int) tblRsp.getValueAt(i, 2));
+                            stBhn.execute();
+                        }
+                    }
+                    stMn.close();
+                    menuF.loadDataMenu("");
+                    menuF.popupHandler("Menu berhasil ditambahkan", 1, this, null);
                 } else {
                     throw new Exception("data tidak boleh kosong");
                 }
@@ -172,7 +267,6 @@ public class tambahMenu extends javax.swing.JFrame {
         jButton1.setText("jButton1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setAlwaysOnTop(true);
         setUndecorated(true);
         setResizable(false);
 
@@ -367,7 +461,11 @@ public class tambahMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_button1ActionPerformed
 
     private void btn_simpanActionPerformed1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_simpanActionPerformed1
-        createData();
+        if (kodeEdit.equals("")) {
+            createData();
+        } else {
+            editData();
+        }
     }//GEN-LAST:event_btn_simpanActionPerformed1
 
     private void btn_tambahbutton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tambahbutton1ActionPerformed
