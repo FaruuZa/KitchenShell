@@ -121,9 +121,9 @@ public class Form_Dashboard extends javax.swing.JPanel {
     }
 
     private void init() {
-        card1.setData(new ModelCard(null, null, null, loadMenu(), "Jumlah Menu"));
-        card2.setData(new ModelCard(GoogleMaterialDesignIcon.ACCOUNT_BALANCE, null, null, loadPendapatanSkrg(), "Pendapatan hari ini"));
-        card3.setData(new ModelCard(GoogleMaterialDesignIcon.ACCOUNT_BALANCE, null, null, loadPengeluaranBulan(), "Pengeluaran Bulan ini"));
+        card1.setData(new ModelCard(GoogleMaterialDesignIcon.RESTAURANT, null, null, loadMenu(), "Jumlah Menu"));
+        card2.setData(new ModelCard(GoogleMaterialDesignIcon.PAYMENT, null, null, loadPendapatanSkrg(), "Pendapatan hari ini"));
+        card3.setData(new ModelCard(GoogleMaterialDesignIcon.MONEY_OFF, null, null, loadPengeluaranBulan(), "Pengeluaran Bulan ini"));
     }
 
     public void showChart(Component com) {
@@ -144,22 +144,22 @@ public class Form_Dashboard extends javax.swing.JPanel {
         btn_pemasukan = new javaswingdev.util.Button();
         btn_pengeluaran = new javaswingdev.util.Button();
         chart = new javax.swing.JPanel();
-        roundPanel2 = new javaswingdev.swing.RoundPanel();
+        container1 = new javaswingdev.util.Container();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblsisa = new javax.swing.JTable();
 
         setOpaque(false);
 
-        card1.setColor1(new java.awt.Color(50, 50, 50));
-        card1.setColor2(new java.awt.Color(100, 75, 70));
+        card1.setColor1(new java.awt.Color(111, 227, 225));
+        card1.setColor2(new java.awt.Color(82, 87, 229));
         card1.setIcon(javaswingdev.GoogleMaterialDesignIcon.GIF);
 
-        card2.setColor1(new java.awt.Color(95, 211, 226));
-        card2.setColor2(new java.awt.Color(26, 166, 170));
+        card2.setColor1(new java.awt.Color(56, 249, 215));
+        card2.setColor2(new java.awt.Color(67, 233, 123));
         card2.setIcon(javaswingdev.GoogleMaterialDesignIcon.PIE_CHART);
 
-        card3.setColor1(new java.awt.Color(95, 243, 140));
-        card3.setColor2(new java.awt.Color(3, 157, 27));
+        card3.setColor1(new java.awt.Color(250, 112, 154));
+        card3.setColor2(new java.awt.Color(254, 225, 64));
         card3.setIcon(javaswingdev.GoogleMaterialDesignIcon.RING_VOLUME);
 
         roundPanel1.setBackground(new java.awt.Color(255, 255, 255));
@@ -195,7 +195,7 @@ public class Form_Dashboard extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(roundPanel1Layout.createSequentialGroup()
-                        .addGap(0, 287, Short.MAX_VALUE)
+                        .addGap(0, 295, Short.MAX_VALUE)
                         .addComponent(btn_pemasukan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btn_pengeluaran, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -210,12 +210,13 @@ public class Form_Dashboard extends javax.swing.JPanel {
                     .addComponent(btn_pemasukan, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btn_pengeluaran, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(chart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(chart, javax.swing.GroupLayout.DEFAULT_SIZE, 411, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        roundPanel2.setBackground(new java.awt.Color(255, 255, 255));
+        container1.setBackground(java.awt.SystemColor.controlLtHighlight);
 
+        tblsisa.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
         tblsisa.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         tblsisa.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -231,21 +232,21 @@ public class Form_Dashboard extends javax.swing.JPanel {
         tblsisa.setRowHeight(30);
         jScrollPane1.setViewportView(tblsisa);
 
-        javax.swing.GroupLayout roundPanel2Layout = new javax.swing.GroupLayout(roundPanel2);
-        roundPanel2.setLayout(roundPanel2Layout);
-        roundPanel2Layout.setHorizontalGroup(
-            roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(roundPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                .addContainerGap())
+        javax.swing.GroupLayout container1Layout = new javax.swing.GroupLayout(container1);
+        container1.setLayout(container1Layout);
+        container1Layout.setHorizontalGroup(
+            container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(container1Layout.createSequentialGroup()
+                .addGap(5, 5, 5)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
+                .addGap(5, 5, 5))
         );
-        roundPanel2Layout.setVerticalGroup(
-            roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, roundPanel2Layout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 447, Short.MAX_VALUE)
-                .addContainerGap())
+        container1Layout.setVerticalGroup(
+            container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(container1Layout.createSequentialGroup()
+                .addGap(5, 5, 5)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 439, Short.MAX_VALUE)
+                .addGap(5, 5, 5))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -262,23 +263,24 @@ public class Form_Dashboard extends javax.swing.JPanel {
                         .addComponent(card2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
                 .addGap(30, 30, 30)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(card3, javax.swing.GroupLayout.DEFAULT_SIZE, 248, Short.MAX_VALUE)
-                    .addComponent(roundPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(30, 30, 30))
+                    .addComponent(card3, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
+                    .addComponent(container1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(14, 14, 14))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(0, 0, 0)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(card3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(card2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(card1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(15, 15, 15)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(roundPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(roundPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(15, 15, 15)
+                        .addComponent(roundPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(container1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addContainerGap())))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -298,9 +300,9 @@ public class Form_Dashboard extends javax.swing.JPanel {
     private javaswingdev.card.Card card2;
     private javaswingdev.card.Card card3;
     private javax.swing.JPanel chart;
+    private javaswingdev.util.Container container1;
     private javax.swing.JScrollPane jScrollPane1;
     private javaswingdev.swing.RoundPanel roundPanel1;
-    private javaswingdev.swing.RoundPanel roundPanel2;
     private javax.swing.JTable tblsisa;
     // End of variables declaration//GEN-END:variables
 }
