@@ -103,12 +103,10 @@ public class popupAkun extends javax.swing.JFrame {
             try {
                 if (!inputNama.equals("") && !inputUsername.equals("") && !inputPassword.equals("")) {
                     Statement statement = connection.createStatement();
-//                    String query = "UPDATE 'user' SET 'nama' = '" + inputNama.getText() + "', 'username' = '" + inputUsername.getText() + "', 'password' = '" + inputPassword.getText() + "' ";
                     String query = "UPDATE user SET nama = ?, username = ?, level = ? WHERE id=?";
                     PreparedStatement ps = connection.prepareStatement(query);
                     ps.setString(1, inputNama.getText());
                     ps.setString(2, inputUsername.getText());
-//                    ps.setString(3, query);
                     if (rdAd.isSelected()) {
                         ps.setInt(3, 1);
                     } else {

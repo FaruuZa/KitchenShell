@@ -105,7 +105,7 @@ public class Form_Pengeluaran extends javax.swing.JPanel {
 
         container1 = new javaswingdev.util.Container();
         jLabel1 = new javax.swing.JLabel();
-        textFieldSearchOption1 = new javaswingdev.util.TextFieldSearchOption();
+        search = new javaswingdev.util.TextFieldSearchOption();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbl_pengeluaran = new javax.swing.JTable();
         addBtn = new javaswingdev.util.Button();
@@ -117,9 +117,18 @@ public class Form_Pengeluaran extends javax.swing.JPanel {
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("PENGELUARAN");
 
-        tbl_pengeluaran.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        search.setColorOverlay1(new java.awt.Color(255, 225, 55));
+        search.setColorOverlay2(new java.awt.Color(0, 220, 0));
+        search.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                searchKeyReleased(evt);
+            }
+        });
+
+        tbl_pengeluaran.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         tbl_pengeluaran.setModel(tableModel);
-        tbl_pengeluaran.setRowHeight(40);
+        tbl_pengeluaran.setRowHeight(30);
+        tbl_pengeluaran.getTableHeader().setReorderingAllowed(false);
         tbl_pengeluaran.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tbl_pengeluaranMouseClicked(evt);
@@ -148,20 +157,20 @@ public class Form_Pengeluaran extends javax.swing.JPanel {
                         .addGroup(container1Layout.createSequentialGroup()
                             .addComponent(jLabel1)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 447, Short.MAX_VALUE)
-                            .addComponent(textFieldSearchOption1, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(30, 30, 30))
         );
         container1Layout.setVerticalGroup(
             container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(container1Layout.createSequentialGroup()
-                .addGap(30, 30, 30)
+                .addGap(20, 20, 20)
                 .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(textFieldSearchOption1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
-                .addGap(37, 37, 37)
+                .addGap(50, 50, 50)
                 .addComponent(addBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 314, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(16, 16, 16)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 314, Short.MAX_VALUE)
                 .addGap(30, 30, 30))
         );
 
@@ -195,13 +204,17 @@ public class Form_Pengeluaran extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_tbl_pengeluaranMouseClicked
 
+    private void searchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchKeyReleased
+        loadDataPengeluaran(search.getText());
+    }//GEN-LAST:event_searchKeyReleased
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javaswingdev.util.Button addBtn;
     private javaswingdev.util.Container container1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javaswingdev.util.TextFieldSearchOption search;
     private javax.swing.JTable tbl_pengeluaran;
-    private javaswingdev.util.TextFieldSearchOption textFieldSearchOption1;
     // End of variables declaration//GEN-END:variables
 }

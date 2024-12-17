@@ -66,7 +66,6 @@ public class popupBahanbaku extends javax.swing.JFrame {
         if (connection != null) {
             try {
                 this.kode = kode;
-//                System.out.println(kode);
                 Statement st = connection.createStatement();
                 String query = "SELECT * FROM bahanbaku WHERE kode_bahanbaku = '" + kode + "';";
                 ResultSet rs = st.executeQuery(query);

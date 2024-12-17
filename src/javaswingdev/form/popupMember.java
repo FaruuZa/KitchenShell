@@ -10,23 +10,15 @@ package javaswingdev.form;
  */
 import java.sql.*;
 import config.DatabaseConfig;
-import java.text.SimpleDateFormat;
 import javaswingdev.util.TextFieldFilter;
-import javax.swing.JOptionPane;
 import javax.swing.text.AbstractDocument;
-import java.util.Date;
-//import raven.alerts.MessageAlerts;
 
 public class popupMember extends javax.swing.JFrame {
 
     Connection connection = null;
-//    Date date = new Date();
-//    private static final SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     String kodeMember = "";
     Form_Member memberF = null;
     boolean isEdit = false;
-//    public tambahMember() {
-//    }
 
     public popupMember(Form_Member member, boolean isEdits) {
         initComponents();
@@ -61,8 +53,6 @@ public class popupMember extends javax.swing.JFrame {
                 while (rs.next()) {
                     inputNama.setText(rs.getString(2));
                     inputNomer.setText(rs.getString(3));
-//                    inputPoin.setText(rs.getString(4));
-//                    inputPoin.setText("00");
                 }
                 rs.close();
                 st.close();
@@ -100,7 +90,6 @@ public class popupMember extends javax.swing.JFrame {
         if (connection != null) {
             try {
                 if (!inputNama.getText().equals("") && !inputNomer.getText().equals("")) {
-//                    Timestamp timestamp2 = new Timestamp(date.getTime());
                     Statement statement = connection.createStatement();
                     String query = "INSERT INTO member VALUES ('" + generateCode() + "','" + inputNama.getText() + "','" + inputNomer.getText() + "','0',NOW())";
                     Boolean resultSet = statement.execute(query);
@@ -293,34 +282,7 @@ public class popupMember extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-//    public static void main(String args[]) {
-//        /* Set the Nimbus look and feel */
-//        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-//        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-//         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-//         */
-//        try {
-//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-//                if ("Nimbus".equals(info.getName())) {
-//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-//                    break;
-//                }
-//            }
-//        } catch (ClassNotFoundException ex) {
-//            java.util.logging.Logger.getLogger(tambahMember.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (InstantiationException ex) {
-//            java.util.logging.Logger.getLogger(tambahMember.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (IllegalAccessException ex) {
-//            java.util.logging.Logger.getLogger(tambahMember.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-//            java.util.logging.Logger.getLogger(tambahMember.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        }
-//        //</editor-fold>
-//
-//        //</editor-fold>
-//
-//        /* Create and display the form */
-//    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javaswingdev.util.Button batalkan;

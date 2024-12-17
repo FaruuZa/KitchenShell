@@ -85,10 +85,10 @@ public class Form_Akun extends javax.swing.JPanel {
         if (connection != null) {
             try {
                 String query = "SELECT * FROM user WHERE nama LIKE ?";
-                PreparedStatement st = connection.prepareStatement(query);
-                String cariq = "%" + cari + "%";
-                st.setString(1, cariq);
-                ResultSet rs = st.executeQuery();
+                PreparedStatement ps = connection.prepareStatement(query);
+                String qcari = "%" + cari + "%";
+                ps.setString(1, qcari);
+                ResultSet rs = ps.executeQuery();
                 tableModel.setRowCount(0);
                 while (rs.next()) {
                     if (!rs.getString(1).equals(Session.getKode())) {
@@ -98,7 +98,7 @@ public class Form_Akun extends javax.swing.JPanel {
                     }
                 }
                 rs.close();
-                st.close();
+                ps.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -123,22 +123,21 @@ public class Form_Akun extends javax.swing.JPanel {
         editBtn = new javaswingdev.util.Button();
         hapusBtn = new javaswingdev.util.Button();
         addBtn = new javaswingdev.util.Button();
-        textFieldSearchOption1 = new javaswingdev.util.TextFieldSearchOption();
+        search = new javaswingdev.util.TextFieldSearchOption();
 
         jCheckBox1.setText("jCheckBox1");
 
-        setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
         setOpaque(false);
-
-        container1.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("AKUN");
+        jLabel1.setText("DAFTAR AKUN");
 
-        tbl_karyawan.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        tbl_karyawan.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         tbl_karyawan.setModel(tableModel);
-        tbl_karyawan.setRowHeight(40);
+        tbl_karyawan.setRowHeight(30);
+        tbl_karyawan.getTableHeader().setReorderingAllowed(false);
         tbl_karyawan.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tbl_karyawanMouseClicked(evt);
@@ -170,9 +169,14 @@ public class Form_Akun extends javax.swing.JPanel {
             }
         });
 
-        textFieldSearchOption1.addKeyListener(new java.awt.event.KeyAdapter() {
+        search.setColorOverlay1(new java.awt.Color(255, 225, 55));
+        search.setColorOverlay2(new java.awt.Color(0, 220, 0));
+        search.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                searchKeyReleased(evt);
+            }
             public void keyTyped(java.awt.event.KeyEvent evt) {
-                textFieldSearchOption1KeyTyped(evt);
+                searchKeyTyped(evt);
             }
         });
 
@@ -186,30 +190,29 @@ public class Form_Akun extends javax.swing.JPanel {
                     .addComponent(jScrollPane1)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, container1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
-                        .addGap(537, 537, 537)
-                        .addComponent(textFieldSearchOption1, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(container1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(editBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addGap(10, 10, 10)
                         .addComponent(hapusBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(673, 673, 673)
                         .addComponent(addBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(16, 16, 16))
+                .addGap(30, 30, 30))
         );
         container1Layout.setVerticalGroup(
             container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(container1Layout.createSequentialGroup()
-                .addGap(5, 5, 5)
-                .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGap(20, 20, 20)
+                .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(textFieldSearchOption1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(50, 50, 50)
                 .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(editBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(hapusBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(addBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(27, 27, 27)
+                .addGap(10, 10, 10)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 295, Short.MAX_VALUE)
                 .addGap(30, 30, 30))
         );
@@ -218,10 +221,7 @@ public class Form_Akun extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(14, 14, 14)
-                .addComponent(container1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(container1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -265,16 +265,20 @@ public class Form_Akun extends javax.swing.JPanel {
     }//GEN-LAST:event_hapusBtnActionPerformed
 
     private void editBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBtnActionPerformed
-//        EditAkun ekaryawan = new EditAkun(this, kodeTerpilih);
         popupAkun pakun = new popupAkun(this, true);
         pakun.setVisible(true);
         pakun.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         aksi = 1;
     }//GEN-LAST:event_editBtnActionPerformed
 
-    private void textFieldSearchOption1KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textFieldSearchOption1KeyTyped
-        loadDataKaryawan(textFieldSearchOption1.getText());
-    }//GEN-LAST:event_textFieldSearchOption1KeyTyped
+    private void searchKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchKeyTyped
+        loadDataKaryawan(search.getText());
+    }//GEN-LAST:event_searchKeyTyped
+
+    private void searchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchKeyReleased
+//        loadDataAkun(search.getText());
+        loadDataKaryawan(search.getText());
+    }//GEN-LAST:event_searchKeyReleased
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -285,8 +289,8 @@ public class Form_Akun extends javax.swing.JPanel {
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javaswingdev.util.TextFieldSearchOption search;
     private javax.swing.JTable tbl_karyawan;
-    private javaswingdev.util.TextFieldSearchOption textFieldSearchOption1;
     // End of variables declaration//GEN-END:variables
 
 //    private void initComponents() {
