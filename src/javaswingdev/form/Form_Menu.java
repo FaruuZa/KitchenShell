@@ -222,7 +222,7 @@ public class Form_Menu extends javax.swing.JPanel {
 
     private void addBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBtnActionPerformed
 
-        tambahMenu tmenu = new tambahMenu(this);
+        tambahMenu tmenu = new tambahMenu(this, "");
         tmenu.setVisible(true);
         tmenu.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         disabledButton();
@@ -234,9 +234,9 @@ public class Form_Menu extends javax.swing.JPanel {
     }//GEN-LAST:event_textFieldSearchOption1ActionPerformed
 
     private void editBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBtnActionPerformed
-        EditMenu emenu = new EditMenu(this, kodeTerpilih);
-        emenu.setVisible(true);
-        emenu.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        tambahMenu tmenu = new tambahMenu(this, kodeTerpilih);
+        tmenu.setVisible(true);
+        tmenu.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         disabledButton();
         aksi = 1;
     }//GEN-LAST:event_editBtnActionPerformed
