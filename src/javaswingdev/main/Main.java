@@ -3,7 +3,6 @@ package javaswingdev.main;
 import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.Component;
 import javaswingdev.form.Form_Dashboard;
-import javaswingdev.form.Form_Empty;
 import javaswingdev.form.Form_Akun;
 import javaswingdev.form.Form_Member;
 import javaswingdev.form.Form_Menu;
@@ -165,7 +164,7 @@ public class Main extends javax.swing.JFrame {
         jLabel2.setText("KITCHEN SHELL");
         jLabel2.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 1, 1, 1));
 
-        button1.setBackground(new java.awt.Color(250, 0, 0));
+        button1.setBackground(new java.awt.Color(80, 153, 85));
         button1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/javaswingdev/icon/logout.png"))); // NOI18N
         button1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

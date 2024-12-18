@@ -55,7 +55,6 @@ public class Form_Menu extends javax.swing.JPanel {
         } else {
             MessageAlerts.getInstance().showMessage("ERROR", popupMsg, MessageAlerts.MessageType.ERROR);
         }
-//        JOptionPane.showMessageDialog(null, popupMsg);
         aksi = 0;
     }
 
@@ -109,17 +108,15 @@ public class Form_Menu extends javax.swing.JPanel {
 
         container4 = new javaswingdev.util.Container();
         addBtn = new javaswingdev.util.Button();
-        cari = new javaswingdev.util.TextFieldSearchOption();
+        search = new javaswingdev.util.TextFieldSearchOption();
         jScrollPane2 = new javax.swing.JScrollPane();
         tbl_menu = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
         hapusBtn = new javaswingdev.util.Button();
         editBtn = new javaswingdev.util.Button();
 
-        setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
         setOpaque(false);
-
-        container4.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         addBtn.setText("TAMBAH");
         addBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -129,23 +126,24 @@ public class Form_Menu extends javax.swing.JPanel {
             }
         });
 
-        cari.setColorOverlay1(new java.awt.Color(255, 255, 55));
-        cari.setColorOverlay2(new java.awt.Color(0, 220, 0));
-        cari.addActionListener(new java.awt.event.ActionListener() {
+        search.setColorOverlay1(new java.awt.Color(255, 255, 55));
+        search.setColorOverlay2(new java.awt.Color(0, 220, 0));
+        search.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cariActionPerformed(evt);
+                searchActionPerformed(evt);
             }
         });
-        cari.addKeyListener(new java.awt.event.KeyAdapter() {
+        search.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                cariKeyReleased(evt);
+                searchKeyReleased(evt);
             }
         });
 
-        tbl_menu.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        tbl_menu.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         tbl_menu.setModel(tableModel);
-        tbl_menu.setRowHeight(40);
+        tbl_menu.setRowHeight(30);
         tbl_menu.setSelectionBackground(new java.awt.Color(51, 204, 0));
+        tbl_menu.getTableHeader().setReorderingAllowed(false);
         tbl_menu.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tbl_menuMouseClicked(evt);
@@ -186,28 +184,28 @@ public class Form_Menu extends javax.swing.JPanel {
                         .addGroup(container4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(container4Layout.createSequentialGroup()
                                 .addComponent(hapusBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGap(10, 10, 10)
                                 .addComponent(editBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jLabel1))
                         .addGap(600, 600, 600)
                         .addGroup(container4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(cari, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(addBtn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(30, 30, 30))
         );
         container4Layout.setVerticalGroup(
             container4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(container4Layout.createSequentialGroup()
-                .addGap(14, 14, 14)
+                .addGap(20, 20, 20)
                 .addGroup(container4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(cari, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(50, 50, 50)
                 .addGroup(container4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(hapusBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(addBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(editBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(15, 15, 15)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 399, Short.MAX_VALUE)
                 .addGap(30, 30, 30))
         );
@@ -235,9 +233,9 @@ public class Form_Menu extends javax.swing.JPanel {
         aksi = 1;
     }//GEN-LAST:event_addBtnActionPerformed
 
-    private void cariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cariActionPerformed
+    private void searchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_cariActionPerformed
+    }//GEN-LAST:event_searchActionPerformed
 
     private void editBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBtnActionPerformed
         tambahMenu tmenu = new tambahMenu(this, kodeTerpilih);
@@ -276,9 +274,9 @@ public class Form_Menu extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_hapusBtnActionPerformed
 
-    private void cariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_cariKeyReleased
-        loadDataMenu(cari.getText());
-    }//GEN-LAST:event_cariKeyReleased
+    private void searchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchKeyReleased
+        loadDataMenu(search.getText());
+    }//GEN-LAST:event_searchKeyReleased
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -289,13 +287,8 @@ public class Form_Menu extends javax.swing.JPanel {
     private javaswingdev.util.Button hapusBtn;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javaswingdev.util.TextFieldSearchOption search;
     private javax.swing.JTable tbl_menu;
     // End of variables declaration//GEN-END:variables
 
-//    private void disabledButton() {
-//        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-//    }
-//    private void loadDataMember() {
-//        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-//    }
 }

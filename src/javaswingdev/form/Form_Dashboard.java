@@ -3,15 +3,10 @@ package javaswingdev.form;
 import java.sql.*;
 import javaswingdev.card.ModelCard;
 import config.DatabaseConfig;
-import config.ModelDataPemasukan;
-import java.awt.Color;
 import java.awt.Component;
-import java.util.ArrayList;
-import java.util.List;
 import javaswingdev.GoogleMaterialDesignIcon;
 import javaswingdev.chart.ChartPemasukan;
 import javaswingdev.chart.ChartPengeluaran;
-import javaswingdev.chart.ModelChart;
 import javaswingdev.main.Main;
 import javax.swing.table.DefaultTableModel;
 
@@ -112,7 +107,6 @@ public class Form_Dashboard extends javax.swing.JPanel {
                 rs.close();
                 st.close();
                 return Main.formatRupiah(jumlah);
-//                System.out.println(jumlahKaryawan + jumlahMember + jumlahMenu);
             } catch (Exception e) {
 
             }
@@ -217,7 +211,7 @@ public class Form_Dashboard extends javax.swing.JPanel {
         container1.setBackground(java.awt.SystemColor.controlLtHighlight);
 
         tblsisa.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        tblsisa.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        tblsisa.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         tblsisa.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {"beras", "500g"},
