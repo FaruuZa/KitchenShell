@@ -59,7 +59,7 @@ public class Menu extends JPanel {
             addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.RECEIPT, "Laporan"));
         } else if(Session.getRole() == 0){
             addTitle("KASIR");
-            addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.DASHBOARD, "Dashboard"));
+//            addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.DASHBOARD, "Dashboard"));
             addMenuItem(new ModelMenuItem(GoogleMaterialDesignIcon.PAYMENT, "Transaksi"));
         }else{
             this.setVisible(false);

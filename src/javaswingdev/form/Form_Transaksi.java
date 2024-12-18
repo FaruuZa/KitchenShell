@@ -29,6 +29,7 @@ public class Form_Transaksi extends javax.swing.JPanel {
 
     public Form_Transaksi() {
         initComponents();
+        totalBayar = 0;
         String[] titleTblMenu = {"Kode menu ", "Nama Menu", "Porsi", "Harga"};
         String[] titleTblPesanan = {"Kode menu ", "Nama Menu", "Jumlah", "Harga", "Total Harga"};
         ((AbstractDocument) txt_bayar.getDocument()).setDocumentFilter(new TextFieldFilter("[0-9]*"));
@@ -60,7 +61,7 @@ public class Form_Transaksi extends javax.swing.JPanel {
         if (connection != null) {
             try {
                 Statement st = connection.createStatement();
-                String query = "SELECT * FROM v_jumlah_porsi_menu WHERE jumlah_porsi != 0";
+                String query = "SELECT * FROM v_jumlah_porsi_menu WHERE jumlah_porsi != 0 ORDER BY kode_menu ASC";
                 ResultSet rs = st.executeQuery(query);
                 tableModel.setRowCount(0);
                 DecimalFormat df = new DecimalFormat("#");
@@ -170,10 +171,8 @@ public class Form_Transaksi extends javax.swing.JPanel {
                             }
                         } else {
                             MessageAlerts.getInstance().showMessage("Gagal!", "Jumlah melebihi porsi.", MessageAlerts.MessageType.ERROR);
-                            System.out.println("TIDIAK CUKUP");
                         }
                         //Cek kode_menu jika sama akan menambah jumlah pesanan
-
                         if (!cekKode && cekStok()) {
                             selectedTableMenu.addRow(new Object[]{kodeMenu, namaMenu, jumlah, harga, totalHarga});
                             totalBayar += totalHarga;
@@ -357,6 +356,7 @@ public class Form_Transaksi extends javax.swing.JPanel {
         loadDataMember();
         cbox_member.setEnabled(true);
         txt_namaPelanggan.setText("");
+        txt_kembalian.setText("");
     }
 
     /**
@@ -395,6 +395,8 @@ public class Form_Transaksi extends javax.swing.JPanel {
         jScrollPane3 = new javax.swing.JScrollPane();
         tbl_menu = new javax.swing.JTable();
         cbox_point = new javax.swing.JCheckBox();
+        jLabel9 = new javax.swing.JLabel();
+        txt_kembalian = new javaswingdev.util.TextField();
 
         setOpaque(false);
 
@@ -486,14 +488,8 @@ public class Form_Transaksi extends javax.swing.JPanel {
         }
 
         cbox_member.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                cbox_memberMouseClicked(evt);
-            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 cbox_memberMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                cbox_memberMouseExited(evt);
             }
         });
 
@@ -516,14 +512,21 @@ public class Form_Transaksi extends javax.swing.JPanel {
         jLabel7.setText("Total Bayar");
 
         txt_totalBayar.setEnabled(false);
+        txt_totalBayar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel8.setForeground(new java.awt.Color(255, 255, 255));
         jLabel8.setText("Bayar");
 
+        txt_bayar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         txt_bayar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txt_bayarActionPerformed(evt);
+            }
+        });
+        txt_bayar.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txt_bayarKeyPressed(evt);
             }
         });
 
@@ -578,6 +581,13 @@ public class Form_Transaksi extends javax.swing.JPanel {
                 cbox_pointActionPerformed(evt);
             }
         });
+
+        jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel9.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel9.setText("Kembalian");
+
+        txt_kembalian.setEnabled(false);
+        txt_kembalian.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
 
         javax.swing.GroupLayout container1Layout = new javax.swing.GroupLayout(container1);
         container1.setLayout(container1Layout);
@@ -634,13 +644,17 @@ public class Form_Transaksi extends javax.swing.JPanel {
                             .addComponent(txt_namaPelanggan, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel6)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, container1Layout.createSequentialGroup()
-                        .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(container1Layout.createSequentialGroup()
-                                .addGap(180, 180, 180)
-                                .addComponent(jLabel8))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, container1Layout.createSequentialGroup()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel7)))
+                                .addComponent(jLabel9))
+                            .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(container1Layout.createSequentialGroup()
+                                    .addGap(180, 180, 180)
+                                    .addComponent(jLabel8))
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, container1Layout.createSequentialGroup()
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(jLabel7))))
                         .addGap(18, 18, 18)
                         .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, container1Layout.createSequentialGroup()
@@ -648,7 +662,8 @@ public class Form_Transaksi extends javax.swing.JPanel {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btn_pesan, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(txt_bayar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(txt_totalBayar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(txt_totalBayar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txt_kembalian, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addGap(10, 10, 10))
         );
         container1Layout.setVerticalGroup(
@@ -682,7 +697,7 @@ public class Form_Transaksi extends javax.swing.JPanel {
                     .addComponent(btn_clear, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, container1Layout.createSequentialGroup()
                 .addGap(17, 17, 17)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)
                 .addGap(11, 11, 11)
                 .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -702,7 +717,11 @@ public class Form_Transaksi extends javax.swing.JPanel {
                 .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
                     .addComponent(txt_bayar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(53, 53, 53)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9)
+                    .addComponent(txt_kembalian, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(9, 9, 9)
                 .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btn_hapus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btn_pesan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -794,13 +813,13 @@ public class Form_Transaksi extends javax.swing.JPanel {
 //                            System.out.println(totalBayar);
                             prosesTransaksi(kodeTransaksi, kodeMember[0], namaPelanggan, kodeMenu, idAdmin, jumlah, bayar, updatePoint, bayarTotal, gunakanPoint);
                             clearForm();
-                            MessageAlerts.getInstance().showMessage("Transaksi berhasil!", "Gratis", MessageAlerts.MessageType.SUCCESS);
+                            MessageAlerts.getInstance().showMessage("Transaksi berhasil!", "", MessageAlerts.MessageType.SUCCESS);
                         } else {
                             bayar = Double.parseDouble(txt_bayar.getText());
                             if (Double.parseDouble(txt_bayar.getText()) >= totalBayar) {
                                 prosesTransaksi(kodeTransaksi, kodeMember[0], namaPelanggan, kodeMenu, idAdmin, jumlah, bayar, updatePoint, totalBayar, gunakanPoint);
                                 clearForm();
-                                MessageAlerts.getInstance().showMessage("Transaksi berhasil!", "Nominal", MessageAlerts.MessageType.SUCCESS);
+                                MessageAlerts.getInstance().showMessage("Transaksi berhasil!", "", MessageAlerts.MessageType.SUCCESS);
                             } else {
                                 MessageAlerts.getInstance().showMessage("Gagal!", "Pastikan nominal pembayaran mencukupi!", MessageAlerts.MessageType.DEFAULT);
                             }
@@ -840,14 +859,6 @@ public class Form_Transaksi extends javax.swing.JPanel {
         txt_harga.setText("");
         txt_jumlah.setText("");
     }//GEN-LAST:event_btn_clearActionPerformed
-
-    private void cbox_memberMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cbox_memberMouseClicked
-
-    }//GEN-LAST:event_cbox_memberMouseClicked
-
-    private void cbox_memberMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cbox_memberMouseExited
-
-    }//GEN-LAST:event_cbox_memberMouseExited
 
     private void cbox_memberMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cbox_memberMouseEntered
         int cmbox = cbox_member.getSelectedIndex();
@@ -907,6 +918,15 @@ public class Form_Transaksi extends javax.swing.JPanel {
         cekStok();
     }//GEN-LAST:event_btn_tambahMouseEntered
 
+    private void txt_bayarKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_bayarKeyPressed
+            double total = Double.parseDouble(txt_totalBayar.getText());
+            double bayar = Double.parseDouble(txt_bayar.getText());
+            double hasil = bayar - total;
+        if(evt.getKeyCode() == 10){
+            txt_kembalian.setText(String.valueOf(hasil));
+        }
+    }//GEN-LAST:event_txt_bayarKeyPressed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javaswingdev.util.Button btn_clear;
@@ -924,6 +944,7 @@ public class Form_Transaksi extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javaswingdev.util.SearchOption searchOption1;
@@ -932,6 +953,7 @@ public class Form_Transaksi extends javax.swing.JPanel {
     private javaswingdev.util.TextField txt_bayar;
     private javaswingdev.util.TextField txt_harga;
     private javaswingdev.util.TextField txt_jumlah;
+    private javaswingdev.util.TextField txt_kembalian;
     private javaswingdev.util.TextField txt_kodeMenu;
     private javaswingdev.util.TextField txt_namaMenu;
     private javaswingdev.util.TextField txt_namaPelanggan;
