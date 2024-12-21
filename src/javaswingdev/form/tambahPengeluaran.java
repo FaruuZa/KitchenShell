@@ -52,8 +52,8 @@ public class tambahPengeluaran extends javax.swing.JFrame {
 
                 if (resultSet.next()) {
                     String lastkode = resultSet.getString("kode_pengeluaran");
-                    int kodenum = Integer.parseInt(lastkode.substring(3)) + 1;
-                    kodePengeluaran = String.format("PGN%03d", kodenum);
+                    int kodenum = Integer.parseInt(lastkode.substring(5)) + 1;
+                    kodePengeluaran = String.format("P24%05d", kodenum);
                 }
                 resultSet.close();
                 statement.close();

@@ -4,8 +4,12 @@
  */
 package javaswingdev.form;
 
+import com.toedter.calendar.JDateChooser;
 import config.DatabaseConfig;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -21,6 +25,7 @@ public class Form_Laporan extends javax.swing.JPanel {
     
     public Form_Laporan() {
         getCon();
+//        JDateChooser date_chooser = new JDateChooser();
         String[] judul = {"Tanggal Transaksi", "Hari", "Jumlah Transaksi", "Total Pemasukan", "Menu Terlaris"};
         tableModel = new DefaultTableModel(judul, 0) {
             @Override
@@ -28,6 +33,8 @@ public class Form_Laporan extends javax.swing.JPanel {
                 return false;
             }
         };
+        
+        
         loadDataLaporan("");
         initComponents();
     }
@@ -43,7 +50,7 @@ public class Form_Laporan extends javax.swing.JPanel {
     protected void loadDataLaporan(String cari){
         if (connection != null) {
             try {
-//                String qcari = "%"+cari+"%";
+                String qcari = "%"+dateChooser+"%";
                 String query = "SELECT * FROM v_laporan_transaksi";
                 PreparedStatement ps = connection.prepareStatement(query);
 //                ps.setString(1, qcari);
@@ -58,7 +65,24 @@ public class Form_Laporan extends javax.swing.JPanel {
             }
         }
     }
-
+    protected void cariData(String cari){
+        if (connection != null) {
+            try {
+               
+                String query = "SELECT * FROM v_laporan_transaksi WHERE tnggl_transaksi = '"+cari+"'";
+                PreparedStatement ps = connection.prepareStatement(query);
+//                ps.setString(1, qcari);
+                ResultSet rs = ps.executeQuery();
+                tableModel.setRowCount(0);
+                while (rs.next()) {                    
+                    String[] data = {rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5)};
+                    tableModel.addRow(data);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -74,6 +98,8 @@ public class Form_Laporan extends javax.swing.JPanel {
         tbl_laporan = new javax.swing.JTable();
         textFieldSearchOption1 = new javaswingdev.util.TextFieldSearchOption();
         button1 = new javaswingdev.util.Button();
+        dateChooser = new com.toedter.calendar.JDateChooser();
+        btn_cari = new javaswingdev.util.Button();
 
         setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
         setOpaque(false);
@@ -87,6 +113,7 @@ public class Form_Laporan extends javax.swing.JPanel {
         tbl_laporan.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(tbl_laporan);
 
+        textFieldSearchOption1.setOpaque(true);
         textFieldSearchOption1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 textFieldSearchOption1ActionPerformed(evt);
@@ -96,23 +123,33 @@ public class Form_Laporan extends javax.swing.JPanel {
         button1.setText("CETAK");
         button1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
 
+        dateChooser.setDateFormatString("yyyy-MM-dd");
+
+        btn_cari.setText("Cari");
+        btn_cari.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_cariActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout container1Layout = new javax.swing.GroupLayout(container1);
         container1.setLayout(container1Layout);
         container1Layout.setHorizontalGroup(
             container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, container1Layout.createSequentialGroup()
+                .addGap(25, 25, 25)
                 .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 769, Short.MAX_VALUE)
                     .addGroup(container1Layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(container1Layout.createSequentialGroup()
-                        .addGap(25, 25, 25)
-                        .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 769, Short.MAX_VALUE)
-                            .addGroup(container1Layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(textFieldSearchOption1, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                        .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(dateChooser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_cari, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(textFieldSearchOption1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(button1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(25, 25, 25))
         );
         container1Layout.setVerticalGroup(
@@ -123,7 +160,11 @@ public class Form_Laporan extends javax.swing.JPanel {
                     .addComponent(jLabel1)
                     .addComponent(textFieldSearchOption1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(40, 40, 40)
-                .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btn_cari, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(dateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(15, 15, 15)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 269, Short.MAX_VALUE)
                 .addGap(25, 25, 25))
@@ -145,10 +186,20 @@ public class Form_Laporan extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_textFieldSearchOption1ActionPerformed
 
+    private void btn_cariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cariActionPerformed
+       
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+       String date = df.format(dateChooser.getDate());
+        cariData(date);
+       
+    }//GEN-LAST:event_btn_cariActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javaswingdev.util.Button btn_cari;
     private javaswingdev.util.Button button1;
     private javaswingdev.util.Container container1;
+    private com.toedter.calendar.JDateChooser dateChooser;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tbl_laporan;

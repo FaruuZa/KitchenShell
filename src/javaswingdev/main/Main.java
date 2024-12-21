@@ -71,8 +71,6 @@ public class Main extends javax.swing.JFrame {
                 @Override
                 public void menuSelected(int index, int indexSubMenu) {
                     if (index == 0 && indexSubMenu == 0) {
-                        showForm(new Form_Dashboard());
-                    } else if (index == 1 && indexSubMenu == 0) {
                         showForm(new Form_Transaksi());
                     }
                 }

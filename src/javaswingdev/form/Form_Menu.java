@@ -84,6 +84,7 @@ public class Form_Menu extends javax.swing.JPanel {
     protected void loadDataMenu(String cari) {
         if (connection != null) {
             try {
+               
                 Statement st = connection.createStatement();
                 String query = "SELECT * FROM menu WHERE nama_menu LIKE '%" + cari + "%'";
                 ResultSet rs = st.executeQuery(query);
@@ -108,7 +109,7 @@ public class Form_Menu extends javax.swing.JPanel {
 
         container4 = new javaswingdev.util.Container();
         addBtn = new javaswingdev.util.Button();
-        textFieldSearchOption1 = new javaswingdev.util.TextFieldSearchOption();
+        cari = new javaswingdev.util.TextFieldSearchOption();
         jScrollPane2 = new javax.swing.JScrollPane();
         tbl_menu = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
@@ -128,11 +129,16 @@ public class Form_Menu extends javax.swing.JPanel {
             }
         });
 
-        textFieldSearchOption1.setColorOverlay1(new java.awt.Color(255, 255, 55));
-        textFieldSearchOption1.setColorOverlay2(new java.awt.Color(0, 220, 0));
-        textFieldSearchOption1.addActionListener(new java.awt.event.ActionListener() {
+        cari.setColorOverlay1(new java.awt.Color(255, 255, 55));
+        cari.setColorOverlay2(new java.awt.Color(0, 220, 0));
+        cari.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                textFieldSearchOption1ActionPerformed(evt);
+                cariActionPerformed(evt);
+            }
+        });
+        cari.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                cariKeyReleased(evt);
             }
         });
 
@@ -185,7 +191,7 @@ public class Form_Menu extends javax.swing.JPanel {
                             .addComponent(jLabel1))
                         .addGap(600, 600, 600)
                         .addGroup(container4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(textFieldSearchOption1, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(cari, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(addBtn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(30, 30, 30))
         );
@@ -194,7 +200,7 @@ public class Form_Menu extends javax.swing.JPanel {
             .addGroup(container4Layout.createSequentialGroup()
                 .addGap(14, 14, 14)
                 .addGroup(container4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(textFieldSearchOption1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cari, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(50, 50, 50)
                 .addGroup(container4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -229,9 +235,9 @@ public class Form_Menu extends javax.swing.JPanel {
         aksi = 1;
     }//GEN-LAST:event_addBtnActionPerformed
 
-    private void textFieldSearchOption1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textFieldSearchOption1ActionPerformed
+    private void cariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cariActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_textFieldSearchOption1ActionPerformed
+    }//GEN-LAST:event_cariActionPerformed
 
     private void editBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBtnActionPerformed
         tambahMenu tmenu = new tambahMenu(this, kodeTerpilih);
@@ -270,16 +276,20 @@ public class Form_Menu extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_hapusBtnActionPerformed
 
+    private void cariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_cariKeyReleased
+        loadDataMenu(cari.getText());
+    }//GEN-LAST:event_cariKeyReleased
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javaswingdev.util.Button addBtn;
+    private javaswingdev.util.TextFieldSearchOption cari;
     private javaswingdev.util.Container container4;
     private javaswingdev.util.Button editBtn;
     private javaswingdev.util.Button hapusBtn;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable tbl_menu;
-    private javaswingdev.util.TextFieldSearchOption textFieldSearchOption1;
     // End of variables declaration//GEN-END:variables
 
 //    private void disabledButton() {
