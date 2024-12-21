@@ -64,22 +64,6 @@ public class Form_Member extends javax.swing.JPanel {
         hapusBtn.setEnabled(false);
     }
 
-//    protected void popupHandler(String popupMsg, int status, popupMember asd, EditMember dsa) {
-//        if (asd != null) {
-//            asd.dispose();
-//            enabledButton(0);
-//        } else if (dsa != null) {
-//            dsa.dispose();
-//            enabledButton(1);
-//        }
-//        if (status == 1) {
-//            MessageAlerts.getInstance().showMessage("SUCCESS", popupMsg, MessageAlerts.MessageType.SUCCESS);
-//        } else {
-//            MessageAlerts.getInstance().showMessage("ERROR", popupMsg, MessageAlerts.MessageType.ERROR);
-//        }
-//        aksi = 0;
-//    }
-
     protected void popupHandler(String popupMsg, int status, popupMember asd, boolean isEdit) {
         if (asd != null) {
             asd.dispose();
@@ -101,7 +85,6 @@ public class Form_Member extends javax.swing.JPanel {
         if (connection != null) {
             try {
                 String qcari = "%"+cari+"%";
-//                Statement st = connection.createStatement();
                 String query = "SELECT * FROM member WHERE nama_member LIKE ?";
                 PreparedStatement ps = connection.prepareStatement(query);
                 ps.setString(1, qcari);
@@ -120,9 +103,6 @@ public class Form_Member extends javax.swing.JPanel {
         }
     }
 
-//    public static void ngeload(){
-//        loadDataMember();
-//    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -143,12 +123,12 @@ public class Form_Member extends javax.swing.JPanel {
         setOpaque(false);
         setPreferredSize(new java.awt.Dimension(860, 650));
 
-        container1.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
-
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("MEMBER");
 
+        search.setColorOverlay1(new java.awt.Color(255, 225, 55));
+        search.setColorOverlay2(new java.awt.Color(0, 220, 0));
         search.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 searchActionPerformed(evt);
@@ -160,8 +140,9 @@ public class Form_Member extends javax.swing.JPanel {
             }
         });
 
+        tbl_member.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         tbl_member.setModel(tableModel);
-        tbl_member.setRowHeight(40);
+        tbl_member.setRowHeight(30);
         tbl_member.getTableHeader().setReorderingAllowed(false);
         tbl_member.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -201,7 +182,7 @@ public class Form_Member extends javax.swing.JPanel {
             .addGroup(container1Layout.createSequentialGroup()
                 .addGap(30, 30, 30)
                 .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 758, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 768, Short.MAX_VALUE)
                     .addGroup(container1Layout.createSequentialGroup()
                         .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
@@ -218,17 +199,17 @@ public class Form_Member extends javax.swing.JPanel {
         container1Layout.setVerticalGroup(
             container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(container1Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(20, 20, 20)
                 .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel1)
                     .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(60, 60, 60)
+                .addGap(50, 50, 50)
                 .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(addBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(editBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(hapusBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 348, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(10, 10, 10)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 348, Short.MAX_VALUE)
                 .addGap(30, 30, 30))
         );
 
@@ -245,7 +226,7 @@ public class Form_Member extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(container1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 81, Short.MAX_VALUE))
+                .addGap(0, 83, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 

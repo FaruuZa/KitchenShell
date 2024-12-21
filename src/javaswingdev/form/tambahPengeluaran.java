@@ -71,7 +71,6 @@ public class tambahPengeluaran extends javax.swing.JFrame {
                 String idAdmin = Session.getKode();
                 if (!inputKeterangan.getText().equals("") && !jumlah.getText().equals("") && !inputTotal.getText().equals("")) {
                     String[] kodeBahan = inputBahanBaku.getSelectedItem().toString().split(" | ");
-//                    String query1 = "INSERT INTO pengeluaran VALUES ('" + generateCode() + "','" + idAdmin + "', '" + kodeBahan[0] + "', NOW(), '" + inputKeterangan.getText() + "', '" + jumlah.getText() + "', '" + inputTotal.getText() + "' ) ";
                     String query = "INSERT INTO pengeluaran VALUES (?, ?, ?, NOW(), ?, ?, ? )";
                     PreparedStatement statement = connection.prepareStatement(query);
                     statement.setString(1, generateCode());
